@@ -1,0 +1,26 @@
+Goal: Auth|Password reset
+-[DONE] add htmx dependencies
+-[DONE] create auth layout
+-[DONE] create login page
+-[DONE] implement login as admin
+-[DONE] Add admin dashboard page
+-[DONE] implement logout
+-[DONE] create forgot password page
+-[DONE] send password reset link (on console for now)
+-[DONE] implement password reset
+-[DONE] Implement client sign up
+-[DONE] implement login as client
+- Add client dashboard page
+
+
+Goal: Upload and process pdfs
+
+Goal: Manage keywords as client
+
+Goal: Manage keywords as admin
+
+Goal: Implement search and manage matches
+
+Goal: Manage subscriptions and payments
+
+Goal: Implement user management
