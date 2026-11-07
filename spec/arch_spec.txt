@@ -1,0 +1,33 @@
+======markup organization=======
+layouts/
+partials/                       (status_badge, pagination, flash)
+admin/
+  dashboard.html
+  settings.html
+  clients/
+    list.html
+    record.html                 (header plus tab nav)
+    tabs/
+      overview.html
+      keywords.html
+      subscriptions.html
+      transactions.html
+    forms/
+      _fields.html
+      create.html
+      update.html
+      create_subscription.html
+      create_transaction.html
+
+======urls===============
+GET  /admin/clients
+GET  /admin/clients/create
+POST /admin/clients
+GET  /admin/clients/{id}
+GET  /admin/clients/{id}/keywords
+GET  /admin/clients/{id}/edit
+POST /admin/clients/{id}/edit
+GET  /admin/clients/{id}/subscriptions/create
+POST /admin/clients/{id}/subscriptions
+GET  /admin/clients/{id}/suspend        (confirmation page)
+POST /admin/clients/{id}/suspend

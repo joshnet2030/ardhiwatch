@@ -19,7 +19,7 @@ public interface AuthService {
 
     public void resendEmailConfirmationToken(String email);
 
-    public void confirmClientEmail(String email, String token) throws AppException;
+    public void confirmClientEmail(String token) throws AppException;
 
     public void logout(UUID appSessionId);
 }

@@ -1,0 +1,12 @@
+<td th:fragment="gazetteStatus(status)" th:switch="${status}">
+    <span th:case="'notified'" class="badge bg-success">Notified</span>
+    <span th:case="'reviewed'" class="badge bg-info text-dark">Reviewed</span>
+    <span th:case="'matched'" class="badge bg-primary">Matched</span>
+    <span th:case="'matching'" class="badge bg-warning text-dark">Matching</span>
+    <span th:case="'ocr_done'" class="badge bg-primary">OCR Done</span>
+    <span th:case="'ocr_processing'" class="badge bg-secondary">OCR Processing</span>
+    <span th:case="'splitting'" class="badge bg-secondary">Splitting</span>
+    <span th:case="'uploaded'" class="badge bg-light text-dark border">Uploaded</span>
+    <span th:case="'failed'" class="badge bg-danger">Failed</span>
+    <span th:case="*" class="badge bg-light text-dark border" th:text="${status}"></span>
+</td>

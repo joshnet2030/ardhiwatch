@@ -12,4 +12,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
     Optional<AppUser> findFirstByPasswordResetToken(String token);
 
     Optional<AppUser> findFirstByEmailIgnoreCaseAndEmailVerificationToken(String email, String emailVerificationToken);
+
+    Optional<AppUser> findFirstByEmailVerificationToken(String token);
 }

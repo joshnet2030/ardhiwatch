@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Match</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="">Matches Review</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Match #1043</li>
+        </ol>
+    </nav>
+
+    <!-- Record header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+        <div>
+            <h2 class="mb-1">Match #1043</h2>
+            <p class="text-muted mb-0">
+                <a href="#">Samuel Otieno</a> &middot; Samuel Otieno Odhiambo &middot;
+                <a href="#">Vol. 128, No. 37, page 61</a>
+                <span class="badge bg-warning text-dark ms-2">Pending Review</span>
+            </p>
+        </div>
+        <div class="btn-group btn-group-sm">
+            <a href="#" class="btn btn-outline-secondary">&laquo; Previous in Queue</a>
+            <a href="#" class="btn btn-outline-secondary">Next in Queue &raquo;</a>
+        </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item"><a th:classappend="${currentTab == 'overview'} ? 'active'" class="nav-link" th:href="@{/admin/matches/show/123}">Overview</a></li>
+        <li class="nav-item"><a th:classappend="${currentTab == 'overview'} ? 'nofitications'" class="nav-link" th:href="@{/admin/matches/show/123/notifications}">Notifications <span class="badge bg-secondary ms-1">0</span></a></li>
+    </ul>
+
+    <!-- Tab content goes here -->
+    <div layout:fragment="tab"></div>
+
+</div>
+</body>
+</html>

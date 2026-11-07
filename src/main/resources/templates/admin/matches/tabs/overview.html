@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{admin/matches/record.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Match &ndash; Overview</title>
+</head>
+<body>
+<div layout:fragment="tab">
+
+    <div class="row g-4">
+
+        <!-- Left: verification and page preview -->
+        <div class="col-lg-8">
+
+            <div class="card mb-4 border-warning">
+                <div class="card-header bg-warning text-dark">What to Verify</div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <p class="text-muted small mb-1">Client's Keyword</p>
+                            <p class="fs-5 fw-semibold mb-0">Samuel Otieno Odhiambo</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="text-muted small mb-1">Found in Gazette</p>
+                            <p class="fs-5 fw-semibold mb-0">Samwel Otieno Odhiambo</p>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-1">Text around the match <span class="badge bg-secondary ms-1">1 of 1 occurrence</span></p>
+                    <blockquote class="border-start border-3 ps-3 mb-0">
+                        <p class="mb-0">
+                            ...loss of the original title deed for land parcel LR No. 209/1145, registered in the name of
+                            <mark>Samwel Otieno Odhiambo</mark> of P.O. Box 4410, Kisumu, who has applied for the issue of a
+                            provisional certificate...
+                        </p>
+                    </blockquote>
+                </div>
+                <div class="card-footer text-muted small">
+                    Read by OCR, so check it against the page image below. If they disagree, the image is correct.
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="fw-semibold">Vol. 128, No. 37 &middot; Page 61</span>
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link active py-1" href="#">Highlighted</a></li>
+                        <li class="nav-item"><a class="nav-link py-1" href="#">Original</a></li>
+                    </ul>
+                    <a href="#" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">Open in New Tab</a>
+                </div>
+                <div class="card-body bg-light p-2">
+                    <iframe src="#" title="Page 61 preview" class="w-100 border rounded bg-white" height="950"></iframe>
+                </div>
+                <div class="card-footer text-muted small">OCR confidence 91% &middot; processed 2026-09-11 14:12</div>
+            </div>
+
+        </div>
+
+        <!-- Right: details and decision -->
+        <div class="col-lg-4">
+
+            <div class="card mb-4">
+                <div class="card-header">Match Details</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-5">Status</dt>
+                        <dd class="col-7"><span class="badge bg-warning text-dark">Pending Review</span></dd>
+                        <dt class="col-5">Client</dt>
+                        <dd class="col-7"><a href="#">Samuel Otieno</a></dd>
+                        <dt class="col-5">Phone</dt>
+                        <dd class="col-7">+254 733 987 654</dd>
+                        <dt class="col-5">Email</dt>
+                        <dd class="col-7">samuel@example.com</dd>
+                        <dt class="col-5">Keyword Type</dt>
+                        <dd class="col-7">Name</dd>
+                        <dt class="col-5">Precision</dt>
+                        <dd class="col-7"><span class="badge bg-secondary">Fuzzy</span></dd>
+                        <dt class="col-5">Score</dt>
+                        <dd class="col-7"><span class="badge bg-warning text-dark">81%</span></dd>
+                        <dt class="col-5">Found</dt>
+                        <dd class="col-7">2026-09-11 14:12</dd>
+                        <dt class="col-5">Subscription</dt>
+                        <dd class="col-7"><span class="badge bg-success">Active</span> to 2026-12-15</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Decision: shown while the match is pending -->
+            <div class="card mb-4">
+                <div class="card-header">On Approval, Samuel Will Receive</div>
+                <div class="card-body">
+                    <p class="mb-2"><span class="badge bg-info text-dark me-1">Email</span> the highlighted page 61 as a PDF</p>
+                    <p class="mb-0"><span class="badge bg-info text-dark me-1">SMS</span> a private link to view the highlighted page</p>
+                </div>
+            </div>
+
+            <div class="card mb-4 border-success">
+                <div class="card-header bg-success text-white">Approve</div>
+                <div class="card-body">
+                    <p class="text-muted small">Confirm the highlighted text really is this client's keyword, not a similar one.</p>
+                    <form action="#" method="post">
+                        <button type="submit" class="btn btn-success w-100">Approve and Send Alerts</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4 border-danger">
+                <div class="card-header bg-danger text-white">Reject</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason</label>
+                            <select id="reason" name="reason" class="form-select">
+                                <option value="not_same_person" selected>Different person or property</option>
+                                <option value="ocr_error">OCR misread</option>
+                                <option value="duplicate">Duplicate of another match</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="memo" class="form-label">Notes (optional)</label>
+                            <textarea id="memo" name="memo" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline-danger w-100">Reject Match</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Decision history: shown instead of the two forms above once decided -->
+            <div class="card mb-4">
+                <div class="card-header">History</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="small text-muted">2026-09-11 14:12</div>
+                        Match found by the system
+                    </li>
+                    <li class="list-group-item text-muted">Not reviewed yet.</li>
+                </ul>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Other Matches for This Client</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-muted">No other matches.</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

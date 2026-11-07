@@ -1,6 +1,8 @@
 package com.josh.ardhi.security;
 
-import jakarta.servlet.http.HttpFilter;
+import com.josh.ardhi.models.AppSession;
+import com.josh.ardhi.models.AppUser;
+import com.josh.ardhi.repositories.AppSessionRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +10,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import java.util.UUID;
 
 @Configuration
 public class SecurityConfig {
@@ -19,20 +23,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AppSessionRepository appSessionRepository) throws Exception {
         return http
                 .authenticationProvider(authProvider)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(
                                     "/",
                                     "/error",
-                                    "/public/**",
+                                    "/js/**",
+                                    "/css/**",
                                     "/forgot-password",
                                     "/process-forgot-password",
                                     "/reset-password/*",
                                     "/process-reset-password",
                                     "/client-signup",
-                                    "/process-client-signup"
+                                    "/process-client-signup",
+                                    "/verify-email",
+                                    "/process-verify-email",
+                                    "/resend-email-verification-token"
                             ).permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/client/**").hasRole("CLIENT")
@@ -42,7 +50,7 @@ public class SecurityConfig {
                     formLogin.loginPage("/login")
                             .loginProcessingUrl("/process-login")
                             .failureUrl("/login?error")
-                            .successHandler(customSuccessHandler())
+                            .successHandler(customSuccessHandler(appSessionRepository))
                             .permitAll();
                 }).logout(logout -> {
                     logout.logoutSuccessUrl("/login?logout")
@@ -55,16 +63,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationSuccessHandler customSuccessHandler() {
+    public AuthenticationSuccessHandler customSuccessHandler(AppSessionRepository appSessionRepository) {
         return (request, response, authentication) -> {
-            var roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
+            String sessionId = authentication.getName();
+            AppSession appSession = appSessionRepository.findById(UUID.fromString(sessionId)).get();
+            AppUser appUser = appSession.getUser();
+            if (!appUser.isEmailVerified()) {
+                response.sendRedirect("/verify-email");
+                return;
+            }
+
+            var roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
             if (roles.contains("ROLE_ADMIN")) {
-                response.sendRedirect("/admin/dashboard");
+                response.sendRedirect("/admin");
             } else if (roles.contains("ROLE_CLIENT")) {
-                response.sendRedirect("/client/dashboard");
+                response.sendRedirect("/client");
             } else {
-                response.sendRedirect("/home");
+                response.sendRedirect("/");
             }
         };
     }

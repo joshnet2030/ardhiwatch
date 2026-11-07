@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{admin/gazette/record.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Gazette Issue &ndash; Overview</title>
+</head>
+<body>
+<div layout:fragment="tab">
+
+    <!-- Attention: failed pages -->
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2" role="alert">
+        <div>
+            <strong>1 page could not be read (page 44).</strong>
+            Keywords on unreadable pages are never checked, so retry it or review it by hand.
+        </div>
+        <a href="#" class="btn btn-sm btn-warning">View Failed Page</a>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Pages</p>
+                <h3 class="card-text">84</h3>
+                <p class="text-muted small mb-0">83 read, 1 failed</p>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Pages with Matches</p>
+                <h3 class="card-text text-warning">6</h3>
+                <p class="text-muted small mb-0">9 matches in total</p>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Matches Reviewed</p>
+                <h3 class="card-text">9 / 9</h3>
+                <p class="text-muted small mb-0">8 approved, 1 rejected</p>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Notifications Sent</p>
+                <h3 class="card-text text-success">16</h3>
+                <p class="text-muted small mb-0">1 failed to deliver</p>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Left: details and processing steps -->
+        <div class="col-lg-7">
+
+            <div class="card mb-4">
+                <div class="card-header">Issue Details</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Volume</dt>
+                        <dd class="col-sm-8">128</dd>
+                        <dt class="col-sm-4">Issue Number</dt>
+                        <dd class="col-sm-8">37</dd>
+                        <dt class="col-sm-4">Publication Date</dt>
+                        <dd class="col-sm-8">2026-09-11</dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Notified</span></dd>
+                        <dt class="col-sm-4">Original File</dt>
+                        <dd class="col-sm-8">kenya-gazette-2026-09-11.pdf <span class="text-muted small">(48.2 MB)</span></dd>
+                        <dt class="col-sm-4">Uploaded By</dt>
+                        <dd class="col-sm-8">Jane Admin</dd>
+                        <dt class="col-sm-4">Uploaded At</dt>
+                        <dd class="col-sm-8">2026-09-11 14:02</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Processing Steps</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>1. Uploaded</span>
+                        <span><span class="badge bg-success">Done</span> <span class="text-muted small ms-2">14:02</span></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>2. Split into pages</span>
+                        <span><span class="badge bg-success">Done</span> <span class="text-muted small ms-2">14:03</span></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>3. Read and matched (OCR)</span>
+                        <span><span class="badge bg-warning text-dark">Done, 1 failed</span> <span class="text-muted small ms-2">14:12</span></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>4. Matches reviewed</span>
+                        <span><span class="badge bg-success">Done</span> <span class="text-muted small ms-2">14:40</span></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>5. Alerts sent</span>
+                        <span><span class="badge bg-success">Done</span> <span class="text-muted small ms-2">14:45</span></span>
+                    </li>
+                </ul>
+                <div class="card-footer d-flex gap-2">
+                    <form action="#" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-warning">Retry Failed Pages</button>
+                    </form>
+                    <form action="#" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Re-run Matching</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right: pages with matches and recent activity -->
+        <div class="col-lg-5">
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Pages with Matches</span>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">All Pages</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 42</span>
+                        <span class="badge bg-warning text-dark">2 matches</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 58</span>
+                        <span class="badge bg-warning text-dark">1 match</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 61</span>
+                        <span class="badge bg-warning text-dark">1 match</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 73</span>
+                        <span class="badge bg-warning text-dark">3 matches</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Recent Activity</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="small text-muted">2026-09-11 14:45</div>
+                        Alerts sent for 8 approved matches (16 notifications)
+                    </li>
+                    <li class="list-group-item">
+                        <div class="small text-muted">2026-09-11 14:40</div>
+                        Jane Admin finished reviewing matches
+                    </li>
+                    <li class="list-group-item">
+                        <div class="small text-muted">2026-09-11 14:12</div>
+                        Matching finished: 9 matches found on 6 pages
+                    </li>
+                    <li class="list-group-item">
+                        <div class="small text-muted">2026-09-11 14:09</div>
+                        Page 44 failed to read
+                    </li>
+                    <li class="list-group-item">
+                        <div class="small text-muted">2026-09-11 14:02</div>
+                        Uploaded by Jane Admin
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

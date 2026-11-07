@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{admin/clients/record.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Client &ndash; Overview</title>
+</head>
+<body>
+<div layout:fragment="tab">
+
+    <!-- Stat cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Keywords</p>
+                <h3 class="card-text">3 / 5</h3>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Alerts Received</p>
+                <h3 class="card-text">2</h3>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Total Paid</p>
+                <h3 class="card-text">KES 9,000</h3>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Days Left on Plan</p>
+                <h3 class="card-text text-warning">40</h3>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Left: account details and notes -->
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
+                <div class="card-header">Account Details</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Full Name</dt>
+                        <dd class="col-sm-8">Peter Mwangi</dd>
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">peter@example.com <span class="badge bg-success">Verified</span></dd>
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">+254 712 345 678</dd>
+                        <dt class="col-sm-4">National ID</dt>
+                        <dd class="col-sm-8">28451976</dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dt class="col-sm-4">Joined</dt>
+                        <dd class="col-sm-8">2026-03-02</dd>
+                        <dt class="col-sm-4">Last Login</dt>
+                        <dd class="col-sm-8">2026-11-04 18:22</dd>
+                        <dt class="col-sm-4">Terms Accepted</dt>
+                        <dd class="col-sm-8">2026-03-02 10:14</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Internal Notes</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="mb-3">
+                            <label for="notes" class="form-label visually-hidden">Notes</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="4" placeholder="Only admins can see these notes"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">Save Notes</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right: current plan and recent alerts -->
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Current Subscription</span>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">All Subscriptions</a>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Plan</dt>
+                        <dd class="col-sm-8">Landlord Pro</dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dt class="col-sm-4">Period</dt>
+                        <dd class="col-sm-8">2025-12-15 to 2026-12-15</dd>
+                        <dt class="col-sm-4">Keywords</dt>
+                        <dd class="col-sm-8">3 of 5 used</dd>
+                    </dl>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a href="#" class="btn btn-sm btn-outline-primary">Extend</a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Change Plan</a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Recent Alerts</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="#">LR No. 209/1145</a>
+                            <div class="small text-muted">Vol. 128 No. 37, page 42 &middot; 2026-09-11</div>
+                        </div>
+                        <span class="badge bg-success">Approved</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="#">Peter Mwangi</a>
+                            <div class="small text-muted">Vol. 128 No. 33, page 12 &middot; 2026-08-14</div>
+                        </div>
+                        <span class="badge bg-danger">Rejected</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

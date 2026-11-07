@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Matches Review</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Matches Review</h2>
+    </div>
+
+    <!-- Status tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Pending Review <span class="badge bg-danger ms-1">7</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Approved <span class="badge bg-secondary ms-1">41</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Rejected <span class="badge bg-secondary ms-1">12</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">All <span class="badge bg-secondary ms-1">60</span></a>
+        </li>
+    </ul>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="#" method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="issue" class="form-label">Gazette Issue</label>
+                    <select id="issue" name="issue" class="form-select">
+                        <option value="" selected>All Issues</option>
+                        <option value="37">Vol. 128, No. 37</option>
+                        <option value="36">Vol. 128, No. 36</option>
+                        <option value="35">Vol. 128, No. 35</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="client" class="form-label">Client</label>
+                    <input type="text" id="client" name="client" class="form-control" placeholder="Name, email or phone">
+                </div>
+                <div class="col-md-2">
+                    <label for="keywordType" class="form-label">Keyword Type</label>
+                    <select id="keywordType" name="keywordType" class="form-select">
+                        <option value="" selected>All Types</option>
+                        <option value="name">Name</option>
+                        <option value="lr_number">Title / LR Number</option>
+                        <option value="id_number">National ID</option>
+                        <option value="plot_number">Plot Number</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="matchMode" class="form-label">Precision</label>
+                    <select id="matchMode" name="matchMode" class="form-select">
+                        <option value="" selected>Exact &amp; Fuzzy</option>
+                        <option value="exact">Exact only</option>
+                        <option value="fuzzy">Fuzzy only</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
+                    <a href="#" class="btn btn-link">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Matches table -->
+    <form action="#" method="post">
+        <div class="card mb-4">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span>Pending Matches <span class="text-muted small ms-2">Showing 1–7 of 7, oldest first</span></span>
+                <div class="d-flex gap-2">
+                    <button type="submit" name="action" value="approve" class="btn btn-sm btn-success">Approve Selected</button>
+                    <button type="submit" name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject Selected</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class="form-check-input" aria-label="Select all"></th>
+                        <th>Client</th>
+                        <th>Keyword</th>
+                        <th>Matched Text</th>
+                        <th>Issue / Page</th>
+                        <th>Precision</th>
+                        <th>Score</th>
+                        <th>Found</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox" name="ids" value="1" class="form-check-input" aria-label="Select match"></td>
+                        <td>Peter Mwangi<br><span class="text-muted small">+254 712 345 678</span></td>
+                        <td>LR No. 209/1145<br><span class="text-muted small">Title / LR Number</span></td>
+                        <td>LR No. 209/1145</td>
+                        <td>Vol. 128 No. 37<br><span class="text-muted small">Page 42</span></td>
+                        <td><span class="badge bg-primary">Exact</span></td>
+                        <td><span class="badge bg-success">98%</span></td>
+                        <td>2026-09-11 14:09</td>
+                        <td class="text-nowrap">
+                            <a th:href="@{/admin/matches/show/123}" class="btn btn-sm btn-primary">Review</a>
+                        </td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><input type="checkbox" name="ids" value="2" class="form-check-input" aria-label="Select match"></td>
+                        <td>Grace Wanjiru<br><span class="text-muted small">+254 722 111 222</span></td>
+                        <td>Grace Wanjiru<br><span class="text-muted small">Name</span></td>
+                        <td>Grace Wanjiru Kamau</td>
+                        <td>Vol. 128 No. 37<br><span class="text-muted small">Page 58</span></td>
+                        <td><span class="badge bg-secondary">Fuzzy</span></td>
+                        <td><span class="badge bg-warning text-dark">87%</span></td>
+                        <td>2026-09-11 14:11</td>
+                        <td class="text-nowrap">
+                            <a  th:href="@{/admin/matches/show/123}" class="btn btn-sm btn-primary">Review</a>
+                        </td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><input type="checkbox" name="ids" value="3" class="form-check-input" aria-label="Select match"></td>
+                        <td>Samuel Otieno<br><span class="text-muted small">+254 733 987 654</span></td>
+                        <td>Samuel Otieno Odhiambo<br><span class="text-muted small">Name</span></td>
+                        <td>Samwel Otieno Odhiambo</td>
+                        <td>Vol. 128 No. 37<br><span class="text-muted small">Page 61</span></td>
+                        <td><span class="badge bg-secondary">Fuzzy</span></td>
+                        <td><span class="badge bg-warning text-dark">81%</span></td>
+                        <td>2026-09-11 14:12</td>
+                        <td class="text-nowrap">
+                            <a  th:href="@{/admin/matches/show/123}" class="btn btn-sm btn-primary">Review</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" name="ids" value="4" class="form-check-input" aria-label="Select match"></td>
+                        <td>Amina Hassan<br><span class="text-muted small">+254 701 555 444</span></td>
+                        <td>32145678<br><span class="text-muted small">National ID</span></td>
+                        <td>32145678</td>
+                        <td>Vol. 128 No. 36<br><span class="text-muted small">Page 17</span></td>
+                        <td><span class="badge bg-primary">Exact</span></td>
+                        <td><span class="badge bg-success">100%</span></td>
+                        <td>2026-09-04 10:30</td>
+                        <td class="text-nowrap">
+                            <a  th:href="@{/admin/matches/show/123}" class="btn btn-sm btn-primary">Review</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer">
+                <nav>
+                    <ul class="pagination pagination-sm mb-0 justify-content-end">
+                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>

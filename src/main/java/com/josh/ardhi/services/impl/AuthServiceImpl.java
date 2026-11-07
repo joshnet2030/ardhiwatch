@@ -126,8 +126,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void confirmClientEmail(String email, String token) throws AppException {
-        AppUser appUser = appUserRepository.findFirstByEmailIgnoreCaseAndEmailVerificationToken(email, token).orElse(null);
+    public void confirmClientEmail(String token) throws AppException {
+        AppUser appUser = appUserRepository.findFirstByEmailVerificationToken(token).orElse(null);
         if(appUser == null){
             log.info("Invalid token");
             throw new AppException("Invalid email verification token.");
@@ -159,6 +159,7 @@ public class AuthServiceImpl implements AuthService {
         String emailVerificationToken = UUID.randomUUID().toString();
         String emailConfirmationMessage = "Your email confirmation link: "+appUrl+"/verify-email?token="+emailVerificationToken;
         emailService.queueEmail(appUser.getEmail(), "Email confirmation", emailConfirmationMessage);
+        appUser.setEmailVerified(false);
         appUser.setEmailVerificationToken(emailVerificationToken);
         appUser.setEmailVerificationTokenExpiresAt(ZonedDateTime.now().plusHours(24));
         appUserRepository.save(appUser);

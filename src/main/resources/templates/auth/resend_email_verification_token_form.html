@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/auth}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<body>
+<div class="col-md-5 col-lg-4" layout:fragment="content" id="verify-email-failed-wrapper">
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <div class="alert alert-info" th:if="${message}" th:text="${message}"></div>
+            <form th:fragment="form" class="mx-2" hx:post="@{/resend-email-verification-token}"
+                  hx-target="#verify-email-failed-wrapper" hx-swap="outerHTML">
+                <div class="mb-2">
+                    <p>Please enter your email address to resend the email verification link</p>
+                </div>
+                <div class="mb-2">
+                    <input class="form-control" type="email" th:name="email" th:value="${email}"/>
+                </div>
+                <button type="submit" class="btn btn-secondary">Send a New Link</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

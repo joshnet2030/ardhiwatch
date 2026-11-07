@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{admin/gazette/record.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Issue Pages</title>
+</head>
+<body>
+<div layout:fragment="tab">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Gazette Issues</a></li>
+            <li class="breadcrumb-item"><a href="#">Vol. 128, No. 37</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Page 42</li>
+        </ol>
+    </nav>
+
+    <!-- Issue header -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="mb-1">Kenya Gazette — Vol. 128, No. 37</h4>
+                    <p class="text-muted mb-0">
+                        Published 2026-09-11 &middot; 84 pages &middot; 83 OCR'd &middot;
+                        6 pages with matches &middot; 9 notifications sent
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <span class="badge bg-success fs-6 me-2">Notified</span>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">Download Original PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Page list -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">Pages</div>
+                <div class="card-body border-bottom">
+                    <form action="#" method="get" class="row g-2">
+                        <div class="col-12">
+                            <select name="show" class="form-select form-select-sm" aria-label="Filter pages">
+                                <option value="all" selected>All Pages</option>
+                                <option value="matches">With Matches Only</option>
+                                <option value="failed">OCR Failed Only</option>
+                            </select>
+                        </div>
+                        <div class="col-8">
+                            <input type="number" name="jump" class="form-control form-control-sm" placeholder="Jump to page" min="1" max="84">
+                        </div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary w-100">Go</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="list-group list-group-flush overflow-y-auto vh-100">
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 1</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 41</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center" aria-current="true">
+                        <span>Page 42</span>
+                        <span class="badge bg-warning text-dark">2 matches</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 43</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 44</span>
+                        <span class="badge bg-danger">OCR failed</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 45</span>
+                        <span class="badge bg-secondary">Processing</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 58</span>
+                        <span class="badge bg-warning text-dark">1 match</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Page 59</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="col-md-9">
+
+            <div class="card mb-4">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="fw-semibold">Page 42 of 84</span>
+
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link active py-1" href="#">Highlighted</a></li>
+                        <li class="nav-item"><a class="nav-link py-1" href="#">Original</a></li>
+                    </ul>
+
+                    <div class="btn-group btn-group-sm">
+                        <a href="#" class="btn btn-outline-secondary">&laquo; Previous</a>
+                        <a href="#" class="btn btn-outline-secondary">Next &raquo;</a>
+                    </div>
+                </div>
+                <div class="card-body bg-light p-2">
+                    <iframe src="#" title="Page 42 preview" class="w-100 border rounded bg-white" height="900"></iframe>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">OCR confidence 94% &middot; processed 2026-09-11 14:09</span>
+                    <a href="#" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">Open in New Tab</a>
+                </div>
+            </div>
+
+            <!-- Matches on this page -->
+            <div class="card mb-4">
+                <div class="card-header">Matches on This Page</div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0 align-middle">
+                        <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Keyword</th>
+                            <th>Matched Text</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Peter Mwangi</td>
+                            <td>LR No. 209/1145</td>
+                            <td>LR No. 209/1145</td>
+                            <td>98%</td>
+                            <td><span class="badge bg-warning text-dark">Pending Review</span></td>
+                            <td class="text-nowrap">
+                                <a href="#" class="btn btn-sm btn-outline-primary">Open</a>
+                                <form action="#" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                </form>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Reject</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Grace Wanjiru</td>
+                            <td>Grace Wanjiru</td>
+                            <td>Grace Wanjiru Kamau</td>
+                            <td>87%</td>
+                            <td><span class="badge bg-success">Approved</span></td>
+                            <td class="text-nowrap">
+                                <a href="#" class="btn btn-sm btn-outline-primary">Open</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
