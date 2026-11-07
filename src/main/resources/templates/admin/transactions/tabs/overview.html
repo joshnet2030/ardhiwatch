@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{admin/transactions/record.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment &ndash; Overview</title>
+</head>
+<body>
+<div layout:fragment="tab">
+
+    <div class="row g-4">
+
+        <!-- Left: the payment -->
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
+                <div class="card-header">Payment Details</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Amount</dt>
+                        <dd class="col-sm-8">KES 4,500.00</dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Completed</span></dd>
+                        <dt class="col-sm-4">Method</dt>
+                        <dd class="col-sm-8">M-Pesa (STK push)</dd>
+                        <dt class="col-sm-4">Receipt No.</dt>
+                        <dd class="col-sm-8">SK4W8QN1TB</dd>
+                        <dt class="col-sm-4">Paid From</dt>
+                        <dd class="col-sm-8">+254 712 345 &bull;&bull;&bull;</dd>
+                        <dt class="col-sm-4">Initiated</dt>
+                        <dd class="col-sm-8">2026-11-04 17:39</dd>
+                        <dt class="col-sm-4">Completed</dt>
+                        <dd class="col-sm-8">2026-11-04 17:40</dd>
+                        <dt class="col-sm-4">Reference</dt>
+                        <dd class="col-sm-8">DKZ-2026-001284</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Refund</div>
+                <div class="card-body">
+                    <p class="mb-2">No refund has been issued for this payment.</p>
+                    <p class="text-muted small mb-0">
+                        Under the Terms of Service, refunds apply to duplicate or mistaken payments, a request inside the
+                        cooling-off period before any alert is delivered, and extended service failures.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right: what it paid for -->
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Client</span>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Open Client</a>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Name</dt>
+                        <dd class="col-sm-8">Peter Mwangi</dd>
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">peter@example.com</dd>
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">+254 712 345 678</dd>
+                        <dt class="col-sm-4">Account</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Paid For</span>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Open Subscription</a>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Plan</dt>
+                        <dd class="col-sm-8">Landlord Pro</dd>
+                        <dt class="col-sm-4">Period</dt>
+                        <dd class="col-sm-8">2026-11-04 to 2027-11-04</dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dt class="col-sm-4">Keyword Limit</dt>
+                        <dd class="col-sm-8">5</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Admin Notes</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="mb-3">
+                            <label for="notes" class="form-label visually-hidden">Notes</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="Only admins can see these notes"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">Save Notes</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

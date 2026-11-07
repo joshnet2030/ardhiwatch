@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Subscription Plan</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Subscription Plans</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Landlord Pro</li>
+        </ol>
+    </nav>
+
+    <!-- Record header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+        <div>
+            <h2 class="mb-1">Landlord Pro</h2>
+            <p class="text-muted mb-0">
+                KES 4,500 per year &middot; up to 5 keywords
+                <span class="badge bg-success ms-2">On Sale</span>
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="#" class="btn btn-outline-secondary">Edit</a>
+            <a href="#" class="btn btn-outline-danger">Retire</a>
+        </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <ul class="nav nav-tabs mb-4">
+        <li  class="nav-item"><a th:classappend="${currentTab == 'overview'}? 'active'" class="nav-link" th:href="@{/admin/subscriptions/show/123}">Overview</a></li>
+        <li  class="nav-item"><a th:classappend="${currentTab == 'clients'}? 'active'" class="nav-link" th:href="@{/admin/subscriptions/show/123/clients}">Clients <span class="badge bg-secondary ms-1">47</span></a></li>
+    </ul>
+
+    <!-- Tab content goes here -->
+    <div layout:fragment="tab"></div>
+
+</div>
+</body>
+</html>
