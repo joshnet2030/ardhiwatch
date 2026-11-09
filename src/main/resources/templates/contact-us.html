@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/public}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact Us — Dokezo</title>
+    <meta name="description" content="Get in touch with the Dokezo team. We're here to help with questions about your account, alerts, or the Kenya Gazette.">
+</head>
+
+<body>
+<main layout:fragment="content" class="dk-legal">
+    <div class="dk-legal__inner">
+
+        <a href="/" class="dk-legal__back">Back to home</a>
+
+        <p class="dk-legal__eyebrow">Get in touch</p>
+        <h1>Contact Us</h1>
+        <p class="dk-legal__meta">We'll get back to you within one business day.</p>
+
+        <!-- Contact form fragment (HTMX target) -->
+        <div th:fragment="contact-us-form" id="contact-us-form">
+
+            <!-- Success state -->
+            <div th:if="${success}" class="dk-contact-success">
+                <span class="dk-contact-success__icon">✓</span>
+                <div>
+                    <strong>Message received!</strong>
+                    <p>Thank you for reaching out. We'll reply to your email within one business day.</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form th:unless="${success}"
+                  th:object="${contactMessageForm}"
+                  hx-post="/process-contact-us"
+                  hx-target="#contact-us-form"
+                  hx-swap="outerHTML"
+                  class="dk-contact-form">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="dk-field-row">
+                    <!-- Full name -->
+                    <div class="dk-field" th:classappend="${#fields.hasErrors('fullName')} ? 'dk-field--error'">
+                        <label class="dk-field__label" for="fullName">Full name *</label>
+                        <input id="fullName"
+                               type="text"
+                               th:field="*{fullName}"
+                               class="dk-field__input"
+                               placeholder="Jane Doe"
+                               autocomplete="name">
+                        <span class="dk-field__error"
+                              th:if="${#fields.hasErrors('fullName')}"
+                              th:errors="*{fullName}"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="dk-field" th:classappend="${#fields.hasErrors('email')} ? 'dk-field--error'">
+                        <label class="dk-field__label" for="email">Email address *</label>
+                        <input id="email"
+                               type="email"
+                               th:field="*{email}"
+                               class="dk-field__input"
+                               placeholder="you@example.com"
+                               autocomplete="email">
+                        <span class="dk-field__error"
+                              th:if="${#fields.hasErrors('email')}"
+                              th:errors="*{email}"></span>
+                    </div>
+                </div>
+
+                <div class="dk-field-row">
+                    <!-- Phone -->
+                    <div class="dk-field">
+                        <label class="dk-field__label" for="phone">Phone <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+                        <input id="phone"
+                               type="tel"
+                               th:field="*{phone}"
+                               class="dk-field__input"
+                               placeholder="+254 7xx xxx xxx"
+                               autocomplete="tel">
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="dk-field" th:classappend="${#fields.hasErrors('subject')} ? 'dk-field--error'">
+                        <label class="dk-field__label" for="subject">Subject *</label>
+                        <input id="subject"
+                               type="text"
+                               th:field="*{subject}"
+                               class="dk-field__input"
+                               placeholder="e.g. Question about my alerts">
+                        <span class="dk-field__error"
+                              th:if="${#fields.hasErrors('subject')}"
+                              th:errors="*{subject}"></span>
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div class="dk-field" th:classappend="${#fields.hasErrors('message')} ? 'dk-field--error'">
+                    <label class="dk-field__label" for="message">Message *</label>
+                    <textarea id="message"
+                              th:field="*{message}"
+                              class="dk-field__input dk-field__textarea"
+                              placeholder="Tell us how we can help…"
+                              rows="6"></textarea>
+                    <span class="dk-field__error"
+                          th:if="${#fields.hasErrors('message')}"
+                          th:errors="*{message}"></span>
+                </div>
+
+                <button type="submit" class="dk-btn dk-btn--primary dk-btn--lg">
+                    Send Message
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Info row -->
+        <div class="dk-contact-info">
+            <div class="dk-contact-info__item">
+                <span class="dk-contact-info__icon">✉</span>
+                <div>
+                    <strong>Email</strong>
+                    <p><a href="mailto:hello@ardhiwatch.com">hello@ardhiwatch.com</a></p>
+                </div>
+            </div>
+            <div class="dk-contact-info__item">
+                <span class="dk-contact-info__icon">⏱</span>
+                <div>
+                    <strong>Response time</strong>
+                    <p>Within one business day</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>

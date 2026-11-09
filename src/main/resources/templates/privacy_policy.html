@@ -1,134 +1,158 @@
 <!doctype html>
 <html lang="en" layout:decorate="~{layouts/public}">
 
-<main class="container py-5" layout:fragment="content">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="mb-1">Privacy Policy</h1>
-            <p class="text-muted mb-4">Last updated: [date]</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Privacy Policy — Dokezo</title>
+    <meta name="description" content="Dokezo's privacy policy — what personal data we collect, why we use it, and your rights under the Kenya Data Protection Act, 2019.">
+</head>
 
-            <p>
-                This policy explains what personal data Dokezo collects, why, and what your rights are. We handle your
-                data in line with the Kenya Data Protection Act, 2019. The data controller is [Company Legal Name],
-                [physical address], Kenya. Our data protection contact is [name or role], [privacy email].
-            </p>
+<body>
+<main layout:fragment="content" class="dk-legal">
+    <div class="dk-legal__inner">
 
-            <h2 class="h5 mt-4">1. What we collect</h2>
-            <ul>
-                <li><strong>Account details:</strong> your full name, email address, phone number and a hashed password.
-                </li>
-                <li><strong>National ID number</strong> (optional): if you choose to provide it, to help verify records
-                    and to use as a keyword.
-                </li>
-                <li><strong>Keywords:</strong> the names, title or LR numbers, plot numbers and ID numbers you ask us to
-                    watch for.
-                </li>
-                <li><strong>Payment records:</strong> the amount, date, M-Pesa phone number and M-Pesa receipt number.
-                    We never see or store your M-Pesa PIN or card details.
-                </li>
-                <li><strong>Alert records:</strong> which Gazette page matched which keyword, and when and how we
-                    notified you.
-                </li>
-                <li><strong>Technical data:</strong> basic logs such as IP address, browser type and login times, used
-                    for security and troubleshooting.
-                </li>
-            </ul>
+        <a href="/" class="dk-legal__back">Back to home</a>
 
-            <h2 class="h5 mt-4">2. Gazette content</h2>
-            <p>
-                The Kenya Gazette is a public document. We process its content (including names and land details that
-                appear in it) only to match it against the keywords that our clients ask us to watch. We store the
-                Gazette pages we process.
-            </p>
+        <p class="dk-legal__eyebrow">Legal</p>
+        <h1>Privacy Policy</h1>
+        <p class="dk-legal__meta">Last updated: [date] &nbsp;·&nbsp; Governed by the Kenya Data Protection Act, 2019</p>
 
-            <h2 class="h5 mt-4">3. Why we use your data</h2>
-            <ul>
-                <li>To provide the service: scanning the Gazette and alerting you.</li>
-                <li>To create your account, process your payments and send you service messages such as renewal
-                    reminders.
-                </li>
-                <li>To keep the service secure and to prevent fraud and misuse.</li>
-                <li>To comply with the law.</li>
-            </ul>
-            <p>
-                Our legal bases are your consent, the performance of our contract with you, our legitimate interests
-                in running a secure service, and legal obligation. We do not sell your data and we do not use it for
-                advertising.
-            </p>
+        <!-- Table of contents -->
+        <nav class="dk-toc" aria-label="Contents">
+            <p class="dk-toc__title">Contents</p>
+            <ol>
+                <li><a href="#pp-intro">Introduction &amp; controller details</a></li>
+                <li><a href="#pp-collect">What we collect</a></li>
+                <li><a href="#pp-gazette">Gazette content</a></li>
+                <li><a href="#pp-why">Why we use your data</a></li>
+                <li><a href="#pp-share">Who we share it with</a></li>
+                <li><a href="#pp-alerts">Alert links and messages</a></li>
+                <li><a href="#pp-retention">How long we keep it</a></li>
+                <li><a href="#pp-security">Security</a></li>
+                <li><a href="#pp-rights">Your rights</a></li>
+                <li><a href="#pp-cookies">Cookies</a></li>
+                <li><a href="#pp-children">Children</a></li>
+                <li><a href="#pp-changes">Changes to this policy</a></li>
+                <li><a href="#pp-contact">Contact</a></li>
+            </ol>
+        </nav>
 
-            <h2 class="h5 mt-4">4. Who we share it with</h2>
-            <p>We share data only with service providers who help us run Dokezo, and only as much as they need:</p>
-            <ul>
-                <li>Payment processing: Safaricom (M-Pesa) [and any other payment provider].</li>
-                <li>SMS delivery: [SMS provider name].</li>
-                <li>Email delivery: [email provider name].</li>
-                <li>Hosting and storage: [hosting provider name and country].</li>
-            </ul>
-            <p>
-                We may also disclose data where required by law or a court order. If any provider processes your data
-                outside Kenya, we take steps to make sure it is protected as the Data Protection Act requires.
-            </p>
+        <h2 id="pp-intro">1. Introduction &amp; controller details</h2>
+        <p>
+            This policy explains what personal data Dokezo collects, why, and what your rights are. We handle your
+            data in line with the Kenya Data Protection Act, 2019. The data controller is <strong>[Company Legal Name]</strong>,
+            [physical address], Kenya. Our data protection contact is [name or role],
+            <a href="mailto:[privacy email]">[privacy email]</a>.
+        </p>
 
-            <h2 class="h5 mt-4">5. Alert links and messages</h2>
-            <p>
-                Alerts contain the Gazette page that matched your keyword. SMS alerts contain a private, expiring link
-                rather than the page itself. Anyone who has your phone or your email inbox could see your alerts, so
-                please keep them secure.
-            </p>
+        <h2 id="pp-collect">2. What we collect</h2>
+        <ul>
+            <li><strong>Account details:</strong> your full name, email address, phone number and a hashed password.</li>
+            <li><strong>National ID number</strong> (optional): if you choose to provide it, to help verify records and to use as a keyword.</li>
+            <li><strong>Keywords:</strong> the names, title or LR numbers, plot numbers and ID numbers you ask us to watch for.</li>
+            <li><strong>Payment records:</strong> the amount, date, M-Pesa phone number and M-Pesa receipt number. We never see or store your M-Pesa PIN or card details.</li>
+            <li><strong>Alert records:</strong> which Gazette page matched which keyword, and when and how we notified you.</li>
+            <li><strong>Technical data:</strong> basic logs such as IP address, browser type and login times, used for security and troubleshooting.</li>
+        </ul>
 
-            <h2 class="h5 mt-4">6. How long we keep it</h2>
-            <ul>
-                <li>Account and keyword data: while your account is active, and for [period] after it closes.</li>
-                <li>Payment and alert records: for [period], to meet accounting and legal requirements.</li>
-                <li>Technical logs: for [period].</li>
-            </ul>
-            <p>After that, we delete or anonymise the data.</p>
+        <h2 id="pp-gazette">3. Gazette content</h2>
+        <p>
+            The Kenya Gazette is a public document. We process its content (including names and land details that
+            appear in it) only to match it against the keywords that our clients ask us to watch. We store the
+            Gazette pages we process.
+        </p>
 
-            <h2 class="h5 mt-4">7. Security</h2>
-            <p>
-                We use reasonable technical and organisational measures to protect your data, including hashed
-                passwords, encrypted connections and restricted staff access. No system is completely secure. If a
-                breach is likely to put your rights at risk, we will notify you and the Office of the Data Protection
-                Commissioner as the law requires.
-            </p>
+        <h2 id="pp-why">4. Why we use your data</h2>
+        <ul>
+            <li>To provide the service: scanning the Gazette and alerting you.</li>
+            <li>To create your account, process your payments and send you service messages such as renewal reminders.</li>
+            <li>To keep the service secure and to prevent fraud and misuse.</li>
+            <li>To comply with the law.</li>
+        </ul>
+        <p>
+            Our legal bases are your consent, the performance of our contract with you, our legitimate interests
+            in running a secure service, and legal obligation. <strong>We do not sell your data and we do not use it for advertising.</strong>
+        </p>
 
-            <h2 class="h5 mt-4">8. Your rights</h2>
-            <p>Under the Data Protection Act, you have the right to:</p>
-            <ul>
-                <li>be informed about how your data is used;</li>
-                <li>access the personal data we hold about you;</li>
-                <li>object to or restrict some uses of your data;</li>
-                <li>have inaccurate data corrected;</li>
-                <li>have your data deleted, subject to records we must keep by law; and</li>
-                <li>receive your data in a portable format.</li>
-            </ul>
-            <p>
-                To exercise these rights, email [privacy email]. We may need to verify your identity first. If you are
-                unhappy with our response, you can complain to the Office of the Data Protection Commissioner.
-            </p>
+        <h2 id="pp-share">5. Who we share it with</h2>
+        <p>We share data only with service providers who help us run Dokezo, and only as much as they need:</p>
+        <ul>
+            <li>Payment processing: Safaricom (M-Pesa) [and any other payment provider].</li>
+            <li>SMS delivery: [SMS provider name].</li>
+            <li>Email delivery: [email provider name].</li>
+            <li>Hosting and storage: [hosting provider name and country].</li>
+        </ul>
+        <p>
+            We may also disclose data where required by law or a court order. If any provider processes your data
+            outside Kenya, we take steps to make sure it is protected as the Data Protection Act requires.
+        </p>
 
-            <h2 class="h5 mt-4">9. Cookies</h2>
-            <p>
-                Dokezo uses only the cookies needed to keep you logged in and secure. We do not use advertising or
-                tracking cookies.
-            </p>
+        <h2 id="pp-alerts">6. Alert links and messages</h2>
+        <p>
+            Alerts contain the Gazette page that matched your keyword. SMS alerts contain a private, expiring link
+            rather than the page itself. Anyone who has your phone or your email inbox could see your alerts, so
+            please keep them secure.
+        </p>
 
-            <h2 class="h5 mt-4">10. Children</h2>
-            <p>Dokezo is not intended for anyone under 18, and we do not knowingly collect data from children.</p>
+        <h2 id="pp-retention">7. How long we keep it</h2>
+        <ul>
+            <li>Account and keyword data: while your account is active, and for [period] after it closes.</li>
+            <li>Payment and alert records: for [period], to meet accounting and legal requirements.</li>
+            <li>Technical logs: for [period].</li>
+        </ul>
+        <p>After that, we delete or anonymise the data.</p>
 
-            <h2 class="h5 mt-4">11. Changes to this policy</h2>
-            <p>
-                We may update this policy. We will notify you of material changes by email or SMS, and the date at the
-                top of this page will change.
-            </p>
+        <h2 id="pp-security">8. Security</h2>
+        <p>
+            We use reasonable technical and organisational measures to protect your data, including hashed
+            passwords, encrypted connections and restricted staff access. No system is completely secure. If a
+            breach is likely to put your rights at risk, we will notify you and the Office of the Data Protection
+            Commissioner as the law requires.
+        </p>
 
-            <h2 class="h5 mt-4">12. Contact</h2>
-            <p>
-                For privacy questions, email [privacy email] or see our <a href="/contact-us">contact page</a>. You can
-                also read our <a href="/terms">Terms of Service</a>.
-            </p>
+        <h2 id="pp-rights">9. Your rights</h2>
+        <p>Under the Data Protection Act, you have the right to:</p>
+        <ul>
+            <li>be informed about how your data is used;</li>
+            <li>access the personal data we hold about you;</li>
+            <li>object to or restrict some uses of your data;</li>
+            <li>have inaccurate data corrected;</li>
+            <li>have your data deleted, subject to records we must keep by law; and</li>
+            <li>receive your data in a portable format.</li>
+        </ul>
+        <p>
+            To exercise these rights, email <a href="mailto:[privacy email]">[privacy email]</a>. We may need to verify
+            your identity first. If you are unhappy with our response, you can complain to the Office of the Data
+            Protection Commissioner.
+        </p>
+
+        <h2 id="pp-cookies">10. Cookies</h2>
+        <p>
+            Dokezo uses only the cookies needed to keep you logged in and secure. We do not use advertising or
+            tracking cookies.
+        </p>
+
+        <h2 id="pp-children">11. Children</h2>
+        <p>Dokezo is not intended for anyone under 18, and we do not knowingly collect data from children.</p>
+
+        <h2 id="pp-changes">12. Changes to this policy</h2>
+        <p>
+            We may update this policy. We will notify you of material changes by email or SMS, and the date at the
+            top of this page will change.
+        </p>
+
+        <h2 id="pp-contact">13. Contact</h2>
+        <p>
+            For privacy questions, email <a href="mailto:[privacy email]">[privacy email]</a> or see our
+            <a href="/contact-us">contact page</a>.
+        </p>
+
+        <div class="dk-legal__crosslink">
+            Also read our <a href="/terms">Terms of Service</a> for the rules governing use of Dokezo.
         </div>
+
     </div>
 </main>
-
+</body>
 </html>

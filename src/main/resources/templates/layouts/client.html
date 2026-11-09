@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.utraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dokezo — Client Portal</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <script th:src="@{/js/htmx.min.js}" defer></script>
+</head>
+<body class="dk-app-body">
+
+<!-- Top Navbar -->
+<header class="dk-nav dk-nav--app">
+    <div class="dk-nav__left">
+        <a th:href="@{/client}" class="dk-nav__brand">Doke<span>zo</span></a>
+        <span class="dk-nav__portal-badge">Client Portal</span>
+    </div>
+
+    <div class="dk-nav__right">
+        <div class="dk-nav__gazette-status">
+            <span class="dk-status-dot"></span>
+            <span>Latest Gazette Scanned: <strong>Vol. 128, No. 37</strong></span>
+        </div>
+
+        <div class="dk-nav__user">
+            <span class="dk-nav__avatar">PM</span>
+            <div class="dk-nav__user-info">
+                <span class="dk-nav__user-name">Peter Mwangi</span>
+                <span class="dk-nav__user-plan">Landlord Pro</span>
+            </div>
+        </div>
+
+        <form th:action="@{/logout}" method="post" style="margin:0;">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="dk-btn dk-btn--outline dk-btn--sm">Log Out</button>
+        </form>
+    </div>
+</header>
+
+<!-- App Layout -->
+<div class="dk-app">
+
+    <!-- Sidebar -->
+    <aside class="dk-sidebar">
+        <nav class="dk-sidebar__nav">
+            <p class="dk-sidebar__label">Monitoring</p>
+            <a th:href="@{/client}"
+               class="dk-sidebar__link"
+               th:classappend="${currentMenu == 'dashboard'} ? 'active'">
+                <span class="dk-sidebar__icon">&#9638;</span>
+                <span>Overview</span>
+            </a>
+
+            <a th:href="@{/client/keywords}"
+               class="dk-sidebar__link"
+               th:classappend="${currentMenu == 'keywords'} ? 'active'">
+                <span class="dk-sidebar__icon">&#128273;</span>
+                <span>My Keywords</span>
+                <span class="dk-sidebar__badge">3 / 5</span>
+            </a>
+
+            <a th:href="@{/client/matches}"
+               class="dk-sidebar__link"
+               th:classappend="${currentMenu == 'matches'} ? 'active'">
+                <span class="dk-sidebar__icon">&#128276;</span>
+                <span>Alerts &amp; Matches</span>
+                <span class="dk-sidebar__badge dk-sidebar__badge--emerald">1</span>
+            </a>
+
+            <p class="dk-sidebar__label" style="margin-top:1.5rem;">Account</p>
+            <a th:href="@{/client/subscription}"
+               class="dk-sidebar__link"
+               th:classappend="${currentMenu == 'subscription'} ? 'active'">
+                <span class="dk-sidebar__icon">&#128179;</span>
+                <span>Subscription &amp; Billing</span>
+            </a>
+
+            <a th:href="@{/client/settings}"
+               class="dk-sidebar__link"
+               th:classappend="${currentMenu == 'settings'} ? 'active'">
+                <span class="dk-sidebar__icon">&#9881;</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Plan Summary Box -->
+        <div class="dk-sidebar__plan">
+            <div class="dk-sidebar__plan-header">
+                <span class="dk-sidebar__plan-name">Landlord Pro</span>
+                <span class="dk-pill dk-pill--emerald">Active</span>
+            </div>
+            <p class="dk-sidebar__plan-meta">3 of 5 keywords watched</p>
+            <div class="dk-progress">
+                <div class="dk-progress__bar" style="width: 60%;"></div>
+            </div>
+            <p class="dk-sidebar__plan-meta" style="margin-top:.55rem;">Renews Dec 15, 2026 (40 days)</p>
+            <a th:href="@{/client/subscription}" class="dk-btn dk-btn--outline dk-btn--sm dk-btn--block" style="margin-top:.75rem;">
+                Manage Plan
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dk-main">
+        <div layout:fragment="content"></div>
+
+        <footer class="dk-main__footer">
+            <span>&copy; 2026 Dokezo &mdash; Kenya Gazette Land &amp; Property Watch</span>
+            <div class="dk-main__footer-links">
+                <a th:href="@{/terms}">Terms</a>
+                <a th:href="@{/privacy-policy}">Privacy</a>
+                <a th:href="@{/contact-us}">Support</a>
+            </div>
+        </footer>
+    </main>
+
+</div>
+
+</body>
+</html>

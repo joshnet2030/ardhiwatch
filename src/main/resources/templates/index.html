@@ -1,202 +1,211 @@
 <!doctype html>
 <html lang="en" layout:decorate="~{layouts/public}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <meta name="description" content="Dokezo reads every Kenya Gazette issue and alerts you by email and SMS the moment your land title, name, or ID is mentioned.">
+    <title>Dokezo — Protect Your Land from Gazette Fraud</title>
 </head>
+
 <body>
 <div layout:fragment="content">
-    <header class="bg-dark text-white py-5">
-        <div class="container py-5">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">Don&rsquo;t find out your land has changed hands when it&rsquo;s
-                        too late.</h1>
-                    <p class="lead mb-4">Dokezo reads every issue of the Kenya Gazette for you and alerts you by email
-                        and SMS the moment your name, title number, or ID is mentioned.</p>
-                    <a href="#" class="btn btn-primary btn-lg me-2">Start Watching My Land</a>
-                    <a href="#how-it-works" class="btn btn-outline-light btn-lg">See how it works</a>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <!-- The problem -->
-    <section class="py-5 bg-light">
-        <div class="container py-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2 class="mb-3">The problem: nobody reads the Gazette</h2>
-                    <p class="text-muted fs-5 mb-0">Notices about lost title deeds and land transactions are published
-                        in the Kenya Gazette. Fraudsters can exploit this: a title is falsely reported lost, a
-                        replacement is processed, and the real owner only finds out after the damage is done. The notice
-                        was public the whole time &mdash; but hundreds of pages a week is more than anyone can
-                        watch.</p>
-                </div>
+    <!-- ── Hero ─────────────────────────────────────────── -->
+    <section class="dk-hero">
+        <div class="dk-hero__inner">
+            <div class="dk-hero__badge">Kenya Gazette Monitoring</div>
+            <h1 class="dk-hero__title">
+                Don't find out your land<br>
+                has changed hands when<br>
+                it's <span class="accent">too late.</span>
+            </h1>
+            <p class="dk-hero__subtitle">
+                Dokezo reads every issue of the Kenya Gazette for you and alerts you by
+                email and SMS the moment your name, title number, or ID is mentioned.
+            </p>
+            <div class="dk-hero__actions">
+                <a href="/signup" class="dk-btn dk-btn--primary dk-btn--lg">Start Watching My Land</a>
+                <a href="#how-it-works" class="dk-btn dk-btn--ghost dk-btn--lg">See how it works</a>
             </div>
         </div>
+        <div class="dk-hero__scroll-hint">Scroll</div>
     </section>
 
-    <!-- How it works -->
-    <section id="how-it-works" class="py-5">
-        <div class="container py-4">
-            <h2 class="text-center mb-5">How Dokezo works</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 text-center">
-                        <div class="card-body p-4">
-                            <p class="display-5 text-primary mb-2">1</p>
-                            <h5 class="card-title">Tell us what to watch</h5>
-                            <p class="card-text text-muted">Add your full name, title or LR number, plot number, or ID
-                                number as keywords.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 text-center">
-                        <div class="card-body p-4">
-                            <p class="display-5 text-primary mb-2">2</p>
-                            <h5 class="card-title">We scan every Gazette issue</h5>
-                            <p class="card-text text-muted">Each new issue is split page by page, read, and searched
-                                against your keywords.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 text-center">
-                        <div class="card-body p-4">
-                            <p class="display-5 text-primary mb-2">3</p>
-                            <h5 class="card-title">You get the exact page</h5>
-                            <p class="card-text text-muted">We email you the Gazette page with your keyword highlighted,
-                                and send an SMS link to view it.</p>
-                        </div>
-                    </div>
+    <!-- ── The Problem ──────────────────────────────────── -->
+    <section class="dk-section dk-section--alt">
+        <div class="dk-container">
+            <p class="dk-section__eyebrow">The Problem</p>
+            <h2 class="dk-section__title">Nobody reads the Gazette</h2>
+            <div class="fade-up">
+                <div class="dk-problem-box">
+                    <h3 class="dk-problem-box__title">Land fraud hiding in plain sight</h3>
+                    <p class="dk-problem-box__body">
+                        Notices about lost title deeds and land transactions are published in the Kenya Gazette.
+                        Fraudsters exploit this: a title is falsely reported lost, a replacement is processed, and
+                        the real owner only finds out after the damage is done. The notice was public the whole
+                        time — but hundreds of pages a week is more than anyone can watch.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features -->
-    <section class="py-5 bg-light">
-        <div class="container py-4">
-            <h2 class="text-center mb-5">Built for landowners</h2>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <h5>Names, numbers &amp; IDs</h5>
-                    <p class="text-muted">Watch several keywords at once, including family members&rsquo; names on
-                        inherited land.</p>
+    <!-- ── How It Works ─────────────────────────────────── -->
+    <section id="how-it-works" class="dk-section">
+        <div class="dk-container">
+            <p class="dk-section__eyebrow">How It Works</p>
+            <h2 class="dk-section__title">Three steps, zero effort</h2>
+            <p class="dk-section__sub">Set up once. We handle the watching, reading, and alerting.</p>
+            <div class="dk-steps">
+                <div class="dk-step fade-up">
+                    <div class="dk-step__number">1</div>
+                    <h3 class="dk-step__title">Tell us what to watch</h3>
+                    <p class="dk-step__body">Add your full name, title or LR number, plot number, or ID number as keywords. Add family members too.</p>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <h5>Spelling-tolerant matching</h5>
-                    <p class="text-muted">Names are matched even when a scanned page is slightly misread. Title and plot
-                        numbers are matched exactly.</p>
+                <div class="dk-step fade-up">
+                    <div class="dk-step__number">2</div>
+                    <h3 class="dk-step__title">We scan every Gazette issue</h3>
+                    <p class="dk-step__body">Each new issue is split page by page, read with AI, and searched against all your keywords automatically.</p>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <h5>Highlighted evidence</h5>
-                    <p class="text-muted">You receive the actual Gazette page with your keyword marked, not just a vague
-                        alert.</p>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <h5>Email &amp; SMS</h5>
-                    <p class="text-muted">Get alerted on the channels you actually check, wherever you are.</p>
+                <div class="dk-step fade-up">
+                    <div class="dk-step__number">3</div>
+                    <h3 class="dk-step__title">You get the exact page</h3>
+                    <p class="dk-step__body">We email you the Gazette page with your keyword highlighted, and send an SMS link so you can view it instantly.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section id="pricing" class="py-5">
-        <div class="container py-4">
-            <h2 class="text-center mb-2">Simple pricing</h2>
-            <p class="text-center text-muted mb-5">Pay once for a period. Cancel by simply not renewing.</p>
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-4">
-                    <div class="card h-100 text-center">
-                        <div class="card-header">Basic</div>
-                        <div class="card-body p-4">
-                            <h3 class="card-title">KES ___</h3>
-                            <p class="text-muted">per year</p>
-                            <ul class="list-unstyled mb-4">
-                                <li>1 keyword</li>
-                                <li>Email &amp; SMS alerts</li>
-                                <li>Highlighted Gazette page</li>
-                            </ul>
-                            <a href="#" class="btn btn-outline-primary w-100">Choose Basic</a>
-                        </div>
-                    </div>
+    <!-- ── Features ─────────────────────────────────────── -->
+    <section class="dk-section dk-section--alt">
+        <div class="dk-container">
+            <p class="dk-section__eyebrow">Features</p>
+            <h2 class="dk-section__title">Built for Kenyan landowners</h2>
+            <p class="dk-section__sub">Every detail designed around how land fraud actually happens.</p>
+            <div class="dk-features">
+                <div class="dk-feature fade-up">
+                    <span class="dk-feature__icon">🔑</span>
+                    <h4 class="dk-feature__title">Names, Numbers &amp; IDs</h4>
+                    <p class="dk-feature__body">Watch several keywords at once, including family members' names on inherited land.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100 text-center border-primary">
-                        <div class="card-header bg-primary text-white">Landlord Pro</div>
-                        <div class="card-body p-4">
-                            <h3 class="card-title">KES ___</h3>
-                            <p class="text-muted">per year</p>
-                            <ul class="list-unstyled mb-4">
-                                <li>Up to 5 keywords</li>
-                                <li>Email &amp; SMS alerts</li>
-                                <li>Highlighted Gazette page</li>
-                            </ul>
-                            <a href="#" class="btn btn-primary w-100">Choose Landlord Pro</a>
-                        </div>
-                    </div>
+                <div class="dk-feature fade-up">
+                    <span class="dk-feature__icon">🔍</span>
+                    <h4 class="dk-feature__title">Spelling-tolerant matching</h4>
+                    <p class="dk-feature__body">Names are matched even when a scanned page is slightly misread. Title and plot numbers are matched exactly.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100 text-center">
-                        <div class="card-header">Portfolio</div>
-                        <div class="card-body p-4">
-                            <h3 class="card-title">KES ___</h3>
-                            <p class="text-muted">per year</p>
-                            <ul class="list-unstyled mb-4">
-                                <li>Up to 20 keywords</li>
-                                <li>Email &amp; SMS alerts</li>
-                                <li>Highlighted Gazette page</li>
-                            </ul>
-                            <a href="#" class="btn btn-outline-primary w-100">Choose Portfolio</a>
-                        </div>
-                    </div>
+                <div class="dk-feature fade-up">
+                    <span class="dk-feature__icon">📄</span>
+                    <h4 class="dk-feature__title">Highlighted evidence</h4>
+                    <p class="dk-feature__body">You receive the actual Gazette page with your keyword marked — not just a vague alert.</p>
+                </div>
+                <div class="dk-feature fade-up">
+                    <span class="dk-feature__icon">📱</span>
+                    <h4 class="dk-feature__title">Email &amp; SMS</h4>
+                    <p class="dk-feature__body">Get alerted on the channels you actually check, wherever you are in the country.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ -->
-    <section id="faq" class="py-5 bg-light">
-        <div class="container py-4">
-            <h2 class="text-center mb-5">Frequently asked questions</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <h5>What is the Kenya Gazette?</h5>
-                    <p class="text-muted mb-4">It&rsquo;s the government&rsquo;s official publication where legal
-                        notices are announced, including notices about lost land title documents.</p>
+    <!-- ── Pricing ───────────────────────────────────────── -->
+    <section id="pricing" class="dk-section">
+        <div class="dk-container">
+            <p class="dk-section__eyebrow">Pricing</p>
+            <h2 class="dk-section__title">Simple, honest pricing</h2>
+            <p class="dk-section__sub">Pay once per year. Cancel by simply not renewing — no contracts.</p>
+            <div class="dk-pricing">
 
-                    <h5>Does Dokezo stop a fraudulent transfer?</h5>
-                    <p class="text-muted mb-4">No. Dokezo gives you early warning so you can act quickly, for example by
-                        contacting the Lands registry or a lawyer. It does not replace legal action.</p>
-
-                    <h5>Could a notice be missed?</h5>
-                    <p class="text-muted mb-4">Gazette pages are scanned documents, so reading them is not perfect. We
-                        review matches and use tolerant matching for names, but no automated service can promise it will
-                        catch every mention.</p>
-
-                    <h5>How do I pay?</h5>
-                    <p class="text-muted mb-0">M-Pesa, once you choose a plan after signing up.</p>
+                <div class="dk-plan fade-up">
+                    <div class="dk-plan__name">Basic</div>
+                    <div class="dk-plan__price">KES ___<span class="dk-plan__period">/ yr</span></div>
+                    <hr class="dk-plan__divider">
+                    <ul class="dk-plan__features">
+                        <li>1 keyword</li>
+                        <li>Email &amp; SMS alerts</li>
+                        <li>Highlighted Gazette page</li>
+                    </ul>
+                    <a href="/signup" class="dk-btn dk-btn--outline" style="text-align:center;justify-content:center;">Choose Basic</a>
                 </div>
+
+                <div class="dk-plan dk-plan--featured fade-up">
+                    <div class="dk-plan__badge">Most Popular</div>
+                    <div class="dk-plan__name">Landlord Pro</div>
+                    <div class="dk-plan__price">KES ___<span class="dk-plan__period">/ yr</span></div>
+                    <hr class="dk-plan__divider">
+                    <ul class="dk-plan__features">
+                        <li>Up to 5 keywords</li>
+                        <li>Email &amp; SMS alerts</li>
+                        <li>Highlighted Gazette page</li>
+                    </ul>
+                    <a href="/signup" class="dk-btn dk-btn--primary" style="text-align:center;justify-content:center;">Choose Landlord Pro</a>
+                </div>
+
+                <div class="dk-plan fade-up">
+                    <div class="dk-plan__name">Portfolio</div>
+                    <div class="dk-plan__price">KES ___<span class="dk-plan__period">/ yr</span></div>
+                    <hr class="dk-plan__divider">
+                    <ul class="dk-plan__features">
+                        <li>Up to 20 keywords</li>
+                        <li>Email &amp; SMS alerts</li>
+                        <li>Highlighted Gazette page</li>
+                    </ul>
+                    <a href="/signup" class="dk-btn dk-btn--outline" style="text-align:center;justify-content:center;">Choose Portfolio</a>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Final CTA -->
-    <section class="py-5 bg-dark text-white">
-        <div class="container py-4 text-center">
-            <h2 class="mb-3">Protect what you own</h2>
-            <p class="lead mb-4">Set up your keywords in a few minutes.</p>
-            <a href="#" class="btn btn-primary btn-lg">Create Your Account</a>
+    <!-- ── FAQ ───────────────────────────────────────────── -->
+    <section id="faq" class="dk-section dk-section--alt">
+        <div class="dk-container">
+            <p class="dk-section__eyebrow">FAQ</p>
+            <h2 class="dk-section__title">Frequently asked questions</h2>
+            <div class="dk-faqs">
+
+                <div class="dk-faq fade-up">
+                    <button class="dk-faq__q">What is the Kenya Gazette?</button>
+                    <div class="dk-faq__a">
+                        <p>It's the government's official publication where legal notices are announced, including notices about lost land title documents.</p>
+                    </div>
+                </div>
+
+                <div class="dk-faq fade-up">
+                    <button class="dk-faq__q">Does Dokezo stop a fraudulent transfer?</button>
+                    <div class="dk-faq__a">
+                        <p>No. Dokezo gives you early warning so you can act quickly — for example by contacting the Lands registry or a lawyer. It does not replace legal action.</p>
+                    </div>
+                </div>
+
+                <div class="dk-faq fade-up">
+                    <button class="dk-faq__q">Could a notice be missed?</button>
+                    <div class="dk-faq__a">
+                        <p>Gazette pages are scanned documents, so reading them is not perfect. We review matches and use tolerant matching for names, but no automated service can promise it will catch every mention.</p>
+                    </div>
+                </div>
+
+                <div class="dk-faq fade-up">
+                    <button class="dk-faq__q">How do I pay?</button>
+                    <div class="dk-faq__a">
+                        <p>M-Pesa, once you choose a plan after signing up. No card required.</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
+
+    <!-- ── Final CTA ─────────────────────────────────────── -->
+    <section class="dk-cta">
+        <div class="dk-cta__inner">
+            <h2 class="dk-cta__title">Protect what you own.</h2>
+            <p class="dk-cta__sub">Set up your keywords in a few minutes. We'll watch the Gazette every day.</p>
+            <a href="/signup" class="dk-btn dk-btn--primary dk-btn--lg">Create Your Account</a>
+        </div>
+    </section>
+
 </div>
 </body>
+
 </html>
-
-
-

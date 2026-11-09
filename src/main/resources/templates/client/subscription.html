@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/client}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Subscription &amp; Billing — Dokezo</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Page Header -->
+    <div class="dk-page-header">
+        <div>
+            <p class="dk-page-header__eyebrow">Plan &amp; Payments</p>
+            <h1 class="dk-page-header__title">Subscription &amp; Billing</h1>
+            <p class="dk-page-header__subtitle">Manage your annual Gazette monitoring plan and view your M-Pesa payment history.</p>
+        </div>
+    </div>
+
+    <!-- Current Active Subscription Overview -->
+    <div class="dk-panel" style="margin-bottom: 2rem;">
+        <div class="dk-panel__header">
+            <div>
+                <h2 class="dk-panel__title">Current Plan: Landlord Pro</h2>
+                <p class="dk-panel__subtitle">Active until 15 Dec 2026 (40 days remaining)</p>
+            </div>
+            <span class="dk-pill dk-pill--emerald">Active Subscription</span>
+        </div>
+
+        <div class="dk-panel__body">
+            <div class="dk-sub-overview">
+                <div class="dk-sub-overview__metrics">
+                    <div class="dk-sub-metric">
+                        <span class="dk-sub-metric__label">Annual Rate</span>
+                        <strong class="dk-sub-metric__value">KES 4,500</strong>
+                    </div>
+                    <div class="dk-sub-metric">
+                        <span class="dk-sub-metric__label">Keyword Slots</span>
+                        <strong class="dk-sub-metric__value">3 / 5 used</strong>
+                    </div>
+                    <div class="dk-sub-metric">
+                        <span class="dk-sub-metric__label">Start Date</span>
+                        <strong class="dk-sub-metric__value">15 Dec 2025</strong>
+                    </div>
+                    <div class="dk-sub-metric">
+                        <span class="dk-sub-metric__label">Renewal Date</span>
+                        <strong class="dk-sub-metric__value">15 Dec 2026</strong>
+                    </div>
+                </div>
+
+                <form action="#" method="post" class="dk-mpesa-box">
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="dk-mpesa-box__header">
+                        <strong>Extend by 1 Year via M-Pesa</strong>
+                        <span>Triggers an M-Pesa STK push for KES 4,500 to your phone</span>
+                    </div>
+                    <div class="dk-mpesa-box__row">
+                        <input type="tel" name="phoneNumber" class="dk-field__input" value="+254 712 345 678" aria-label="M-Pesa phone number">
+                        <button type="submit" class="dk-btn dk-btn--primary" style="white-space:nowrap;">Pay KES 4,500</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Options -->
+    <div style="margin-bottom: 2rem;">
+        <h2 class="dk-section-subheading">Compare Annual Plans</h2>
+        <div class="dk-pricing" style="margin-top: 1rem;">
+
+            <!-- Basic -->
+            <div class="dk-plan">
+                <p class="dk-plan__name">Basic</p>
+                <div class="dk-plan__price">KES 1,500 <span>/ year</span></div>
+                <p class="dk-plan__desc">For a single title deed or homeowner watching one property.</p>
+                <ul class="dk-plan__features">
+                    <li><strong>1</strong> watched keyword</li>
+                    <li>Weekly Kenya Gazette scan</li>
+                    <li>Instant SMS &amp; Email PDF alerts</li>
+                </ul>
+                <button type="button" class="dk-btn dk-btn--outline dk-btn--block">Switch on Renewal</button>
+            </div>
+
+            <!-- Landlord Pro -->
+            <div class="dk-plan dk-plan--featured">
+                <span class="dk-plan__badge">Current Plan</span>
+                <p class="dk-plan__name">Landlord Pro</p>
+                <div class="dk-plan__price">KES 4,500 <span>/ year</span></div>
+                <p class="dk-plan__desc">Watch your title numbers, full name, and National ID together.</p>
+                <ul class="dk-plan__features">
+                    <li>Up to <strong>5</strong> watched keywords</li>
+                    <li>Exact &amp; Fuzzy matching included</li>
+                    <li>Instant SMS &amp; Email PDF alerts</li>
+                </ul>
+                <button type="button" class="dk-btn dk-btn--primary dk-btn--block" disabled style="opacity:.75;cursor:default;">Active Plan</button>
+            </div>
+
+            <!-- Portfolio -->
+            <div class="dk-plan">
+                <p class="dk-plan__name">Portfolio</p>
+                <div class="dk-plan__price">KES 12,000 <span>/ year</span></div>
+                <p class="dk-plan__desc">For families, estates, Saccos, and multi-parcel investors.</p>
+                <ul class="dk-plan__features">
+                    <li>Up to <strong>20</strong> watched keywords</li>
+                    <li>Multiple properties &amp; company names</li>
+                    <li>Priority SMS &amp; Email PDF alerts</li>
+                </ul>
+                <button type="button" class="dk-btn dk-btn--outline dk-btn--block">Upgrade to Portfolio</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Payment / Transaction History -->
+    <div class="dk-panel">
+        <div class="dk-panel__header">
+            <div>
+                <h2 class="dk-panel__title">Payment History</h2>
+                <p class="dk-panel__subtitle">Your M-Pesa subscription transactions</p>
+            </div>
+        </div>
+
+        <div class="dk-table-wrap">
+            <table class="dk-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Plan</th>
+                    <th>Period</th>
+                    <th>Method</th>
+                    <th>M-Pesa Receipt</th>
+                    <th>Amount (KES)</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>15 Dec 2025, 09:40</td>
+                    <td><strong class="dk-text-white">Landlord Pro</strong></td>
+                    <td class="dk-text-muted">15 Dec 2025 &ndash; 15 Dec 2026</td>
+                    <td>M-Pesa</td>
+                    <td><code>SL15X2LM9P</code></td>
+                    <td><strong class="dk-text-white">4,500.00</strong></td>
+                    <td><span class="dk-pill dk-pill--emerald">Completed</span></td>
+                </tr>
+                <tr>
+                    <td>15 Dec 2024, 14:05</td>
+                    <td><strong class="dk-text-white">Basic</strong></td>
+                    <td class="dk-text-muted">15 Dec 2024 &ndash; 15 Dec 2025</td>
+                    <td>M-Pesa</td>
+                    <td><code>SK15W8QN1T</code></td>
+                    <td><strong class="dk-text-white">1,500.00</strong></td>
+                    <td><span class="dk-pill dk-pill--emerald">Completed</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/client}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Account Settings — Dokezo</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Page Header -->
+    <div class="dk-page-header">
+        <div>
+            <p class="dk-page-header__eyebrow">Account &amp; Preferences</p>
+            <h1 class="dk-page-header__title">Settings</h1>
+            <p class="dk-page-header__subtitle">Keep your contact details up to date so you never miss an urgent Kenya Gazette alert.</p>
+        </div>
+    </div>
+
+    <div class="dk-dash-grid">
+
+        <!-- Left Column: Profile & Password -->
+        <div class="dk-dash-col">
+
+            <!-- Profile Details -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <div>
+                        <h2 class="dk-panel__title">Profile Details</h2>
+                        <p class="dk-panel__subtitle">Used for account verification and alert delivery</p>
+                    </div>
+                </div>
+                <div class="dk-panel__body">
+                    <form action="#" method="post">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div class="dk-field-row">
+                            <div class="dk-field">
+                                <label class="dk-field__label" for="fullName">Full Name</label>
+                                <input id="fullName" name="fullName" type="text" class="dk-field__input" value="Peter Mwangi">
+                            </div>
+
+                            <div class="dk-field">
+                                <label class="dk-field__label" for="nationalId">National ID Number</label>
+                                <input id="nationalId" name="nationalId" type="text" class="dk-field__input" value="28451976">
+                            </div>
+                        </div>
+
+                        <div class="dk-field-row">
+                            <div class="dk-field">
+                                <label class="dk-field__label" for="email">
+                                    Email Address <span class="dk-pill dk-pill--emerald" style="margin-left:.35rem;">Verified</span>
+                                </label>
+                                <input id="email" name="email" type="email" class="dk-field__input" value="peter@example.com">
+                            </div>
+
+                            <div class="dk-field">
+                                <label class="dk-field__label" for="phoneNumber">Phone Number (SMS &amp; M-Pesa)</label>
+                                <input id="phoneNumber" name="phoneNumber" type="tel" class="dk-field__input" value="+254 712 345 678">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="dk-btn dk-btn--primary">Save Profile Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <div>
+                        <h2 class="dk-panel__title">Change Password</h2>
+                        <p class="dk-panel__subtitle">Use a strong password of at least 8 characters</p>
+                    </div>
+                </div>
+                <div class="dk-panel__body">
+                    <form action="#" method="post">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div class="dk-field">
+                            <label class="dk-field__label" for="currentPassword">Current Password</label>
+                            <input id="currentPassword" name="currentPassword" type="password" class="dk-field__input" placeholder="Enter current password" autocomplete="current-password">
+                        </div>
+
+                        <div class="dk-field-row">
+                            <div class="dk-field">
+                                <label class="dk-field__label" for="newPassword">New Password</label>
+                                <input id="newPassword" name="newPassword" type="password" class="dk-field__input" placeholder="Enter new password" autocomplete="new-password">
+                            </div>
+
+                            <div class="dk-field">
+                                <label class="dk-field__label" for="confirmPassword">Confirm New Password</label>
+                                <input id="confirmPassword" name="confirmPassword" type="password" class="dk-field__input" placeholder="Re-enter new password" autocomplete="new-password">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="dk-btn dk-btn--outline">Update Password</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Alert Delivery Preferences & Account Status -->
+        <div class="dk-dash-side">
+
+            <!-- Alert Preferences -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <div>
+                        <h2 class="dk-panel__title">Alert Preferences</h2>
+                        <p class="dk-panel__subtitle">How we notify you when a verified match is found</p>
+                    </div>
+                </div>
+                <div class="dk-panel__body">
+                    <form action="#" method="post">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div class="dk-check" style="margin-top:0;">
+                            <input type="checkbox" class="dk-check__input" id="emailAlerts" name="emailAlerts" checked>
+                            <label class="dk-check__label" for="emailAlerts">
+                                <strong class="dk-text-white" style="display:block;">Email Alerts with Highlighted PDF</strong>
+                                Send an email with the highlighted Kenya Gazette page attached as a PDF to <code>peter@example.com</code>.
+                            </label>
+                        </div>
+
+                        <div class="dk-check">
+                            <input type="checkbox" class="dk-check__input" id="smsAlerts" name="smsAlerts" checked>
+                            <label class="dk-check__label" for="smsAlerts">
+                                <strong class="dk-text-white" style="display:block;">Instant SMS Alerts</strong>
+                                Send an immediate SMS notification with a direct inspection link to <code>+254 712 345 678</code>.
+                            </label>
+                        </div>
+
+                        <button type="submit" class="dk-btn dk-btn--primary dk-btn--sm dk-btn--block">Save Alert Preferences</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Account Metadata -->
+            <div class="dk-panel dk-panel--subtle">
+                <div class="dk-panel__header">
+                    <h2 class="dk-panel__title">Account Summary</h2>
+                </div>
+                <div class="dk-panel__body">
+                    <dl class="dk-kv-list">
+                        <div class="dk-kv-list__row">
+                            <dt>Account Status</dt>
+                            <dd><span class="dk-pill dk-pill--emerald">Active</span></dd>
+                        </div>
+                        <div class="dk-kv-list__row">
+                            <dt>Member Since</dt>
+                            <dd>02 Mar 2026</dd>
+                        </div>
+                        <div class="dk-kv-list__row">
+                            <dt>Terms Accepted</dt>
+                            <dd>02 Mar 2026</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

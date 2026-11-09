@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/client}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Keywords — Dokezo</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Page Header -->
+    <div class="dk-page-header">
+        <div>
+            <p class="dk-page-header__eyebrow">Keyword Management</p>
+            <h1 class="dk-page-header__title">My Watched Keywords</h1>
+            <p class="dk-page-header__subtitle">Add your land parcel numbers, full name, or National ID. Every new issue of the Kenya Gazette is checked against your active keywords.</p>
+        </div>
+        <div class="dk-page-header__actions">
+            <a th:href="@{/client/subscription}" class="dk-btn dk-btn--outline">Upgrade Quota</a>
+        </div>
+    </div>
+
+    <!-- Quota Banner -->
+    <div class="dk-quota-bar">
+        <div class="dk-quota-bar__info">
+            <div>
+                <strong class="dk-text-white">Using 3 of 5 active keyword slots</strong>
+                <span class="dk-text-muted"> on your <strong>Landlord Pro</strong> plan (paused keywords do not count toward your active limit).</span>
+            </div>
+            <span class="dk-pill dk-pill--emerald">2 slots available</span>
+        </div>
+        <div class="dk-progress" style="margin-top:.65rem;">
+            <div class="dk-progress__bar" style="width: 60%;"></div>
+        </div>
+    </div>
+
+    <!-- Add Keyword Form Panel -->
+    <div class="dk-panel" style="margin-bottom: 1.75rem;">
+        <div class="dk-panel__header">
+            <div>
+                <h2 class="dk-panel__title">Add a Keyword to Watch</h2>
+                <p class="dk-panel__subtitle">Matching precision (Exact vs. Fuzzy) is configured automatically based on the keyword type you choose.</p>
+            </div>
+        </div>
+
+        <div class="dk-panel__body">
+            <form action="#" method="post" class="dk-keyword-form">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="dk-keyword-form__grid">
+                    <div class="dk-field" style="margin-bottom:0;">
+                        <label class="dk-field__label" for="keywordType">Keyword Type</label>
+                        <select id="keywordType" name="type" class="dk-field__input dk-field__select">
+                            <option value="TITLE" selected>Title / LR Number</option>
+                            <option value="NAME">Full Name / Company Name</option>
+                            <option value="NATIONAL_ID">National ID Number</option>
+                        </select>
+                    </div>
+
+                    <div class="dk-field" style="margin-bottom:0;">
+                        <label class="dk-field__label" for="keywordValue">Keyword to Watch</label>
+                        <input id="keywordValue"
+                               name="keyword"
+                               type="text"
+                               class="dk-field__input"
+                               placeholder="e.g. LR No. 209/1145 or KJD/Kiserian/4812"
+                               required>
+                    </div>
+
+                    <div class="dk-keyword-form__submit">
+                        <button type="submit" class="dk-btn dk-btn--primary" style="height:44px;width:100%;justify-content:center;">
+                            + Add Keyword
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Auto-Precision Indicator -->
+                <div class="dk-precision-note" id="precisionNote">
+                    <span class="dk-pill dk-pill--blue" id="precisionBadge">Exact Match (Automatic)</span>
+                    <span id="precisionDescription">Title and LR Numbers use <strong>Exact Matching</strong> so we pinpoint notices referencing your exact land parcel without false alarms.</span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Keywords Table Panel -->
+    <div class="dk-panel">
+        <div class="dk-panel__header">
+            <div>
+                <h2 class="dk-panel__title">Your Keywords (4)</h2>
+                <p class="dk-panel__subtitle">3 active &middot; 1 paused</p>
+            </div>
+        </div>
+
+        <div class="dk-table-wrap">
+            <table class="dk-table">
+                <thead>
+                <tr>
+                    <th>Keyword</th>
+                    <th>Type</th>
+                    <th>Matching Mode</th>
+                    <th>Status</th>
+                    <th>Verified Alerts</th>
+                    <th>Added</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <strong class="dk-text-white">LR No. 209/1145</strong>
+                        <div class="dk-table__sub">Nairobi commercial plot</div>
+                    </td>
+                    <td>Title / LR Number</td>
+                    <td><span class="dk-pill dk-pill--blue">Exact (Auto)</span></td>
+                    <td><span class="dk-pill dk-pill--emerald">Active</span></td>
+                    <td>
+                        <a th:href="@{/client/matches/show/1042}" class="dk-link-accent">1 verified alert</a>
+                    </td>
+                    <td class="dk-text-muted">02 Mar 2026</td>
+                    <td class="dk-table__actions">
+                        <a href="#" class="dk-btn dk-btn--outline dk-btn--xs">Edit</a>
+                        <a href="#" class="dk-btn dk-btn--amber dk-btn--xs">Pause</a>
+                        <a href="#" class="dk-btn dk-btn--danger dk-btn--xs">Delete</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong class="dk-text-white">Peter Mwangi</strong>
+                        <div class="dk-table__sub">Proprietor full name</div>
+                    </td>
+                    <td>Name</td>
+                    <td><span class="dk-pill dk-pill--purple">Fuzzy (Auto)</span></td>
+                    <td><span class="dk-pill dk-pill--emerald">Active</span></td>
+                    <td class="dk-text-muted">0</td>
+                    <td class="dk-text-muted">02 Mar 2026</td>
+                    <td class="dk-table__actions">
+                        <a href="#" class="dk-btn dk-btn--outline dk-btn--xs">Edit</a>
+                        <a href="#" class="dk-btn dk-btn--amber dk-btn--xs">Pause</a>
+                        <a href="#" class="dk-btn dk-btn--danger dk-btn--xs">Delete</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong class="dk-text-white">28451976</strong>
+                        <div class="dk-table__sub">Kenyan National ID</div>
+                    </td>
+                    <td>National ID</td>
+                    <td><span class="dk-pill dk-pill--blue">Exact (Auto)</span></td>
+                    <td><span class="dk-pill dk-pill--emerald">Active</span></td>
+                    <td class="dk-text-muted">0</td>
+                    <td class="dk-text-muted">05 Mar 2026</td>
+                    <td class="dk-table__actions">
+                        <a href="#" class="dk-btn dk-btn--outline dk-btn--xs">Edit</a>
+                        <a href="#" class="dk-btn dk-btn--amber dk-btn--xs">Pause</a>
+                        <a href="#" class="dk-btn dk-btn--danger dk-btn--xs">Delete</a>
+                    </td>
+                </tr>
+
+                <tr class="dk-table__row--muted">
+                    <td>
+                        <strong>Mwangi Holdings Ltd</strong>
+                        <div class="dk-table__sub">Family holding company</div>
+                    </td>
+                    <td>Name</td>
+                    <td><span class="dk-pill dk-pill--muted">Fuzzy (Auto)</span></td>
+                    <td><span class="dk-pill dk-pill--muted">Paused</span></td>
+                    <td class="dk-text-muted">0</td>
+                    <td class="dk-text-muted">12 Jun 2026</td>
+                    <td class="dk-table__actions">
+                        <a href="#" class="dk-btn dk-btn--outline dk-btn--xs">Edit</a>
+                        <a href="#" class="dk-btn dk-btn--emerald dk-btn--xs">Resume</a>
+                        <a href="#" class="dk-btn dk-btn--danger dk-btn--xs">Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const typeSelect = document.getElementById('keywordType');
+            const input = document.getElementById('keywordValue');
+            const badge = document.getElementById('precisionBadge');
+            const desc = document.getElementById('precisionDescription');
+
+            const config = {
+                TITLE: {
+                    placeholder: 'e.g. LR No. 209/1145 or KJD/Kiserian/4812',
+                    badgeText: 'Exact Match (Automatic)',
+                    badgeClass: 'dk-pill dk-pill--blue',
+                    html: 'Title and LR Numbers use <strong>Exact Matching</strong> so we pinpoint notices referencing your exact land parcel without false alarms.'
+                },
+                NAME: {
+                    placeholder: 'e.g. Peter Mwangi or Mwangi Holdings Ltd',
+                    badgeText: 'Fuzzy Match (Automatic)',
+                    badgeClass: 'dk-pill dk-pill--purple',
+                    html: 'Names use <strong>Fuzzy Matching</strong> automatically to catch spelling variations, middle-name differences, or OCR typos in the Kenya Gazette.'
+                },
+                NATIONAL_ID: {
+                    placeholder: 'e.g. 28451976',
+                    badgeText: 'Exact Match (Automatic)',
+                    badgeClass: 'dk-pill dk-pill--blue',
+                    html: 'National ID Numbers use <strong>Exact Matching</strong> automatically to detect notices listing your identity number.'
+                }
+            };
+
+            if (typeSelect) {
+                typeSelect.addEventListener('change', function () {
+                    const item = config[this.value] || config.TITLE;
+                    input.placeholder = item.placeholder;
+                    badge.textContent = item.badgeText;
+                    badge.className = item.badgeClass;
+                    desc.innerHTML = item.html;
+                });
+            }
+        })();
+    </script>
+
+</div>
+</body>
+</html>

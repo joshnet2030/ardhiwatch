@@ -3,25 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <title>Resend Verification Link — Dokezo</title>
 </head>
 <body>
-<div class="col-md-5 col-lg-4" layout:fragment="content" id="verify-email-failed-wrapper">
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-            <div class="alert alert-info" th:if="${message}" th:text="${message}"></div>
-            <form th:fragment="form" class="mx-2" hx:post="@{/resend-email-verification-token}"
-                  hx-target="#verify-email-failed-wrapper" hx-swap="outerHTML">
-                <div class="mb-2">
-                    <p>Please enter your email address to resend the email verification link</p>
-                </div>
-                <div class="mb-2">
-                    <input class="form-control" type="email" th:name="email" th:value="${email}"/>
-                </div>
-                <button type="submit" class="btn btn-secondary">Send a New Link</button>
-            </form>
+
+<div class="dk-auth__container" layout:fragment="content" id="verify-email-wrapper">
+    <div class="dk-auth-card" id="verify-email-failed-wrapper">
+        <p class="dk-auth-card__eyebrow">Email Verification</p>
+        <h1 class="dk-auth-card__title">Resend Verification Link</h1>
+        <p class="dk-auth-card__subtitle">Please enter your email address to receive a new email verification link.</p>
+
+        <div class="dk-alert dk-alert--info" th:if="${message}" th:text="${message}"></div>
+
+        <form th:fragment="form"
+              hx:post="@{/resend-email-verification-token}"
+              hx-target="#verify-email-failed-wrapper"
+              hx-select="#verify-email-failed-wrapper"
+              hx-swap="outerHTML"
+              style="text-align:left;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="dk-field">
+                <label class="dk-field__label" for="resend-email">Email address</label>
+                <input id="resend-email"
+                       class="dk-field__input"
+                       type="email"
+                       th:name="email"
+                       th:value="${email}"
+                       placeholder="you@example.com"
+                       autocomplete="email"
+                       required/>
+            </div>
+            <button type="submit" class="dk-btn dk-btn--primary dk-btn--block">Send a New Link</button>
+        </form>
+
+        <div class="dk-auth__links dk-auth__links--center">
+            <a th:href="@{/login}" class="dk-auth__link">&larr; Back to Log In</a>
         </div>
     </div>
 </div>
+
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/client}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alerts &amp; Matches — Dokezo</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Page Header -->
+    <div class="dk-page-header">
+        <div>
+            <p class="dk-page-header__eyebrow">Gazette Monitoring</p>
+            <h1 class="dk-page-header__title">Verified Alerts &amp; Matches</h1>
+            <p class="dk-page-header__subtitle">Every match below has been verified against the official Kenya Gazette scan so you only receive genuine, actionable alerts.</p>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="dk-panel" style="margin-bottom: 1.5rem;">
+        <div class="dk-panel__body">
+            <form action="#" method="get" class="dk-filter-bar">
+                <div class="dk-field" style="margin-bottom:0;">
+                    <label class="dk-field__label" for="filterKeyword">Watched Keyword</label>
+                    <select id="filterKeyword" name="keyword" class="dk-field__input dk-field__select">
+                        <option value="" selected>All Keywords</option>
+                        <option value="1">LR No. 209/1145 (Title / LR Number)</option>
+                        <option value="2">Peter Mwangi (Name)</option>
+                        <option value="3">28451976 (National ID)</option>
+                    </select>
+                </div>
+
+                <div class="dk-field" style="margin-bottom:0;">
+                    <label class="dk-field__label" for="filterYear">Publication Year</label>
+                    <select id="filterYear" name="year" class="dk-field__input dk-field__select">
+                        <option value="" selected>All Years</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+
+                <div class="dk-filter-bar__actions">
+                    <button type="submit" class="dk-btn dk-btn--primary" style="height:44px;">Filter</button>
+                    <a th:href="@{/client/matches}" class="dk-btn dk-btn--outline" style="height:44px;">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Verified Matches Panel -->
+    <div class="dk-panel">
+        <div class="dk-panel__header">
+            <div>
+                <h2 class="dk-panel__title">Verified Gazette Appearances (1)</h2>
+                <p class="dk-panel__subtitle">Click any match to inspect the highlighted Kenya Gazette page and download the PDF extract.</p>
+            </div>
+        </div>
+
+        <div class="dk-panel__body">
+            <div class="dk-match-item">
+                <div class="dk-match-item__top">
+                    <div class="dk-match-item__title-group">
+                        <span class="dk-pill dk-pill--emerald">Verified Alert #1042</span>
+                        <span class="dk-pill dk-pill--blue">Exact Match</span>
+                        <strong class="dk-match-item__keyword">LR No. 209/1145</strong>
+                    </div>
+                    <span class="dk-match-item__date">Published 11 Sep 2026 &middot; Vol. 128, No. 37 &middot; Page 42</span>
+                </div>
+
+                <blockquote class="dk-match-item__excerpt">
+                    &ldquo;&hellip;GAZETTE NOTICE NO. 11408 &mdash; THE LAND REGISTRATION ACT (No. 3 of 2012) &mdash; ISSUE OF A PROVISIONAL CERTIFICATE. WHEREAS <mark>LR No. 209/1145</mark>, situated in the City of Nairobi, registered in the name of Peter Mwangi, is reported lost, notice is given that after the expiration of sixty (60) days from the date hereof, the Land Registrar shall issue a provisional certificate of title unless a valid objection is lodged&hellip;&rdquo;
+                </blockquote>
+
+                <div class="dk-match-item__footer">
+                    <div class="dk-match-item__channels">
+                        <span class="dk-channel-tag">&#9993; Email PDF Sent (11 Sep 2026, 14:45)</span>
+                        <span class="dk-channel-tag">&#128241; SMS Alert Sent (+254 712 345 678)</span>
+                    </div>
+                    <div class="dk-match-item__actions">
+                        <a href="#" class="dk-btn dk-btn--outline dk-btn--sm">Download Page PDF</a>
+                        <a th:href="@{/client/matches/show/1042}" class="dk-btn dk-btn--primary dk-btn--sm">Inspect Gazette Page &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
