@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Dashboard Recent Gazette Issues Table Fragment -->
+<div class="table-responsive" th:fragment="dashboardTable">
+    <table class="table table-striped table-hover mb-0 align-middle">
+        <thead>
+        <tr>
+            <th>Issue No.</th>
+            <th>Volume</th>
+            <th>Publication Date</th>
+            <th>PDF File</th>
+            <th>Status</th>
+            <th>Uploaded At</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(gazetteIssues)}">
+            <td colspan="7" class="text-center text-muted py-4">No Gazette issues uploaded yet. Use the form above to upload one.</td>
+        </tr>
+        <tr th:each="issue : ${gazetteIssues}">
+            <td th:text="${issue.issueNumber}">37</td>
+            <td th:text="${issue.volumeNumber}">128</td>
+            <td th:text="${issue.publicationDate}">2026-09-11</td>
+            <td>
+                <span th:if="${issue.pdfSystemFile != null}" th:text="${issue.pdfSystemFile.originalFileName}">gazette.pdf</span>
+                <span th:if="${issue.pdfSystemFile != null and issue.pdfSystemFile.sizeInBytes != null}"
+                      class="text-muted small ms-1"
+                      th:text="'(' + ${#numbers.formatDecimal(issue.pdfSystemFile.sizeInBytes / 1048576.0, 1, 2)} + ' MB)'"></span>
+            </td>
+            <td th:replace="~{admin/gazettes/fragments/status-badge :: gazetteStatus(${issue.status})}"></td>
+            <td th:text="${issue.createdAt != null ? #temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-11 14:02</td>
+            <td class="text-nowrap">
+                <a th:href="@{/admin/gazettes/show/{id}(id=${issue.id})}" class="btn btn-sm btn-outline-primary">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Full Gazette Issues List Table Fragment -->
+<div th:fragment="listTable">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>All Issues</span>
+        <span class="text-muted small" th:text="${#lists.size(gazetteIssues)} + ' issue(s)'">0 issue(s)</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0 align-middle">
+            <thead>
+            <tr>
+                <th>Issue No.</th>
+                <th>Volume</th>
+                <th>Publication Date</th>
+                <th>PDF File</th>
+                <th>Status</th>
+                <th>Uploaded At</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(gazetteIssues)}">
+                <td colspan="7" class="text-center text-muted py-4">No Gazette issues uploaded yet. Use the form above to upload one.</td>
+            </tr>
+            <tr th:each="issue : ${gazetteIssues}">
+                <td th:text="${issue.issueNumber}">37</td>
+                <td th:text="${issue.volumeNumber}">128</td>
+                <td th:text="${issue.publicationDate}">2026-09-11</td>
+                <td>
+                    <span th:if="${issue.pdfSystemFile != null}" th:text="${issue.pdfSystemFile.originalFileName}">gazette.pdf</span>
+                    <span th:if="${issue.pdfSystemFile != null and issue.pdfSystemFile.sizeInBytes != null}"
+                          class="text-muted small ms-1"
+                          th:text="'(' + ${#numbers.formatDecimal(issue.pdfSystemFile.sizeInBytes / 1048576.0, 1, 2)} + ' MB)'"></span>
+                </td>
+                <td th:replace="~{admin/gazettes/fragments/status-badge :: gazetteStatus(${issue.status})}"></td>
+                <td th:text="${issue.createdAt != null ? #temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-11 14:02</td>
+                <td class="text-nowrap">
+                    <a th:href="@{/admin/gazettes/show/{id}(id=${issue.id})}" class="btn btn-sm btn-outline-primary">View Pages</a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

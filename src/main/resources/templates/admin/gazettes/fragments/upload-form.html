@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="card mb-4" id="gazette-upload-form-wrapper" th:fragment="uploadForm">
+    <div class="card-header">Upload New Gazette Issue</div>
+    <div class="card-body">
+
+        <div th:if="${uploadSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${uploadSuccess}"></div>
+        <div th:if="${uploadFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${uploadFailure}"></div>
+
+        <form hx-post="/admin/gazettes/upload"
+              hx-encoding="multipart/form-data"
+              hx-target="#gazette-upload-form-wrapper"
+              hx-swap="outerHTML"
+              th:object="${uploadForm}"
+              th:attr="hx-headers=${_csrf != null ? '{&quot;' + _csrf.headerName + '&quot;: &quot;' + _csrf.token + '&quot;}' : null}"
+              enctype="multipart/form-data">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="row g-3 align-items-start">
+                <div class="col-md-2">
+                    <label for="volumeNumber" class="form-label">Volume</label>
+                    <input type="number"
+                           id="volumeNumber"
+                           th:field="*{volumeNumber}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('volumeNumber')} ? 'is-invalid'"
+                           placeholder="e.g. 128"
+                           min="1">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('volumeNumber')}" th:errors="*{volumeNumber}"></div>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="issueNumber" class="form-label">Issue Number</label>
+                    <input type="number"
+                           id="issueNumber"
+                           th:field="*{issueNumber}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('issueNumber')} ? 'is-invalid'"
+                           placeholder="e.g. 38"
+                           min="1">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('issueNumber')}" th:errors="*{issueNumber}"></div>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="publicationDate" class="form-label">Publication Date</label>
+                    <input type="date"
+                           id="publicationDate"
+                           th:field="*{publicationDate}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('publicationDate')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('publicationDate')}" th:errors="*{publicationDate}"></div>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="pdfFile" class="form-label">Gazette PDF</label>
+                    <input type="file"
+                           id="pdfFile"
+                           name="pdfFile"
+                           accept="application/pdf,.pdf"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('pdfFile')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('pdfFile')}" th:errors="*{pdfFile}"></div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Upload</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
