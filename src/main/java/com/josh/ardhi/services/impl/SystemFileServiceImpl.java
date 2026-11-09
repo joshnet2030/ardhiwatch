@@ -73,4 +73,53 @@ public class SystemFileServiceImpl implements SystemFileService {
             throw new AppException("Failed to store uploaded file: " + e.getMessage());
         }
     }
+
+    @Override
+    public SystemFile storeBytes(byte[] content, String originalFileName, String contentType) throws AppException {
+        if (content == null || content.length == 0) {
+            throw new AppException("File content must not be empty");
+        }
+
+        String cleanedName = StringUtils.cleanPath(
+                StringUtils.hasText(originalFileName) ? originalFileName : "gazette-page.pdf"
+        );
+
+        String extension = "";
+        int dotIndex = cleanedName.lastIndexOf('.');
+        if (dotIndex >= 0) {
+            extension = cleanedName.substring(dotIndex);
+        }
+
+        String generatedFileName = UUID.randomUUID() + extension;
+
+        try {
+            Path rootLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Files.createDirectories(rootLocation);
+
+            Path destinationFile = rootLocation.resolve(generatedFileName).normalize();
+            if (!destinationFile.getParent().equals(rootLocation)) {
+                throw new AppException("Cannot store file outside configured upload directory");
+            }
+
+            Files.write(destinationFile, content);
+
+            SystemFile systemFile = SystemFile.builder()
+                    .originalFileName(cleanedName)
+                    .fileType(StringUtils.hasText(contentType) ? contentType : "application/pdf")
+                    .sizeInBytes((long) content.length)
+                    .generatedFileName(generatedFileName)
+                    .filePath(destinationFile.toString())
+                    .build();
+
+            return systemFileRepository.save(systemFile);
+        } catch (IOException e) {
+            throw new AppException("Failed to store file: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public SystemFile getById(UUID id) throws AppException {
+        return systemFileRepository.findById(id)
+                .orElseThrow(() -> new AppException("System file not found: " + id));
+    }
 }

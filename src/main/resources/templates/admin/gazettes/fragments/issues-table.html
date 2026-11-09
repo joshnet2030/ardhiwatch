@@ -25,7 +25,11 @@
             <td th:text="${issue.volumeNumber}">128</td>
             <td th:text="${issue.publicationDate}">2026-09-11</td>
             <td>
-                <span th:if="${issue.pdfSystemFile != null}" th:text="${issue.pdfSystemFile.originalFileName}">gazette.pdf</span>
+                <a th:if="${issue.pdfSystemFile != null}"
+                   th:href="@{/admin/system-file/serve(id=${issue.pdfSystemFile.id})}"
+                   target="_blank"
+                   rel="noopener"
+                   th:text="${issue.pdfSystemFile.originalFileName}">gazette.pdf</a>
                 <span th:if="${issue.pdfSystemFile != null and issue.pdfSystemFile.sizeInBytes != null}"
                       class="text-muted small ms-1"
                       th:text="'(' + ${#numbers.formatDecimal(issue.pdfSystemFile.sizeInBytes / 1048576.0, 1, 2)} + ' MB)'"></span>
@@ -34,6 +38,7 @@
             <td th:text="${issue.createdAt != null ? #temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-11 14:02</td>
             <td class="text-nowrap">
                 <a th:href="@{/admin/gazettes/show/{id}(id=${issue.id})}" class="btn btn-sm btn-outline-primary">View</a>
+                <a th:href="@{/admin/gazettes/show/{id}/pages(id=${issue.id})}" class="btn btn-sm btn-outline-secondary">Pages</a>
             </td>
         </tr>
         </tbody>
@@ -68,7 +73,11 @@
                 <td th:text="${issue.volumeNumber}">128</td>
                 <td th:text="${issue.publicationDate}">2026-09-11</td>
                 <td>
-                    <span th:if="${issue.pdfSystemFile != null}" th:text="${issue.pdfSystemFile.originalFileName}">gazette.pdf</span>
+                    <a th:if="${issue.pdfSystemFile != null}"
+                       th:href="@{/admin/system-file/serve(id=${issue.pdfSystemFile.id})}"
+                       target="_blank"
+                       rel="noopener"
+                       th:text="${issue.pdfSystemFile.originalFileName}">gazette.pdf</a>
                     <span th:if="${issue.pdfSystemFile != null and issue.pdfSystemFile.sizeInBytes != null}"
                           class="text-muted small ms-1"
                           th:text="'(' + ${#numbers.formatDecimal(issue.pdfSystemFile.sizeInBytes / 1048576.0, 1, 2)} + ' MB)'"></span>
@@ -76,9 +85,13 @@
                 <td th:replace="~{admin/gazettes/fragments/status-badge :: gazetteStatus(${issue.status})}"></td>
                 <td th:text="${issue.createdAt != null ? #temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-11 14:02</td>
                 <td class="text-nowrap">
-                    <a th:href="@{/admin/gazettes/show/{id}(id=${issue.id})}" class="btn btn-sm btn-outline-primary">View Pages</a>
-                    <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                    <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                    <a th:href="@{/admin/gazettes/show/{id}(id=${issue.id})}" class="btn btn-sm btn-outline-primary">Overview</a>
+                    <a th:href="@{/admin/gazettes/show/{id}/pages(id=${issue.id})}" class="btn btn-sm btn-outline-secondary">View Pages</a>
+                    <a th:if="${issue.pdfSystemFile != null}"
+                       th:href="@{/admin/system-file/serve(id=${issue.pdfSystemFile.id})}"
+                       target="_blank"
+                       rel="noopener"
+                       class="btn btn-sm btn-outline-dark">Original PDF</a>
                 </td>
             </tr>
             </tbody>

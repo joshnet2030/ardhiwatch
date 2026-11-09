@@ -63,7 +63,8 @@ public class SecurityConfig {
                             .clearAuthentication(true)
                             .deleteCookies("JSESSIONID")
                             .permitAll();
-                }).build();
+                }).headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .build();
     }
 
     @Bean

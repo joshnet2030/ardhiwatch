@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/gazettes/record.html}">
+<html lang="en" layout:decorate="~{admin/gazettes/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,85 +8,47 @@
 <body>
 <div layout:fragment="tab">
 
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Gazette Issues</a></li>
-            <li class="breadcrumb-item"><a href="#">Vol. 128, No. 37</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Page 42</li>
-        </ol>
-    </nav>
-
-    <!-- Issue header -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h4 class="mb-1">Kenya Gazette — Vol. 128, No. 37</h4>
-                    <p class="text-muted mb-0">
-                        Published 2026-09-11 &middot; 84 pages &middot; 83 OCR'd &middot;
-                        6 pages with matches &middot; 9 notifications sent
-                    </p>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <span class="badge bg-success fs-6 me-2">Notified</span>
-                    <a href="#" class="btn btn-outline-secondary btn-sm">Download Original PDF</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="row g-4">
 
         <!-- Page list -->
         <div class="col-md-3">
             <div class="card">
-                <div class="card-header">Pages</div>
-                <div class="card-body border-bottom">
-                    <form action="#" method="get" class="row g-2">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Pages</span>
+                    <span class="badge bg-secondary" th:text="${#lists.size(pages)}">0</span>
+                </div>
+                <div class="card-body border-bottom" th:if="${issue != null}">
+                    <form th:action="@{/admin/gazettes/show/{id}/pages(id=${issue.id})}" method="get" class="row g-2">
                         <div class="col-12">
-                            <select name="show" class="form-select form-select-sm" aria-label="Filter pages">
-                                <option value="all" selected>All Pages</option>
-                                <option value="matches">With Matches Only</option>
-                                <option value="failed">OCR Failed Only</option>
+                            <select name="show" class="form-select form-select-sm" aria-label="Filter pages" onchange="this.form.submit()">
+                                <option value="all" th:selected="${showFilter == null or showFilter == 'all'}">All Pages</option>
+                                <option value="failed" th:selected="${showFilter == 'failed'}">OCR Failed Only</option>
                             </select>
                         </div>
                         <div class="col-8">
-                            <input type="number" name="jump" class="form-control form-control-sm" placeholder="Jump to page" min="1" max="84">
+                            <input type="number"
+                                   name="jump"
+                                   class="form-control form-control-sm"
+                                   placeholder="Jump to page"
+                                   min="1"
+                                   th:max="${allPagesCount != null and allPagesCount > 0 ? allPagesCount : 1}">
                         </div>
                         <div class="col-4">
                             <button type="submit" class="btn btn-sm btn-outline-secondary w-100">Go</button>
                         </div>
                     </form>
                 </div>
-                <div class="list-group list-group-flush overflow-y-auto vh-100">
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 1</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 41</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center" aria-current="true">
-                        <span>Page 42</span>
-                        <span class="badge bg-warning text-dark">2 matches</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 43</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 44</span>
-                        <span class="badge bg-danger">OCR failed</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 45</span>
-                        <span class="badge bg-secondary">Processing</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 58</span>
-                        <span class="badge bg-warning text-dark">1 match</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span>Page 59</span>
+                <div class="list-group list-group-flush overflow-y-auto" style="max-height: 750px;">
+                    <div th:if="${#lists.isEmpty(pages)}" class="list-group-item text-muted small py-3">
+                        No pages available yet. Wait a few seconds for the scheduler to finish splitting this Gazette issue.
+                    </div>
+                    <a th:each="p : ${pages}"
+                       th:href="@{/admin/gazettes/show/{id}/pages(id=${issue.id}, page=${p.pageNumber}, show=${showFilter})}"
+                       th:classappend="${selectedPage != null and selectedPage.pageNumber == p.pageNumber} ? 'active'"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span th:text="'Page ' + ${p.pageNumber}">Page 1</span>
+                        <span th:if="${p.status.name() == 'OCR_FAILED'}" class="badge bg-danger">OCR failed</span>
+                        <span th:if="${p.status.name() == 'OCR_PROCESSING'}" class="badge bg-secondary">Processing</span>
                     </a>
                 </div>
             </div>
@@ -95,71 +57,73 @@
         <!-- Preview -->
         <div class="col-md-9">
 
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${selectedPage != null}">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <span class="fw-semibold">Page 42 of 84</span>
-
-                    <ul class="nav nav-pills">
-                        <li class="nav-item"><a class="nav-link active py-1" href="#">Highlighted</a></li>
-                        <li class="nav-item"><a class="nav-link py-1" href="#">Original</a></li>
-                    </ul>
+                    <span class="fw-semibold"
+                          th:text="'Page ' + ${selectedPage.pageNumber} + ' of ' + ${allPagesCount}">
+                        Page 1 of 1
+                    </span>
 
                     <div class="btn-group btn-group-sm">
-                        <a href="#" class="btn btn-outline-secondary">&laquo; Previous</a>
-                        <a href="#" class="btn btn-outline-secondary">Next &raquo;</a>
+                        <a th:href="${prevPageNumber != null} ? @{/admin/gazettes/show/{id}/pages(id=${issue.id}, page=${prevPageNumber}, show=${showFilter})} : '#'"
+                           th:classappend="${prevPageNumber == null} ? 'disabled'"
+                           class="btn btn-outline-secondary">&laquo; Previous</a>
+                        <a th:href="${nextPageNumber != null} ? @{/admin/gazettes/show/{id}/pages(id=${issue.id}, page=${nextPageNumber}, show=${showFilter})} : '#'"
+                           th:classappend="${nextPageNumber == null} ? 'disabled'"
+                           class="btn btn-outline-secondary">Next &raquo;</a>
                     </div>
                 </div>
                 <div class="card-body bg-light p-2">
-                    <iframe src="#" title="Page 42 preview" class="w-100 border rounded bg-white" height="900"></iframe>
+                    <iframe th:if="${selectedPage.pdfSystemFile != null}"
+                            th:src="@{/admin/system-file/serve(id=${selectedPage.pdfSystemFile.id})}"
+                            th:title="'Page ' + ${selectedPage.pageNumber} + ' preview'"
+                            class="w-100 border rounded bg-white"
+                            height="900"></iframe>
+                    <div th:if="${selectedPage.pdfSystemFile == null}" class="text-center text-muted py-5">
+                        PDF file for this page is not available.
+                    </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <span class="text-muted small">OCR confidence 94% &middot; processed 2026-09-11 14:09</span>
-                    <a href="#" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">Open in New Tab</a>
+                <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="text-muted small">
+                        Status: <strong th:text="${selectedPage.status}">OCR_DONE</strong>
+                        <span th:if="${selectedPage.createdAt != null}"
+                              th:text="' · processed ' + ${#temporals.format(selectedPage.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                    </span>
+                    <div class="d-flex gap-2">
+                        <a th:if="${selectedPage.pdfSystemFile != null}"
+                           th:href="@{/admin/system-file/serve(id=${selectedPage.pdfSystemFile.id})}"
+                           class="btn btn-sm btn-outline-primary"
+                           target="_blank"
+                           rel="noopener">Open Page PDF in New Tab</a>
+                        <a th:if="${issue != null and issue.pdfSystemFile != null}"
+                           th:href="@{/admin/system-file/serve(id=${issue.pdfSystemFile.id})}"
+                           class="btn btn-sm btn-outline-secondary"
+                           target="_blank"
+                           rel="noopener">Open Full Gazette PDF</a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Matches on this page -->
-            <div class="card mb-4">
-                <div class="card-header">Matches on This Page</div>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0 align-middle">
-                        <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>Keyword</th>
-                            <th>Matched Text</th>
-                            <th>Score</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Peter Mwangi</td>
-                            <td>LR No. 209/1145</td>
-                            <td>LR No. 209/1145</td>
-                            <td>98%</td>
-                            <td><span class="badge bg-warning text-dark">Pending Review</span></td>
-                            <td class="text-nowrap">
-                                <a href="#" class="btn btn-sm btn-outline-primary">Open</a>
-                                <form action="#" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                                </form>
-                                <a href="#" class="btn btn-sm btn-outline-danger">Reject</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Grace Wanjiru</td>
-                            <td>Grace Wanjiru</td>
-                            <td>Grace Wanjiru Kamau</td>
-                            <td>87%</td>
-                            <td><span class="badge bg-success">Approved</span></td>
-                            <td class="text-nowrap">
-                                <a href="#" class="btn btn-sm btn-outline-primary">Open</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <!-- Extracted OCR Text on this page -->
+            <div class="card mb-4" th:if="${selectedPage != null}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span th:text="'Extracted Text — Page ' + ${selectedPage.pageNumber}">Extracted Text</span>
+                    <span class="text-muted small"
+                          th:text="${selectedPage.ocrText != null ? #strings.length(selectedPage.ocrText) + ' chars' : '0 chars'}">0 chars</span>
+                </div>
+                <div class="card-body">
+                    <pre th:if="${selectedPage.ocrText != null and !#strings.isEmpty(selectedPage.ocrText)}"
+                         class="mb-0 small bg-light p-3 border rounded"
+                         style="max-height: 320px; overflow-y: auto; white-space: pre-wrap;"
+                         th:text="${selectedPage.ocrText}"></pre>
+                    <p th:if="${selectedPage.ocrText == null or #strings.isEmpty(selectedPage.ocrText)}"
+                       class="text-muted mb-0">No text extracted from this page.</p>
+                </div>
+            </div>
+
+            <div class="card mb-4" th:if="${selectedPage == null}">
+                <div class="card-body text-center text-muted py-5">
+                    No page selected or pages are still being split by the background scheduler.
                 </div>
             </div>
 

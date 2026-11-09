@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,30 +11,53 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Gazette Issues</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Vol. 128, No. 37</li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/gazettes}">Gazette Issues</a></li>
+            <li class="breadcrumb-item active" aria-current="page"
+                th:text="${issue != null ? 'Vol. ' + issue.volumeNumber + ', No. ' + issue.issueNumber : 'Vol. 128, No. 37'}">Vol. 128, No. 37</li>
         </ol>
     </nav>
 
     <!-- Record header -->
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
         <div>
-            <h2 class="mb-1">Kenya Gazette &mdash; Vol. 128, No. 37</h2>
+            <h2 class="mb-1"
+                th:text="${issue != null ? 'Kenya Gazette — Vol. ' + issue.volumeNumber + ', No. ' + issue.issueNumber : 'Kenya Gazette — Vol. 128, No. 37'}">
+                Kenya Gazette &mdash; Vol. 128, No. 37
+            </h2>
             <p class="text-muted mb-0">
-                Published 2026-09-11 &middot; <span class="badge bg-success">Notified</span>
+                Published <span th:text="${issue != null ? issue.publicationDate : '2026-09-11'}">2026-09-11</span>
+                &middot;
+                <span th:if="${issue != null}" th:replace="~{admin/gazettes/fragments/status-badge :: gazetteStatus(${issue.status})}"></span>
+                <span th:if="${issue == null}" class="badge bg-success">Notified</span>
             </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            <a href="#" class="btn btn-outline-secondary">Download Original PDF</a>
-            <a href="#" class="btn btn-outline-secondary">Edit</a>
-            <a href="#" class="btn btn-outline-danger">Delete</a>
+            <a th:if="${issue != null and issue.pdfSystemFile != null}"
+               th:href="@{/admin/system-file/serve(id=${issue.pdfSystemFile.id})}"
+               target="_blank"
+               rel="noopener"
+               class="btn btn-outline-primary">View Original Gazette</a>
+            <a th:if="${issue != null and issue.pdfSystemFile != null}"
+               th:href="@{/admin/system-file/serve(id=${issue.pdfSystemFile.id}, download=true)}"
+               class="btn btn-outline-secondary">Download Original PDF</a>
         </div>
     </div>
 
     <!-- Tab navigation -->
     <ul class="nav nav-tabs mb-4">
-        <li class="nav-item"><a th:classappend="${tab == 'overview'} ? 'active'" class="nav-link" href="/admin/gazettes/show/123">Overview</a></li>
-        <li class="nav-item"><a th:classappend="${tab == 'pages'} ? 'active'" class="nav-link" href="/admin/gazettes/show/123/pages">Pages <span class="badge bg-secondary ms-1">84</span></a></li>
+        <li class="nav-item">
+            <a th:classappend="${tab == 'overview'} ? 'active'"
+               class="nav-link"
+               th:href="${issue != null} ? @{/admin/gazettes/show/{id}(id=${issue.id})} : '#'">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${tab == 'pages'} ? 'active'"
+               class="nav-link"
+               th:href="${issue != null} ? @{/admin/gazettes/show/{id}/pages(id=${issue.id})} : '#'">
+                Pages
+                <span class="badge bg-secondary ms-1" th:text="${allPagesCount != null ? allPagesCount : 0}">0</span>
+            </a>
+        </li>
     </ul>
 
     <!-- Tab content goes here -->

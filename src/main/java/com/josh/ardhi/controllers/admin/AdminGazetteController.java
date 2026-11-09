@@ -3,6 +3,8 @@ package com.josh.ardhi.controllers.admin;
 import com.josh.ardhi.exception.AppException;
 import com.josh.ardhi.forms.GazetteUploadForm;
 import com.josh.ardhi.models.GazetteIssue;
+import com.josh.ardhi.models.GazettePage;
+import com.josh.ardhi.models.GazettePageStatus;
 import com.josh.ardhi.services.GazetteService;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/gazettes")
@@ -89,13 +96,98 @@ public class AdminGazetteController {
     @GetMapping("/show/{id}")
     public String overview(@PathVariable String id, Model model) {
         model.addAttribute("tab", "overview");
+        populateIssueAndPages(id, null, null, "all", model);
         return "admin/gazettes/tabs/overview";
     }
 
     @GetMapping("/show/{id}/pages")
-    public String gazetteViewPages(@PathVariable String id, Model model) {
+    public String gazetteViewPages(@PathVariable String id,
+                                   @RequestParam(name = "page", required = false) Integer pageNumber,
+                                   @RequestParam(name = "jump", required = false) Integer jumpPage,
+                                   @RequestParam(name = "show", defaultValue = "all") String show,
+                                   Model model) {
         model.addAttribute("tab", "pages");
+        populateIssueAndPages(id, pageNumber, jumpPage, show, model);
         return "admin/gazettes/tabs/pages";
+    }
+
+    private void populateIssueAndPages(String id,
+                                       Integer pageNumber,
+                                       Integer jumpPage,
+                                       String show,
+                                       Model model) {
+        try {
+            UUID issueUuid = UUID.fromString(id);
+            Optional<GazetteIssue> optionalIssue = gazetteService.findById(issueUuid);
+            if (optionalIssue.isEmpty()) {
+                return;
+            }
+
+            GazetteIssue issue = optionalIssue.get();
+            List<GazettePage> allPages = gazetteService.getPagesForIssue(issueUuid);
+
+            long ocrDoneCount = allPages.stream()
+                    .filter(p -> p.getStatus() == GazettePageStatus.OCR_DONE)
+                    .count();
+            long ocrFailedCount = allPages.stream()
+                    .filter(p -> p.getStatus() == GazettePageStatus.OCR_FAILED)
+                    .count();
+            GazettePage firstFailedPage = allPages.stream()
+                    .filter(p -> p.getStatus() == GazettePageStatus.OCR_FAILED)
+                    .findFirst()
+                    .orElse(null);
+
+            List<GazettePage> filteredPages = allPages;
+            if ("failed".equalsIgnoreCase(show)) {
+                filteredPages = allPages.stream()
+                        .filter(p -> p.getStatus() == GazettePageStatus.OCR_FAILED)
+                        .toList();
+            }
+
+            Integer requestedPageNo = jumpPage != null ? jumpPage : pageNumber;
+            GazettePage selectedPage = null;
+            if (requestedPageNo != null) {
+                selectedPage = allPages.stream()
+                        .filter(p -> requestedPageNo.equals(p.getPageNumber()))
+                        .findFirst()
+                        .orElse(null);
+            }
+            if (selectedPage == null && !filteredPages.isEmpty()) {
+                selectedPage = filteredPages.get(0);
+            } else if (selectedPage == null && !allPages.isEmpty()) {
+                selectedPage = allPages.get(0);
+            }
+
+            Integer prevPageNumber = null;
+            Integer nextPageNumber = null;
+            if (selectedPage != null && !allPages.isEmpty()) {
+                int currentNo = selectedPage.getPageNumber();
+                prevPageNumber = allPages.stream()
+                        .map(GazettePage::getPageNumber)
+                        .filter(n -> n < currentNo)
+                        .max(Integer::compareTo)
+                        .orElse(null);
+                nextPageNumber = allPages.stream()
+                        .map(GazettePage::getPageNumber)
+                        .filter(n -> n > currentNo)
+                        .min(Integer::compareTo)
+                        .orElse(null);
+            }
+
+            model.addAttribute("issue", issue);
+            model.addAttribute("pages", filteredPages);
+            model.addAttribute("allPagesCount", allPages.size());
+            model.addAttribute("ocrDoneCount", ocrDoneCount);
+            model.addAttribute("ocrFailedCount", ocrFailedCount);
+            model.addAttribute("firstFailedPage", firstFailedPage);
+            model.addAttribute("selectedPage", selectedPage);
+            model.addAttribute("prevPageNumber", prevPageNumber);
+            model.addAttribute("nextPageNumber", nextPageNumber);
+            model.addAttribute("showFilter", show != null ? show.toLowerCase() : "all");
+        } catch (IllegalArgumentException ignored) {
+            model.addAttribute("pages", Collections.emptyList());
+            model.addAttribute("allPagesCount", 0);
+        }
     }
 
     @GetMapping("/matches-review")
