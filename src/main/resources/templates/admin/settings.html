@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,7 +17,7 @@
 
         <!-- Section links -->
         <div class="col-lg-3">
-            <div class="list-group">
+            <div class="list-group sticky-top" style="top: 1rem;">
                 <a href="#general" class="list-group-item list-group-item-action">General</a>
                 <a href="#matching" class="list-group-item list-group-item-action">Matching and Alerts</a>
                 <a href="#security" class="list-group-item list-group-item-action">Security</a>
@@ -25,32 +25,61 @@
                 <a href="#sms" class="list-group-item list-group-item-action">SMS</a>
                 <a href="#email" class="list-group-item list-group-item-action">Email</a>
                 <a href="#retention" class="list-group-item list-group-item-action">Data Retention</a>
+                <a href="#history" class="list-group-item list-group-item-action">Change History</a>
             </div>
         </div>
 
         <div class="col-lg-9">
 
-            <!-- General -->
-            <div class="card mb-4" id="general">
+            <!-- 1. General -->
+            <div class="card mb-4" id="general" th:fragment="generalCard">
                 <div class="card-header">General</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${generalSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${generalSuccess}"></div>
+                    <div th:if="${generalFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${generalFailure}"></div>
+
+                    <form hx-post="/admin/settings/general"
+                          hx-target="#general"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="appName" class="form-label">Service Name</label>
-                                <input type="text" id="appName" name="appName" class="form-control" value="Dokezo">
+                                <input type="text"
+                                       id="appName"
+                                       th:field="*{appName}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('appName')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('appName')}" th:errors="*{appName}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="supportEmail" class="form-label">Support Email</label>
-                                <input type="email" id="supportEmail" name="supportEmail" class="form-control" value="support@dokezo.co.ke">
+                                <input type="email"
+                                       id="supportEmail"
+                                       th:field="*{supportEmail}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('supportEmail')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('supportEmail')}" th:errors="*{supportEmail}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="supportPhone" class="form-label">Support Phone</label>
-                                <input type="tel" id="supportPhone" name="supportPhone" class="form-control" value="+254 700 000 000">
+                                <input type="tel"
+                                       id="supportPhone"
+                                       th:field="*{supportPhone}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('supportPhone')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('supportPhone')}" th:errors="*{supportPhone}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="supportHours" class="form-label">Support Hours</label>
-                                <input type="text" id="supportHours" name="supportHours" class="form-control" value="Monday to Friday, 8:00 to 17:00 EAT">
+                                <input type="text"
+                                       id="supportHours"
+                                       th:field="*{supportHours}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('supportHours')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('supportHours')}" th:errors="*{supportHours}"></div>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Save General</button>
@@ -60,37 +89,65 @@
                 </div>
             </div>
 
-            <!-- Matching and alerts -->
-            <div class="card mb-4" id="matching">
+            <!-- 2. Matching and alerts -->
+            <div class="card mb-4" id="matching" th:fragment="matchingCard">
                 <div class="card-header">Matching and Alerts</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${matchingSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${matchingSuccess}"></div>
+                    <div th:if="${matchingFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${matchingFailure}"></div>
+
+                    <form hx-post="/admin/settings/matching"
+                          hx-target="#matching"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="fuzzyThreshold" class="form-label">Fuzzy Name Match Threshold (%)</label>
-                                <input type="number" id="fuzzyThreshold" name="fuzzyThreshold" class="form-control" value="80" min="50" max="100">
+                                <input type="number"
+                                       id="fuzzyThreshold"
+                                       th:field="*{fuzzyThreshold}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('fuzzyThreshold')} ? 'is-invalid'"
+                                       min="50"
+                                       max="100">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fuzzyThreshold')}" th:errors="*{fuzzyThreshold}"></div>
                                 <div class="form-text">Lower catches more spelling variations but creates more false matches to review.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="linkExpiryDays" class="form-label">SMS Alert Link Expires After (days)</label>
-                                <input type="number" id="linkExpiryDays" name="linkExpiryDays" class="form-control" value="30" min="1">
+                                <input type="number"
+                                       id="linkExpiryDays"
+                                       th:field="*{linkExpiryDays}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('linkExpiryDays')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('linkExpiryDays')}" th:errors="*{linkExpiryDays}"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input type="checkbox" id="manualReview" name="manualReview" class="form-check-input" checked>
+                                    <input type="checkbox" id="manualReview" th:field="*{manualReview}" class="form-check-input">
                                     <label for="manualReview" class="form-check-label">Require manual review before alerts are sent</label>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input type="checkbox" id="autoApproveExact" name="autoApproveExact" class="form-check-input">
+                                    <input type="checkbox" id="autoApproveExact" th:field="*{autoApproveExact}" class="form-check-input">
                                     <label for="autoApproveExact" class="form-check-label">Auto-approve exact matches (title numbers, IDs)</label>
                                 </div>
                                 <div class="form-text">Only applies when manual review is on. Fuzzy name matches always go to review.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="lowConfidence" class="form-label">Flag Pages Below OCR Confidence (%)</label>
-                                <input type="number" id="lowConfidence" name="lowConfidence" class="form-control" value="70" min="0" max="100">
+                                <input type="number"
+                                       id="lowConfidence"
+                                       th:field="*{lowConfidence}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('lowConfidence')} ? 'is-invalid'"
+                                       min="0"
+                                       max="100">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('lowConfidence')}" th:errors="*{lowConfidence}"></div>
                                 <div class="form-text">Pages read below this are highlighted on the issue pages, because keywords on them may be missed.</div>
                             </div>
                             <div class="col-12">
@@ -101,35 +158,79 @@
                 </div>
             </div>
 
-            <!-- Security -->
-            <div class="card mb-4" id="security">
+            <!-- 3. Security -->
+            <div class="card mb-4" id="security" th:fragment="securityCard">
                 <div class="card-header">Security</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${securitySuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${securitySuccess}"></div>
+                    <div th:if="${securityFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${securityFailure}"></div>
+
+                    <form hx-post="/admin/settings/security"
+                          hx-target="#security"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="sessionHours" class="form-label">Admin Session Length (hours)</label>
-                                <input type="number" id="sessionHours" name="sessionHours" class="form-control" value="8" min="1">
+                                <input type="number"
+                                       id="sessionHours"
+                                       th:field="*{sessionHours}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('sessionHours')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('sessionHours')}" th:errors="*{sessionHours}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="maxAttempts" class="form-label">Failed Logins Before Lock</label>
-                                <input type="number" id="maxAttempts" name="maxAttempts" class="form-control" value="5" min="3">
+                                <input type="number"
+                                       id="maxAttempts"
+                                       th:field="*{maxAttempts}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('maxAttempts')} ? 'is-invalid'"
+                                       min="3">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('maxAttempts')}" th:errors="*{maxAttempts}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="lockMinutes" class="form-label">Lock Duration (minutes)</label>
-                                <input type="number" id="lockMinutes" name="lockMinutes" class="form-control" value="15" min="1">
+                                <input type="number"
+                                       id="lockMinutes"
+                                       th:field="*{lockMinutes}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('lockMinutes')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('lockMinutes')}" th:errors="*{lockMinutes}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="minPassword" class="form-label">Minimum Password Length</label>
-                                <input type="number" id="minPassword" name="minPassword" class="form-control" value="8" min="8">
+                                <input type="number"
+                                       id="minPassword"
+                                       th:field="*{minPassword}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('minPassword')} ? 'is-invalid'"
+                                       min="8">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('minPassword')}" th:errors="*{minPassword}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="resetHours" class="form-label">Reset Link Expires After (hours)</label>
-                                <input type="number" id="resetHours" name="resetHours" class="form-control" value="1" min="1">
+                                <input type="number"
+                                       id="resetHours"
+                                       th:field="*{resetHours}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('resetHours')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('resetHours')}" th:errors="*{resetHours}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="verifyHours" class="form-label">Email Verification Link Expires After (hours)</label>
-                                <input type="number" id="verifyHours" name="verifyHours" class="form-control" value="48" min="1">
+                                <input type="number"
+                                       id="verifyHours"
+                                       th:field="*{verifyHours}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('verifyHours')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('verifyHours')}" th:errors="*{verifyHours}"></div>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Save Security</button>
@@ -139,148 +240,280 @@
                 </div>
             </div>
 
-            <!-- M-Pesa -->
-            <div class="card mb-4" id="mpesa">
+            <!-- 4. M-Pesa -->
+            <div class="card mb-4" id="mpesa" th:fragment="mpesaCard">
                 <div class="card-header">M-Pesa (Daraja)</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${mpesaSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${mpesaSuccess}"></div>
+                    <div th:if="${mpesaFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${mpesaFailure}"></div>
+
+                    <form hx-post="/admin/settings/mpesa"
+                          hx-target="#mpesa"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="mpesaEnv" class="form-label">Environment</label>
-                                <select id="mpesaEnv" name="mpesaEnv" class="form-select">
+                                <select id="mpesaEnv"
+                                        th:field="*{mpesaEnv}"
+                                        class="form-select"
+                                        th:classappend="${#fields.hasErrors('mpesaEnv')} ? 'is-invalid'">
                                     <option value="sandbox">Sandbox</option>
-                                    <option value="production" selected>Production</option>
+                                    <option value="production">Production</option>
                                 </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('mpesaEnv')}" th:errors="*{mpesaEnv}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="mpesaShortcode" class="form-label">Paybill / Till Number</label>
-                                <input type="text" id="mpesaShortcode" name="mpesaShortcode" class="form-control" value="174379">
+                                <input type="text"
+                                       id="mpesaShortcode"
+                                       th:field="*{mpesaShortcode}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('mpesaShortcode')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('mpesaShortcode')}" th:errors="*{mpesaShortcode}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="mpesaCallback" class="form-label">Callback URL</label>
-                                <input type="text" id="mpesaCallback" class="form-control" value="https://dokezo.co.ke/webhooks/mpesa" readonly>
+                                <input type="text"
+                                       id="mpesaCallback"
+                                       th:field="*{mpesaCallback}"
+                                       class="form-control"
+                                       readonly>
                             </div>
                             <div class="col-md-6">
                                 <label for="mpesaKey" class="form-label">Consumer Key</label>
-                                <input type="password" id="mpesaKey" name="mpesaKey" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <input type="password"
+                                       id="mpesaKey"
+                                       th:field="*{mpesaKey}"
+                                       class="form-control"
+                                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                                       autocomplete="off">
                             </div>
                             <div class="col-md-6">
                                 <label for="mpesaSecret" class="form-label">Consumer Secret</label>
-                                <input type="password" id="mpesaSecret" name="mpesaSecret" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <input type="password"
+                                       id="mpesaSecret"
+                                       th:field="*{mpesaSecret}"
+                                       class="form-control"
+                                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                                       autocomplete="off">
                             </div>
                             <div class="col-12">
                                 <label for="mpesaPasskey" class="form-label">Passkey</label>
-                                <input type="password" id="mpesaPasskey" name="mpesaPasskey" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <input type="password"
+                                       id="mpesaPasskey"
+                                       th:field="*{mpesaPasskey}"
+                                       class="form-control"
+                                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                                       autocomplete="off">
                                 <div class="form-text">Leave secret fields blank to keep the current values.</div>
                             </div>
                             <div class="col-12 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Save M-Pesa</button>
-                                <button type="submit" formaction="#" class="btn btn-outline-secondary">Test Connection</button>
+                                <button type="button" class="btn btn-outline-secondary">Test Connection</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- SMS -->
-            <div class="card mb-4" id="sms">
+            <!-- 5. SMS -->
+            <div class="card mb-4" id="sms" th:fragment="smsCard">
                 <div class="card-header">SMS Gateway</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${smsSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${smsSuccess}"></div>
+                    <div th:if="${smsFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${smsFailure}"></div>
+
+                    <form hx-post="/admin/settings/sms"
+                          hx-target="#sms"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="smsProvider" class="form-label">Provider</label>
-                                <select id="smsProvider" name="smsProvider" class="form-select">
-                                    <option value="africastalking" selected>Africa&rsquo;s Talking</option>
+                                <select id="smsProvider"
+                                        th:field="*{smsProvider}"
+                                        class="form-select"
+                                        th:classappend="${#fields.hasErrors('smsProvider')} ? 'is-invalid'">
+                                    <option value="africastalking">Africa&rsquo;s Talking</option>
                                     <option value="other">Other</option>
                                 </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smsProvider')}" th:errors="*{smsProvider}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="smsUsername" class="form-label">Username</label>
-                                <input type="text" id="smsUsername" name="smsUsername" class="form-control" value="dokezo">
+                                <input type="text"
+                                       id="smsUsername"
+                                       th:field="*{smsUsername}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('smsUsername')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smsUsername')}" th:errors="*{smsUsername}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="smsSender" class="form-label">Sender ID</label>
-                                <input type="text" id="smsSender" name="smsSender" class="form-control" value="DOKEZO" maxlength="11">
+                                <input type="text"
+                                       id="smsSender"
+                                       th:field="*{smsSender}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('smsSender')} ? 'is-invalid'"
+                                       maxlength="11">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smsSender')}" th:errors="*{smsSender}"></div>
                             </div>
                             <div class="col-12">
                                 <label for="smsKey" class="form-label">API Key</label>
-                                <input type="password" id="smsKey" name="smsKey" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <input type="password"
+                                       id="smsKey"
+                                       th:field="*{smsKey}"
+                                       class="form-control"
+                                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                                       autocomplete="off">
                                 <div class="form-text">Leave blank to keep the current value.</div>
                             </div>
                             <div class="col-12 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Save SMS</button>
-                                <button type="submit" formaction="#" class="btn btn-outline-secondary">Send Test SMS</button>
+                                <button type="button" class="btn btn-outline-secondary">Send Test SMS</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Email -->
-            <div class="card mb-4" id="email">
+            <!-- 6. Email -->
+            <div class="card mb-4" id="email" th:fragment="emailCard">
                 <div class="card-header">Email (SMTP)</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${emailSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${emailSuccess}"></div>
+                    <div th:if="${emailFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${emailFailure}"></div>
+
+                    <form hx-post="/admin/settings/email"
+                          hx-target="#email"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="smtpHost" class="form-label">Host</label>
-                                <input type="text" id="smtpHost" name="smtpHost" class="form-control" value="smtp.example.com">
+                                <input type="text"
+                                       id="smtpHost"
+                                       th:field="*{smtpHost}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('smtpHost')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smtpHost')}" th:errors="*{smtpHost}"></div>
                             </div>
                             <div class="col-md-3">
                                 <label for="smtpPort" class="form-label">Port</label>
-                                <input type="number" id="smtpPort" name="smtpPort" class="form-control" value="587">
+                                <input type="number"
+                                       id="smtpPort"
+                                       th:field="*{smtpPort}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('smtpPort')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smtpPort')}" th:errors="*{smtpPort}"></div>
                             </div>
                             <div class="col-md-3">
                                 <label for="smtpSecurity" class="form-label">Security</label>
-                                <select id="smtpSecurity" name="smtpSecurity" class="form-select">
-                                    <option value="starttls" selected>STARTTLS</option>
+                                <select id="smtpSecurity"
+                                        th:field="*{smtpSecurity}"
+                                        class="form-select"
+                                        th:classappend="${#fields.hasErrors('smtpSecurity')} ? 'is-invalid'">
+                                    <option value="starttls">STARTTLS</option>
                                     <option value="ssl">SSL/TLS</option>
                                     <option value="none">None</option>
                                 </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smtpSecurity')}" th:errors="*{smtpSecurity}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="smtpUser" class="form-label">Username</label>
-                                <input type="text" id="smtpUser" name="smtpUser" class="form-control" value="system@dokezo.co.ke">
+                                <input type="text"
+                                       id="smtpUser"
+                                       th:field="*{smtpUser}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('smtpUser')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('smtpUser')}" th:errors="*{smtpUser}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="smtpPassword" class="form-label">Password</label>
-                                <input type="password" id="smtpPassword" name="smtpPassword" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <input type="password"
+                                       id="smtpPassword"
+                                       th:field="*{smtpPassword}"
+                                       class="form-control"
+                                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                                       autocomplete="off">
                             </div>
                             <div class="col-md-6">
                                 <label for="fromAddress" class="form-label">From Address</label>
-                                <input type="email" id="fromAddress" name="fromAddress" class="form-control" value="system@dokezo.co.ke">
+                                <input type="email"
+                                       id="fromAddress"
+                                       th:field="*{fromAddress}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('fromAddress')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fromAddress')}" th:errors="*{fromAddress}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="fromName" class="form-label">From Name</label>
-                                <input type="text" id="fromName" name="fromName" class="form-control" value="Dokezo">
+                                <input type="text"
+                                       id="fromName"
+                                       th:field="*{fromName}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('fromName')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fromName')}" th:errors="*{fromName}"></div>
                             </div>
                             <div class="col-12 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Save Email</button>
-                                <button type="submit" formaction="#" class="btn btn-outline-secondary">Send Test Email</button>
+                                <button type="button" class="btn btn-outline-secondary">Send Test Email</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Data retention -->
-            <div class="card mb-4" id="retention">
+            <!-- 7. Data retention -->
+            <div class="card mb-4" id="retention" th:fragment="retentionCard">
                 <div class="card-header">Data Retention</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${retentionSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${retentionSuccess}"></div>
+                    <div th:if="${retentionFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${retentionFailure}"></div>
+
+                    <form hx-post="/admin/settings/retention"
+                          hx-target="#retention"
+                          hx-swap="outerHTML"
+                          th:object="${settingsForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="retainLogs" class="form-label">Login and Technical Logs (months)</label>
-                                <input type="number" id="retainLogs" name="retainLogs" class="form-control" value="12" min="1">
+                                <input type="number"
+                                       id="retainLogs"
+                                       th:field="*{retainLogs}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('retainLogs')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('retainLogs')}" th:errors="*{retainLogs}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="retainContact" class="form-label">Contact Messages (months)</label>
-                                <input type="number" id="retainContact" name="retainContact" class="form-control" value="24" min="1">
+                                <input type="number"
+                                       id="retainContact"
+                                       th:field="*{retainContact}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('retainContact')} ? 'is-invalid'"
+                                       min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('retainContact')}" th:errors="*{retainContact}"></div>
                             </div>
                             <div class="col-md-4">
                                 <label for="retainClosed" class="form-label">Closed Accounts (months)</label>
-                                <input type="number" id="retainClosed" name="retainClosed" class="form-control" value="12" min="0">
+                                <input type="number"
+                                       id="retainClosed"
+                                       th:field="*{retainClosed}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('retainClosed')} ? 'is-invalid'"
+                                       min="0">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('retainClosed')}" th:errors="*{retainClosed}"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-text">
@@ -292,6 +525,138 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- 8. Settings Change History Trail -->
+            <div class="card mb-4"
+                 id="history"
+                 hx-get="/admin/settings/history"
+                 hx-trigger="settingsUpdated from:body"
+                 hx-swap="outerHTML"
+                 th:fragment="historyCard">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span>Settings History <span class="text-muted small ms-2">10 records per page</span></span>
+                    <span class="text-muted small"
+                          th:if="${settingsHistoryPage != null and settingsHistoryPage.totalElements > 0}"
+                          th:text="'Showing ' + (${settingsHistoryPage.number * settingsHistoryPage.size + 1}) + '–' + (${settingsHistoryPage.number * settingsHistoryPage.size + settingsHistoryPage.numberOfElements}) + ' of ' + ${settingsHistoryPage.totalElements} + ' version(s)'">
+                        Showing 1–1 of 1 version(s)
+                    </span>
+                    <span class="text-muted small"
+                          th:if="${settingsHistoryPage == null or settingsHistoryPage.totalElements == 0}">
+                        0 versions
+                    </span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0 align-middle">
+                        <thead>
+                        <tr>
+                            <th>Created / Modified</th>
+                            <th>Status</th>
+                            <th>General</th>
+                            <th>Matching &amp; Alerts</th>
+                            <th>Security</th>
+                            <th>M-Pesa</th>
+                            <th>SMS Gateway</th>
+                            <th>Email (SMTP)</th>
+                            <th>Retention</th>
+                            <th>Deactivation Memo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(settingsHistory)}">
+                            <td colspan="10" class="text-center text-muted py-4">No settings history records found.</td>
+                        </tr>
+                        <tr th:each="item : ${settingsHistory}">
+                            <td class="text-nowrap small">
+                                <div class="fw-semibold" th:text="${item.createdAt != null ? #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss') : '—'}">2026-11-09 14:50:00</div>
+                                <div class="text-muted" th:if="${!item.active and item.lastModifiedAt != null}"
+                                     th:text="'Ended: ' + ${#temporals.format(item.lastModifiedAt, 'yyyy-MM-dd HH:mm:ss')}">Ended: 2026-11-09 15:00:00</div>
+                            </td>
+                            <td>
+                                <span th:if="${item.active}" class="badge bg-success">Active</span>
+                                <span th:unless="${item.active}" class="badge bg-secondary">Superseded</span>
+                            </td>
+                            <td class="small">
+                                <div class="fw-semibold" th:text="${item.appName}">Dokezo</div>
+                                <div class="text-muted" th:text="${item.supportEmail}">support@dokezo.co.ke</div>
+                                <div class="text-muted" th:text="${item.supportPhone}">+254 700 000 000</div>
+                                <div class="text-muted" th:text="${item.supportHours}">Mon-Fri 8-17 EAT</div>
+                            </td>
+                            <td class="small text-nowrap">
+                                <div>Fuzzy: <strong th:text="${item.fuzzyThreshold + '%'}">80%</strong> | Low: <strong th:text="${item.lowConfidence + '%'}">70%</strong></div>
+                                <div>Link Expiry: <span th:text="${item.linkExpiryDays + 'd'}">30d</span></div>
+                                <div>Manual Review: <span th:text="${item.manualReview ? 'Yes' : 'No'}">Yes</span></div>
+                                <div>Auto-Approve Exact: <span th:text="${item.autoApproveExact ? 'Yes' : 'No'}">No</span></div>
+                            </td>
+                            <td class="small text-nowrap">
+                                <div>Session: <span th:text="${item.sessionHours + 'h'}">8h</span> | Min Pass: <span th:text="${item.minPassword}">8</span></div>
+                                <div>Attempts: <span th:text="${item.maxAttempts}">5</span> (<span th:text="${item.lockMinutes + 'm lock'}">15m lock</span>)</div>
+                                <div>Reset: <span th:text="${item.resetHours + 'h'}">1h</span> | Verify: <span th:text="${item.verifyHours + 'h'}">48h</span></div>
+                            </td>
+                            <td class="small">
+                                <div>
+                                    <span class="badge bg-light text-dark border text-uppercase" th:text="${item.mpesaEnv}">production</span>
+                                    <strong class="ms-1" th:text="${item.mpesaShortcode}">174379</strong>
+                                </div>
+                                <div class="text-muted text-truncate" style="max-width: 180px;" th:title="${item.mpesaCallback}" th:text="${item.mpesaCallback}">https://dokezo.co.ke/webhooks/mpesa</div>
+                            </td>
+                            <td class="small text-nowrap">
+                                <div class="fw-semibold" th:text="${item.smsProvider}">africastalking</div>
+                                <div class="text-muted">User: <span th:text="${item.smsUsername}">dokezo</span></div>
+                                <div class="text-muted">Sender: <span th:text="${item.smsSender}">DOKEZO</span></div>
+                            </td>
+                            <td class="small">
+                                <div class="text-nowrap"><span th:text="${item.smtpHost}">smtp.example.com</span>:<span th:text="${item.smtpPort}">587</span> (<span class="text-uppercase" th:text="${item.smtpSecurity}">starttls</span>)</div>
+                                <div class="text-muted" th:text="${item.smtpUser}">system@dokezo.co.ke</div>
+                                <div class="text-muted" th:text="${item.fromName + ' <' + item.fromAddress + '>'}">Dokezo &lt;system@dokezo.co.ke&gt;</div>
+                            </td>
+                            <td class="small text-nowrap">
+                                <div>Logs: <span th:text="${item.retainLogs + ' mo'}">12 mo</span></div>
+                                <div>Contacts: <span th:text="${item.retainContact + ' mo'}">24 mo</span></div>
+                                <div>Closed: <span th:text="${item.retainClosed + ' mo'}">12 mo</span></div>
+                            </td>
+                            <td class="text-muted small" th:text="${item.deactivationMemo != null ? item.deactivationMemo : 'Current active configuration'}">
+                                Current active configuration
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2"
+                     th:if="${settingsHistoryPage != null}">
+                    <span class="text-muted small"
+                          th:text="'Page ' + (${settingsHistoryPage.number + 1}) + ' of ' + (${settingsHistoryPage.totalPages > 0 ? settingsHistoryPage.totalPages : 1})">
+                        Page 1 of 1
+                    </span>
+                    <nav aria-label="Settings history pagination">
+                        <ul class="pagination pagination-sm mb-0 justify-content-end">
+                            <li class="page-item" th:classappend="${settingsHistoryPage.first} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/settings(page=${settingsHistoryPage.number - 1})} + '#history'"
+                                   th:attr="hx-get=@{/admin/settings/history(page=${settingsHistoryPage.number - 1})}"
+                                   hx-target="#history"
+                                   hx-swap="outerHTML">Previous</a>
+                            </li>
+                            <li class="page-item"
+                                th:each="pageIdx : ${#numbers.sequence(0, (settingsHistoryPage.totalPages > 0 ? settingsHistoryPage.totalPages - 1 : 0))}"
+                                th:classappend="${pageIdx == settingsHistoryPage.number} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/admin/settings(page=${pageIdx})} + '#history'"
+                                   th:attr="hx-get=@{/admin/settings/history(page=${pageIdx})}"
+                                   hx-target="#history"
+                                   hx-swap="outerHTML"
+                                   th:text="${pageIdx + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${settingsHistoryPage.last} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/settings(page=${settingsHistoryPage.number + 1})} + '#history'"
+                                   th:attr="hx-get=@{/admin/settings/history(page=${settingsHistoryPage.number + 1})}"
+                                   hx-target="#history"
+                                   hx-swap="outerHTML">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 

@@ -14,7 +14,7 @@
             <h1 class="dk-auth-card__title">Create Your Account</h1>
             <p class="dk-auth-card__subtitle">Watch the Kenya Gazette for your name, title number, or ID — and get notified the moment they appear.</p>
 
-            <form hx:post="@{/process-client-signup}"
+            <form hx-post="/process-client-signup"
                   hx-target="#client-signup-form-wrapper"
                   hx-swap="outerHTML"
                   th:object="${signUpForm}">

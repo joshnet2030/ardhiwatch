@@ -16,7 +16,7 @@
         <div class="dk-alert dk-alert--info" th:if="${message}" th:text="${message}"></div>
 
         <form th:fragment="form"
-              hx:post="@{/resend-email-verification-token}"
+              hx-post="/resend-email-verification-token"
               hx-target="#verify-email-failed-wrapper"
               hx-select="#verify-email-failed-wrapper"
               hx-swap="outerHTML"
