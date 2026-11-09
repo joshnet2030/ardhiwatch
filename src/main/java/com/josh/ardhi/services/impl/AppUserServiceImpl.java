@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,5 +260,31 @@ public class AppUserServiceImpl implements AppUserService {
         } catch (Exception e) {
             throw new AppException("Unable to save internal notes: " + e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional(rollbackOn = AppException.class)
+    public AppUser addToWalletBalance(UUID id, BigDecimal amount) throws AppException {
+        AppUser user = getById(id);
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return user;
+        }
+        user.setWalletBalance(user.getWalletBalance().add(amount));
+        return appUserRepository.save(user);
+    }
+
+    @Override
+    @Transactional(rollbackOn = AppException.class)
+    public AppUser deductFromWalletBalance(UUID id, BigDecimal amount) throws AppException {
+        AppUser user = getById(id);
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return user;
+        }
+        BigDecimal updated = user.getWalletBalance().subtract(amount);
+        if (updated.compareTo(BigDecimal.ZERO) < 0) {
+            updated = BigDecimal.ZERO;
+        }
+        user.setWalletBalance(updated);
+        return appUserRepository.save(user);
     }
 }

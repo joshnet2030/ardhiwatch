@@ -28,6 +28,11 @@
                 <span th:text="${client != null and client.phone != null ? client.phone : '+254 712 345 678'}">+254 712 345 678</span>
                 <span th:if="${client == null or client.active}" class="badge bg-success ms-2">Active</span>
                 <span th:if="${client != null and !client.active}" class="badge bg-danger ms-2">Suspended</span>
+                <span th:if="${client != null}"
+                      class="badge bg-info text-dark ms-2"
+                      th:text="'Wallet: KES ' + ${#numbers.formatDecimal(client.walletBalance, 1, 'COMMA', 2, 'POINT')}">
+                    Wallet: KES 0.00
+                </span>
             </p>
         </div>
         <div class="d-flex flex-wrap gap-2" th:if="${client != null}">
@@ -95,14 +100,14 @@
             <a th:classappend="${currentTab == 'subscriptions'} ? 'active'"
                class="nav-link"
                th:href="${client != null} ? @{/admin/clients/show/{id}/subscriptions(id=${client.id})} : '#'">
-                Subscriptions <span class="badge bg-secondary ms-1">0</span>
+                Subscriptions <span class="badge bg-secondary ms-1" th:text="${subscriptionsCount != null ? subscriptionsCount : 0}">0</span>
             </a>
         </li>
         <li class="nav-item">
             <a th:classappend="${currentTab == 'transactions'} ? 'active'"
                class="nav-link"
                th:href="${client != null} ? @{/admin/clients/show/{id}/transactions(id=${client.id})} : '#'">
-                Transactions <span class="badge bg-secondary ms-1">0</span>
+                Transactions <span class="badge bg-secondary ms-1" th:text="${transactionsCount != null ? transactionsCount : 0}">0</span>
             </a>
         </li>
     </ul>
@@ -120,7 +125,7 @@
     </div>
 
     <script>
-        document.body.addEventListener('clientSaved', function () {
+        function hideClientModal() {
             var modalEl = document.getElementById('clientModal');
             if (modalEl && window.bootstrap) {
                 var modalInstance = bootstrap.Modal.getInstance(modalEl);
@@ -128,17 +133,15 @@
                     modalInstance.hide();
                 }
             }
+        }
+        document.body.addEventListener('clientSaved', function () {
+            hideClientModal();
             window.location.reload();
         });
-        document.body.addEventListener('keywordSaved', function () {
-            var modalEl = document.getElementById('clientModal');
-            if (modalEl && window.bootstrap) {
-                var modalInstance = bootstrap.Modal.getInstance(modalEl);
-                if (modalInstance) {
-                    modalInstance.hide();
-                }
-            }
-        });
+        document.body.addEventListener('keywordSaved', hideClientModal);
+        document.body.addEventListener('subscriptionSaved', hideClientModal);
+        document.body.addEventListener('subscriptionCancelled', hideClientModal);
+        document.body.addEventListener('paymentSaved', hideClientModal);
     </script>
 
 </div>

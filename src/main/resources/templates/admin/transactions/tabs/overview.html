@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/transactions/record.html}">
+<html lang="en" layout:decorate="~{admin/transactions/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Payment &ndash; Overview</title>
@@ -17,21 +17,29 @@
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Amount</dt>
-                        <dd class="col-sm-8">KES 4,500.00</dd>
+                        <dd class="col-sm-8"
+                            th:text="${tx != null ? 'KES ' + #numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT') : 'KES 4,500.00'}">KES 4,500.00</dd>
                         <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Completed</span></dd>
+                        <dd class="col-sm-8">
+                            <span th:if="${tx == null or tx.status.name() == 'COMPLETED'}" class="badge bg-success">Completed</span>
+                            <span th:if="${tx != null and tx.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                            <span th:if="${tx != null and tx.status.name() == 'FAILED'}" class="badge bg-danger">Failed</span>
+                            <span th:if="${tx != null and tx.status.name() == 'REFUNDED'}" class="badge bg-secondary">Refunded</span>
+                        </dd>
                         <dt class="col-sm-4">Method</dt>
-                        <dd class="col-sm-8">M-Pesa (STK push)</dd>
+                        <dd class="col-sm-8" th:text="${tx != null and tx.paymentMethod != null ? tx.paymentMethod.label : 'M-Pesa'}">M-Pesa</dd>
                         <dt class="col-sm-4">Receipt No.</dt>
-                        <dd class="col-sm-8">SK4W8QN1TB</dd>
+                        <dd class="col-sm-8" th:text="${tx != null and tx.receiptNumber != null ? tx.receiptNumber : '—'}">SK4W8QN1TB</dd>
                         <dt class="col-sm-4">Paid From</dt>
-                        <dd class="col-sm-8">+254 712 345 &bull;&bull;&bull;</dd>
+                        <dd class="col-sm-8" th:text="${tx != null and tx.paidFrom != null ? tx.paidFrom : '—'}">+254 712 345 678</dd>
                         <dt class="col-sm-4">Initiated</dt>
-                        <dd class="col-sm-8">2026-11-04 17:39</dd>
+                        <dd class="col-sm-8"
+                            th:text="${tx != null and tx.createdAt != null ? #temporals.format(tx.createdAt, 'yyyy-MM-dd HH:mm') : '2026-11-04 17:39'}">2026-11-04 17:39</dd>
                         <dt class="col-sm-4">Completed</dt>
-                        <dd class="col-sm-8">2026-11-04 17:40</dd>
+                        <dd class="col-sm-8"
+                            th:text="${tx != null and tx.completedAt != null ? #temporals.format(tx.completedAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-11-04 17:40</dd>
                         <dt class="col-sm-4">Reference</dt>
-                        <dd class="col-sm-8">DKZ-2026-001284</dd>
+                        <dd class="col-sm-8" th:text="${tx != null and tx.reference != null ? tx.reference : 'DKZ-2026-001284'}">DKZ-2026-001284</dd>
                     </dl>
                 </div>
             </div>
@@ -39,7 +47,12 @@
             <div class="card mb-4">
                 <div class="card-header">Refund</div>
                 <div class="card-body">
-                    <p class="mb-2">No refund has been issued for this payment.</p>
+                    <p class="mb-2" th:if="${tx == null or tx.status.name() != 'REFUNDED'}">
+                        No refund has been issued for this payment.
+                    </p>
+                    <p class="mb-2 text-danger fw-semibold" th:if="${tx != null and tx.status.name() == 'REFUNDED'}">
+                        This payment has been refunded and reversed from the subscription balance.
+                    </p>
                     <p class="text-muted small mb-0">
                         Under the Terms of Service, refunds apply to duplicate or mistaken payments, a request inside the
                         cooling-off period before any alert is delivered, and extended service failures.
@@ -52,51 +65,81 @@
         <!-- Right: what it paid for -->
         <div class="col-lg-6">
 
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${tx != null and tx.client != null}">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Client</span>
-                    <a href="#" class="btn btn-sm btn-outline-secondary">Open Client</a>
+                    <a th:href="@{/admin/clients/show/{cid}(cid=${tx.client.id})}"
+                       class="btn btn-sm btn-outline-secondary">Open Client</a>
                 </div>
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Name</dt>
-                        <dd class="col-sm-8">Peter Mwangi</dd>
+                        <dd class="col-sm-8" th:text="${tx.client.fullName}">Peter Mwangi</dd>
                         <dt class="col-sm-4">Email</dt>
-                        <dd class="col-sm-8">peter@example.com</dd>
+                        <dd class="col-sm-8" th:text="${tx.client.email}">peter@example.com</dd>
                         <dt class="col-sm-4">Phone</dt>
-                        <dd class="col-sm-8">+254 712 345 678</dd>
+                        <dd class="col-sm-8" th:text="${tx.client.phone != null ? tx.client.phone : '—'}">+254 712 345 678</dd>
                         <dt class="col-sm-4">Account</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dd class="col-sm-8">
+                            <span th:if="${tx.client.active}" class="badge bg-success">Active</span>
+                            <span th:unless="${tx.client.active}" class="badge bg-danger">Suspended</span>
+                        </dd>
                     </dl>
                 </div>
             </div>
 
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${tx != null and tx.clientSubscriptionPlan != null}">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Paid For</span>
-                    <a href="#" class="btn btn-sm btn-outline-secondary">Open Subscription</a>
+                    <a th:href="@{/admin/clients/show/{cid}/subscriptions(cid=${tx.client.id})}"
+                       class="btn btn-sm btn-outline-secondary">View Client Subscriptions</a>
                 </div>
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Plan</dt>
-                        <dd class="col-sm-8">Landlord Pro</dd>
+                        <dd class="col-sm-8" th:text="${tx.clientSubscriptionPlan.subscriptionPlan.name}">Landlord Pro</dd>
                         <dt class="col-sm-4">Period</dt>
-                        <dd class="col-sm-8">2026-11-04 to 2027-11-04</dd>
+                        <dd class="col-sm-8"
+                            th:text="${tx.clientSubscriptionPlan.startDate + ' to ' + tx.clientSubscriptionPlan.endDate}">2026-11-04 to 2027-11-04</dd>
                         <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
-                        <dt class="col-sm-4">Keyword Limit</dt>
-                        <dd class="col-sm-8">5</dd>
+                        <dd class="col-sm-8">
+                            <span th:if="${tx.clientSubscriptionPlan.valid}" class="badge bg-success">Valid (Active)</span>
+                            <span th:if="${!tx.clientSubscriptionPlan.valid and tx.clientSubscriptionPlan.status.name() == 'PARTIALLY_PAID'}" class="badge bg-warning text-dark">Partially Paid</span>
+                            <span th:if="${!tx.clientSubscriptionPlan.valid and tx.clientSubscriptionPlan.status.name() == 'PENDING_PAYMENT'}" class="badge bg-secondary">Pending Payment</span>
+                        </dd>
+                        <dt class="col-sm-4">Paid / Amount</dt>
+                        <dd class="col-sm-8"
+                            th:text="'KES ' + ${#numbers.formatDecimal(tx.clientSubscriptionPlan.paidAmount, 1, 'COMMA', 2, 'POINT')} + ' / KES ' + ${#numbers.formatDecimal(tx.clientSubscriptionPlan.amount, 1, 'COMMA', 2, 'POINT')}">
+                            KES 4,500.00 / KES 4,500.00
+                        </dd>
+                        <dt class="col-sm-4">Balance</dt>
+                        <dd class="col-sm-8"
+                            th:text="'KES ' + ${#numbers.formatDecimal(tx.clientSubscriptionPlan.balance, 1, 'COMMA', 2, 'POINT')}">KES 0.00</dd>
                     </dl>
                 </div>
             </div>
 
-            <div class="card mb-4">
+            <div class="card mb-4" id="admin-notes-card" th:fragment="adminNotesCard">
                 <div class="card-header">Admin Notes</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${notesSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${notesSuccess}"></div>
+                    <div th:if="${notesFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${notesFailure}"></div>
+
+                    <form th:if="${tx != null}"
+                          th:action="@{/admin/transactions/show/{id}/notes(id=${tx.id})}"
+                          method="post"
+                          th:attr="hx-post=@{/admin/transactions/show/{id}/notes(id=${tx.id})}"
+                          hx-target="#admin-notes-card"
+                          hx-swap="outerHTML">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <div class="mb-3">
-                            <label for="notes" class="form-label visually-hidden">Notes</label>
-                            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="Only admins can see these notes"></textarea>
+                            <label for="adminNotes" class="form-label visually-hidden">Notes</label>
+                            <textarea id="adminNotes"
+                                      name="adminNotes"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Only admins can see these notes"
+                                      th:text="${tx.adminNotes}"></textarea>
                         </div>
                         <button type="submit" class="btn btn-sm btn-primary">Save Notes</button>
                     </form>

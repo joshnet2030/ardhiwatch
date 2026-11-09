@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/clients/record.html}">
+<html lang="en" layout:decorate="~{admin/clients/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Client &ndash; Subscriptions</title>
@@ -7,52 +7,170 @@
 <body>
 <div layout:fragment="tab">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Subscriptions</h5>
-        <a href="#" class="btn btn-primary btn-sm">Add Subscription</a>
-    </div>
+    <div id="client-subscriptions-section"
+         th:attr="hx-get=${client != null} ? @{/admin/clients/show/{id}/subscriptions/table(id=${client.id})} : null"
+         hx-trigger="subscriptionSaved from:body, paymentSaved from:body"
+         hx-swap="outerHTML"
+         th:fragment="subscriptionsSection">
 
-    <div class="card mb-4">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover mb-0 align-middle">
-                <thead>
-                <tr>
-                    <th>Plan</th>
-                    <th>Status</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Days Left</th>
-                    <th class="text-end">Paid (KES)</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Landlord Pro</td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>2025-12-15</td>
-                    <td>2026-12-15</td>
-                    <td>40</td>
-                    <td class="text-end">4,500.00</td>
-                    <td class="text-nowrap">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Extend</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Change Plan</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Cancel</a>
-                    </td>
-                </tr>
-                <tr class="table-secondary">
-                    <td>Basic</td>
-                    <td><span class="badge bg-secondary">Expired</span></td>
-                    <td>2024-12-15</td>
-                    <td>2025-12-15</td>
-                    <td>0</td>
-                    <td class="text-end">1,500.00</td>
-                    <td class="text-nowrap">
-                        <a href="#" class="btn btn-sm btn-outline-secondary">View</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div th:if="${subscriptionsError}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${subscriptionsError}"></div>
+        <div th:if="${subscriptionsWarning}" class="alert alert-warning py-2 mb-3" role="alert" th:text="${subscriptionsWarning}"></div>
+        <div th:if="${subscriptionsSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${subscriptionsSuccess}"></div>
+
+        <!-- Wallet Balance & Subscription Summary Cards -->
+        <div class="row g-3 mb-4" th:if="${client != null}">
+            <div class="col-md-4">
+                <div class="card h-100 border-info">
+                    <div class="card-body py-3">
+                        <p class="text-muted small mb-1">Client Wallet Balance</p>
+                        <h4 class="mb-0"
+                            th:classappend="${client.walletBalance != null and client.walletBalance.signum() > 0} ? 'text-success fw-bold' : 'text-body'"
+                            th:text="'KES ' + ${#numbers.formatDecimal(client.walletBalance, 1, 'COMMA', 2, 'POINT')}">
+                            KES 0.00
+                        </h4>
+                        <span class="text-muted small">Credited when an unstarted subscription is cancelled</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body py-3">
+                        <p class="text-muted small mb-1">Active Plan Status</p>
+                        <h5 class="mb-0" th:if="${currentSubscription != null and currentSubscription.valid}">
+                            <span class="badge bg-success">Valid</span>
+                            <span class="ms-1 fs-6" th:text="${currentSubscription.subscriptionPlan.name}">Landlord Pro</span>
+                        </h5>
+                        <h5 class="mb-0 text-muted" th:unless="${currentSubscription != null and currentSubscription.valid}">
+                            No Valid Active Plan
+                        </h5>
+                        <span class="text-muted small"
+                              th:text="${currentSubscription != null and currentSubscription.valid} ? ('Ends ' + ${currentSubscription.endDate} + ' (' + ${currentSubscription.daysLeft} + ' days left)') : 'Valid when balance is KES 0.00'">
+                            Valid when balance is KES 0.00
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body py-3">
+                        <p class="text-muted small mb-1">Total Payments Collected</p>
+                        <h4 class="mb-0"
+                            th:text="${totalPaid != null ? 'KES ' + #numbers.formatDecimal(totalPaid, 1, 'COMMA', 2, 'POINT') : 'KES 0.00'}">
+                            KES 0.00
+                        </h4>
+                        <span class="text-muted small" th:text="${subscriptionsCount != null ? subscriptionsCount + ' subscription period(s)' : '0 periods'}">0 periods</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="mb-0">Subscriptions</h5>
+                <span class="text-muted small">
+                    Valid when <strong>Balance is KES 0.00</strong>. Cancelling a subscription before its start date moves paid funds to the client's wallet; once started, no refund is given.
+                </span>
+            </div>
+            <div class="d-flex gap-2" th:if="${client != null}">
+                <button type="button"
+                        class="btn btn-outline-success btn-sm"
+                        th:attr="hx-get=@{/admin/clients/show/{id}/transactions/modal/record(id=${client.id})}"
+                        hx-target="#clientModalDialog"
+                        hx-swap="innerHTML"
+                        data-bs-toggle="modal"
+                        data-bs-target="#clientModal">
+                    Record Payment
+                </button>
+                <button type="button"
+                        class="btn btn-primary btn-sm"
+                        th:attr="hx-get=@{/admin/clients/show/{id}/subscriptions/modal/create(id=${client.id})}"
+                        hx-target="#clientModalDialog"
+                        hx-swap="innerHTML"
+                        data-bs-toggle="modal"
+                        data-bs-target="#clientModal">
+                    Add Subscription
+                </button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Status / Validity</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Days Left</th>
+                        <th class="text-end">Amount (KES)</th>
+                        <th class="text-end">Paid (KES)</th>
+                        <th class="text-end">Balance (KES)</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(subscriptions)}">
+                        <td colspan="9" class="text-center text-muted py-4">
+                            No subscriptions found for this client. Click "Add Subscription" or "Record Payment" above.
+                        </td>
+                    </tr>
+                    <tr th:each="sub : ${subscriptions}"
+                        th:classappend="${sub.status.name() == 'EXPIRED' or sub.status.name() == 'CANCELLED'} ? 'table-secondary'">
+                        <td>
+                            <a th:href="@{/admin/subscriptions/show/{pid}(pid=${sub.subscriptionPlan.id})}"
+                               class="fw-semibold"
+                               th:text="${sub.subscriptionPlan.name}">Landlord Pro</a>
+                            <div class="text-muted small" th:text="${sub.subscriptionPlan.keywordLimit + ' keywords'}">5 keywords</div>
+                        </td>
+                        <td>
+                            <span th:if="${sub.valid}" class="badge bg-success">Valid (Active)</span>
+                            <span th:if="${!sub.valid and sub.status.name() == 'PARTIALLY_PAID'}" class="badge bg-warning text-dark">Partially Paid</span>
+                            <span th:if="${!sub.valid and sub.status.name() == 'PENDING_PAYMENT'}" class="badge bg-secondary">Pending Payment</span>
+                            <span th:if="${sub.status.name() == 'EXPIRED'}" class="badge bg-dark">Expired</span>
+                            <span th:if="${sub.status.name() == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                            <div th:if="${sub.status.name() == 'CANCELLED' and sub.deactivationMemo != null}"
+                                 class="text-muted small mt-1"
+                                 th:text="${sub.deactivationMemo}"></div>
+                        </td>
+                        <td>
+                            <span th:text="${sub.startDate}">2025-12-15</span>
+                            <span th:if="${!sub.hasStarted() and sub.status.name() != 'CANCELLED'}"
+                                  class="badge bg-info text-dark ms-1">Not Started</span>
+                        </td>
+                        <td th:text="${sub.endDate}">2026-12-15</td>
+                        <td th:text="${sub.daysLeft}">365</td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(sub.amount, 1, 'COMMA', 2, 'POINT')}">4,500.00</td>
+                        <td class="text-end text-success" th:text="${#numbers.formatDecimal(sub.paidAmount, 1, 'COMMA', 2, 'POINT')}">4,500.00</td>
+                        <td class="text-end"
+                            th:classappend="${sub.balance.signum() > 0} ? 'text-danger fw-semibold' : 'text-muted'"
+                            th:text="${#numbers.formatDecimal(sub.balance, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td class="text-nowrap text-end">
+                            <button th:if="${sub.balance.signum() > 0 and sub.status.name() != 'CANCELLED'}"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    th:attr="hx-get=@{/admin/clients/show/{id}/transactions/modal/record(id=${client.id}, subscriptionId=${sub.id})}"
+                                    hx-target="#clientModalDialog"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#clientModal">
+                                Pay Balance
+                            </button>
+                            <button th:if="${sub.status.name() != 'CANCELLED'}"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    th:attr="hx-get=@{/admin/clients/show/{id}/subscriptions/{sid}/modal/cancel(id=${client.id}, sid=${sub.id})}"
+                                    hx-target="#clientModalDialog"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#clientModal">
+                                Cancel
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

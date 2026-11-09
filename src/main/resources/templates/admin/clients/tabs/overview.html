@@ -12,7 +12,10 @@
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Active Keywords</p>
-                <h3 class="card-text" th:text="${activeKeywordsCount != null ? activeKeywordsCount : 0}">0</h3>
+                <h3 class="card-text"
+                    th:text="${currentSubscription != null and currentSubscription.subscriptionPlan != null} ? (${activeKeywordsCount} + ' / ' + ${currentSubscription.subscriptionPlan.keywordLimit}) : (${activeKeywordsCount != null ? activeKeywordsCount : 0})">
+                    0
+                </h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
@@ -24,13 +27,16 @@
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Total Paid</p>
-                <h3 class="card-text">KES 0</h3>
+                <h3 class="card-text"
+                    th:text="${totalPaid != null ? 'KES ' + #numbers.formatDecimal(totalPaid, 1, 'COMMA', 2, 'POINT') : 'KES 0.00'}">KES 0.00</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Days Left on Plan</p>
-                <h3 class="card-text text-muted">&mdash;</h3>
+                <h3 class="card-text"
+                    th:classappend="${currentSubscription != null and currentSubscription.valid} ? 'text-success' : 'text-muted'"
+                    th:text="${currentSubscription != null and currentSubscription.valid ? currentSubscription.daysLeft : '—'}">&mdash;</h3>
             </div></div>
         </div>
     </div>
@@ -54,6 +60,14 @@
                         </dd>
                         <dt class="col-sm-4">Phone</dt>
                         <dd class="col-sm-8" th:text="${client != null and client.phone != null ? client.phone : '+254 712 345 678'}">+254 712 345 678</dd>
+                        <dt class="col-sm-4">Wallet Balance</dt>
+                        <dd class="col-sm-8">
+                            <span class="fw-semibold"
+                                  th:classappend="${client != null and client.walletBalance != null and client.walletBalance.signum() > 0} ? 'text-success' : 'text-body'"
+                                  th:text="${client != null ? 'KES ' + #numbers.formatDecimal(client.walletBalance, 1, 'COMMA', 2, 'POINT') : 'KES 0.00'}">
+                                KES 0.00
+                            </span>
+                        </dd>
                         <dt class="col-sm-4">Status</dt>
                         <dd class="col-sm-8">
                             <span th:if="${client == null or client.active}" class="badge bg-success">Active</span>
@@ -134,12 +148,33 @@
                        class="btn btn-sm btn-outline-secondary">All Subscriptions</a>
                 </div>
                 <div class="card-body">
-                    <dl class="row mb-0">
+                    <dl class="row mb-0" th:if="${currentSubscription != null}">
                         <dt class="col-sm-4">Plan</dt>
-                        <dd class="col-sm-8 text-muted">None assigned yet</dd>
-                        <dt class="col-sm-4">Keywords</dt>
-                        <dd class="col-sm-8" th:text="${(activeKeywordsCount != null ? activeKeywordsCount : 0) + ' active'}">0 active</dd>
+                        <dd class="col-sm-8" th:text="${currentSubscription.subscriptionPlan.name}">Landlord Pro</dd>
+                        <dt class="col-sm-4">Validity</dt>
+                        <dd class="col-sm-8">
+                            <span th:if="${currentSubscription.valid}" class="badge bg-success">Valid (Paid in Full)</span>
+                            <span th:if="${!currentSubscription.valid and currentSubscription.status.name() == 'PARTIALLY_PAID'}" class="badge bg-warning text-dark">Partially Paid</span>
+                            <span th:if="${!currentSubscription.valid and currentSubscription.status.name() == 'PENDING_PAYMENT'}" class="badge bg-secondary">Pending Payment</span>
+                            <span th:if="${!currentSubscription.valid and currentSubscription.status.name() == 'EXPIRED'}" class="badge bg-danger">Expired</span>
+                        </dd>
+                        <dt class="col-sm-4">Period</dt>
+                        <dd class="col-sm-8" th:text="${currentSubscription.startDate + ' to ' + currentSubscription.endDate}">2025-12-15 to 2026-12-15</dd>
+                        <dt class="col-sm-4">Amount / Paid</dt>
+                        <dd class="col-sm-8"
+                            th:text="'KES ' + ${#numbers.formatDecimal(currentSubscription.paidAmount, 1, 'COMMA', 2, 'POINT')} + ' / KES ' + ${#numbers.formatDecimal(currentSubscription.amount, 1, 'COMMA', 2, 'POINT')}">
+                            KES 4,500.00 / KES 4,500.00
+                        </dd>
+                        <dt class="col-sm-4">Balance</dt>
+                        <dd class="col-sm-8"
+                            th:classappend="${currentSubscription.balance.signum() > 0} ? 'text-danger fw-semibold' : 'text-success'"
+                            th:text="'KES ' + ${#numbers.formatDecimal(currentSubscription.balance, 1, 'COMMA', 2, 'POINT')}">
+                            KES 0.00
+                        </dd>
                     </dl>
+                    <p th:if="${currentSubscription == null}" class="text-muted mb-0">
+                        No subscription assigned to this client yet.
+                    </p>
                 </div>
             </div>
 

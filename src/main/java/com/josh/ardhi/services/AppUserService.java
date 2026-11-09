@@ -6,6 +6,7 @@ import com.josh.ardhi.forms.CreateUserForm;
 import com.josh.ardhi.models.AppUser;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,5 +31,9 @@ public interface AppUserService {
     AppUser updateClientStatus(UUID id, boolean active, String deactivationMemo) throws AppException;
 
     AppUser updateInternalNotes(UUID id, String internalNotes) throws AppException;
+
+    AppUser addToWalletBalance(UUID id, BigDecimal amount) throws AppException;
+
+    AppUser deductFromWalletBalance(UUID id, BigDecimal amount) throws AppException;
 
 }

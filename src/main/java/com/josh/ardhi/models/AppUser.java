@@ -4,6 +4,7 @@ import com.josh.ardhi.models.base.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -50,5 +51,12 @@ public class AppUser extends Auditable {
     @Column(name = "internal_notes", columnDefinition = "text")
     private String internalNotes;
 
+    @Column(name = "wallet_balance", nullable = false, precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal walletBalance = BigDecimal.ZERO;
+
+    public BigDecimal getWalletBalance() {
+        return walletBalance != null ? walletBalance : BigDecimal.ZERO;
+    }
 
 }

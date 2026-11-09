@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,33 +10,88 @@
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Payments</a></li>
-            <li class="breadcrumb-item active" aria-current="page">SK4W8QN1TB</li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/transactions}">Payments</a></li>
+            <li class="breadcrumb-item active" aria-current="page"
+                th:text="${tx != null ? (tx.receiptNumber != null ? tx.receiptNumber : tx.reference) : 'SK4W8QN1TB'}">SK4W8QN1TB</li>
         </ol>
     </nav>
 
     <!-- Record header -->
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
         <div>
-            <h2 class="mb-1">KES 4,500.00</h2>
+            <h2 class="mb-1"
+                th:text="${tx != null ? 'KES ' + #numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT') : 'KES 4,500.00'}">KES 4,500.00</h2>
             <p class="text-muted mb-0">
-                <a href="#">Peter Mwangi</a> &middot; Landlord Pro &middot; 2026-11-04 17:40
-                <span class="badge bg-success ms-2">Completed</span>
+                <a th:if="${tx != null and tx.client != null}"
+                   th:href="@{/admin/clients/show/{cid}(cid=${tx.client.id})}"
+                   th:text="${tx.client.fullName}">Peter Mwangi</a>
+                <span th:if="${tx == null}">Peter Mwangi</span>
+                &middot;
+                <span th:text="${tx != null and tx.subscriptionPlan != null ? tx.subscriptionPlan.name : 'Landlord Pro'}">Landlord Pro</span>
+                &middot;
+                <span th:text="${tx != null and tx.createdAt != null ? #temporals.format(tx.createdAt, 'yyyy-MM-dd HH:mm') : '2026-11-04 17:40'}">2026-11-04 17:40</span>
+                <span th:if="${tx == null or tx.status.name() == 'COMPLETED'}" class="badge bg-success ms-2">Completed</span>
+                <span th:if="${tx != null and tx.status.name() == 'PENDING'}" class="badge bg-warning text-dark ms-2">Pending</span>
+                <span th:if="${tx != null and tx.status.name() == 'FAILED'}" class="badge bg-danger ms-2">Failed</span>
+                <span th:if="${tx != null and tx.status.name() == 'REFUNDED'}" class="badge bg-secondary ms-2">Refunded</span>
             </p>
         </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="#" class="btn btn-outline-secondary">Download Receipt</a>
-            <a href="#" class="btn btn-outline-danger">Refund</a>
+        <div class="d-flex flex-wrap gap-2" th:if="${tx != null}">
+            <button th:if="${tx.status.name() == 'PENDING'}"
+                    type="button"
+                    class="btn btn-warning"
+                    th:attr="hx-get=@{/admin/transactions/modal/reconcile/{id}(id=${tx.id})}"
+                    hx-target="#txModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#txModal">
+                Reconcile Payment
+            </button>
+            <button th:if="${tx.status.name() == 'COMPLETED'}"
+                    type="button"
+                    class="btn btn-outline-danger"
+                    th:attr="hx-get=@{/admin/transactions/modal/refund/{id}(id=${tx.id})}"
+                    hx-target="#txModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#txModal">
+                Refund
+            </button>
         </div>
     </div>
 
     <!-- Tab navigation -->
     <ul class="nav nav-tabs mb-4">
-        <li class="nav-item"><a class="nav-link active" href="#">Overview</a></li>
+        <li class="nav-item">
+            <a class="nav-link active"
+               th:href="${tx != null} ? @{/admin/transactions/show/{id}(id=${tx.id})} : '#'">Overview</a>
+        </li>
     </ul>
 
     <!-- Tab content goes here -->
     <div layout:fragment="tab"></div>
+
+    <!-- Bootstrap 5 Modal Shell populated dynamically via HTMX -->
+    <div class="modal fade" id="txModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="txModalDialog">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4 text-muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.body.addEventListener('transactionSaved', function () {
+            var modalEl = document.getElementById('txModal');
+            if (modalEl && window.bootstrap) {
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+            window.location.reload();
+        });
+    </script>
 
 </div>
 </body>
