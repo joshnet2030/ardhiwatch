@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{admin/users/record.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin User &ndash; Overview</title>
+</head>
+<body>
+<div layout:fragment="tab">
+
+    <div class="row mb-4 g-3">
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Matches Reviewed</p>
+                <h3 class="card-text">142</h3>
+                <p class="text-muted small mb-0">this year</p>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Approved</p>
+                <h3 class="card-text text-success">121</h3>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Rejected</p>
+                <h3 class="card-text text-danger">21</h3>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center h-100"><div class="card-body">
+                <p class="card-title text-muted mb-1">Issues Uploaded</p>
+                <h3 class="card-text">9</h3>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
+                <div class="card-header">Account Details</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Full Name</dt>
+                        <dd class="col-sm-8">John Deputy</dd>
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">john@dokezo.co.ke <span class="badge bg-success">Verified</span></dd>
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">+254 700 000 002</dd>
+                        <dt class="col-sm-4">Role</dt>
+                        <dd class="col-sm-8"><span class="badge bg-secondary">Admin</span></dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dt class="col-sm-4">Added</dt>
+                        <dd class="col-sm-8">2026-02-14 by Jane Admin</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Client Profile</div>
+                <div class="card-body">
+                    <p class="mb-2">John is not a client, so he has no keywords or subscription.</p>
+                    <p class="text-muted small mb-0">
+                        An admin can also be a client. If John signs up as one, the same login will ask which profile to open.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
+                <div class="card-header">Security</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Last Login</dt>
+                        <dd class="col-sm-8">2026-11-09 07:55 <span class="text-muted small">(41.90.xx.xx)</span></dd>
+                        <dt class="col-sm-4">Password Changed</dt>
+                        <dd class="col-sm-8">2026-08-30</dd>
+                        <dt class="col-sm-4">Failed Logins</dt>
+                        <dd class="col-sm-8">0 in the last 30 days</dd>
+                        <dt class="col-sm-4">Active Sessions</dt>
+                        <dd class="col-sm-8">1</dd>
+                    </dl>
+                </div>
+                <div class="card-footer d-flex flex-wrap gap-2">
+                    <form action="#" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Send Password Reset Link</button>
+                    </form>
+                    <form action="#" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-warning">Sign Out Everywhere</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">What an Admin Can Do</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span>Upload and manage Gazette issues</span><span class="badge bg-success">Yes</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Review matches and send alerts</span><span class="badge bg-success">Yes</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Manage clients, subscriptions and payments</span><span class="badge bg-success">Yes</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Refund and reconcile payments</span><span class="badge bg-success">Yes</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Manage admin users</span><span class="badge bg-secondary">Superadmin only</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Change settings and credentials</span><span class="badge bg-secondary">Superadmin only</span></li>
+                </ul>
+            </div>
+
+            <div class="card mb-4 border-danger">
+                <div class="card-header bg-danger text-white">Remove Admin Access</div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        Removing John ends his admin access and signs him out. His past reviews and uploads stay in the records under his name.
+                    </p>
+                    <a href="#" class="btn btn-outline-danger">Remove Admin</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

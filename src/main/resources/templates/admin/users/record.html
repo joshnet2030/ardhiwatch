@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin User</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Admin Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">John Deputy</li>
+        </ol>
+    </nav>
+
+    <!-- Record header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+        <div>
+            <h2 class="mb-1">John Deputy</h2>
+            <p class="text-muted mb-0">
+                john@dokezo.co.ke <span class="badge bg-success">Verified</span> &middot; +254 700 000 002
+                <span class="badge bg-secondary ms-2">Admin</span>
+                <span class="badge bg-success">Active</span>
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="#" class="btn btn-outline-secondary">Edit</a>
+            <a href="#" class="btn btn-outline-danger">Suspend</a>
+        </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item"><a class="nav-link active" href="#">Overview</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Activity</a></li>
+    </ul>
+
+    <!-- Tab content goes here -->
+    <div layout:fragment="tab"></div>
+
+</div>
+</body>
+</html>

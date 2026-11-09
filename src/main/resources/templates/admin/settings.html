@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Settings</h2>
+        <span class="badge bg-dark">Superadmin only</span>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Section links -->
+        <div class="col-lg-3">
+            <div class="list-group">
+                <a href="#general" class="list-group-item list-group-item-action">General</a>
+                <a href="#matching" class="list-group-item list-group-item-action">Matching and Alerts</a>
+                <a href="#security" class="list-group-item list-group-item-action">Security</a>
+                <a href="#mpesa" class="list-group-item list-group-item-action">M-Pesa</a>
+                <a href="#sms" class="list-group-item list-group-item-action">SMS</a>
+                <a href="#email" class="list-group-item list-group-item-action">Email</a>
+                <a href="#retention" class="list-group-item list-group-item-action">Data Retention</a>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+
+            <!-- General -->
+            <div class="card mb-4" id="general">
+                <div class="card-header">General</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="appName" class="form-label">Service Name</label>
+                                <input type="text" id="appName" name="appName" class="form-control" value="Dokezo">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="supportEmail" class="form-label">Support Email</label>
+                                <input type="email" id="supportEmail" name="supportEmail" class="form-control" value="support@dokezo.co.ke">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="supportPhone" class="form-label">Support Phone</label>
+                                <input type="tel" id="supportPhone" name="supportPhone" class="form-control" value="+254 700 000 000">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="supportHours" class="form-label">Support Hours</label>
+                                <input type="text" id="supportHours" name="supportHours" class="form-control" value="Monday to Friday, 8:00 to 17:00 EAT">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Save General</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Matching and alerts -->
+            <div class="card mb-4" id="matching">
+                <div class="card-header">Matching and Alerts</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="fuzzyThreshold" class="form-label">Fuzzy Name Match Threshold (%)</label>
+                                <input type="number" id="fuzzyThreshold" name="fuzzyThreshold" class="form-control" value="80" min="50" max="100">
+                                <div class="form-text">Lower catches more spelling variations but creates more false matches to review.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="linkExpiryDays" class="form-label">SMS Alert Link Expires After (days)</label>
+                                <input type="number" id="linkExpiryDays" name="linkExpiryDays" class="form-control" value="30" min="1">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox" id="manualReview" name="manualReview" class="form-check-input" checked>
+                                    <label for="manualReview" class="form-check-label">Require manual review before alerts are sent</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox" id="autoApproveExact" name="autoApproveExact" class="form-check-input">
+                                    <label for="autoApproveExact" class="form-check-label">Auto-approve exact matches (title numbers, IDs)</label>
+                                </div>
+                                <div class="form-text">Only applies when manual review is on. Fuzzy name matches always go to review.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lowConfidence" class="form-label">Flag Pages Below OCR Confidence (%)</label>
+                                <input type="number" id="lowConfidence" name="lowConfidence" class="form-control" value="70" min="0" max="100">
+                                <div class="form-text">Pages read below this are highlighted on the issue pages, because keywords on them may be missed.</div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Save Matching</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="card mb-4" id="security">
+                <div class="card-header">Security</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="sessionHours" class="form-label">Admin Session Length (hours)</label>
+                                <input type="number" id="sessionHours" name="sessionHours" class="form-control" value="8" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="maxAttempts" class="form-label">Failed Logins Before Lock</label>
+                                <input type="number" id="maxAttempts" name="maxAttempts" class="form-control" value="5" min="3">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="lockMinutes" class="form-label">Lock Duration (minutes)</label>
+                                <input type="number" id="lockMinutes" name="lockMinutes" class="form-control" value="15" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="minPassword" class="form-label">Minimum Password Length</label>
+                                <input type="number" id="minPassword" name="minPassword" class="form-control" value="8" min="8">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="resetHours" class="form-label">Reset Link Expires After (hours)</label>
+                                <input type="number" id="resetHours" name="resetHours" class="form-control" value="1" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="verifyHours" class="form-label">Email Verification Link Expires After (hours)</label>
+                                <input type="number" id="verifyHours" name="verifyHours" class="form-control" value="48" min="1">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Save Security</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- M-Pesa -->
+            <div class="card mb-4" id="mpesa">
+                <div class="card-header">M-Pesa (Daraja)</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="mpesaEnv" class="form-label">Environment</label>
+                                <select id="mpesaEnv" name="mpesaEnv" class="form-select">
+                                    <option value="sandbox">Sandbox</option>
+                                    <option value="production" selected>Production</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="mpesaShortcode" class="form-label">Paybill / Till Number</label>
+                                <input type="text" id="mpesaShortcode" name="mpesaShortcode" class="form-control" value="174379">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="mpesaCallback" class="form-label">Callback URL</label>
+                                <input type="text" id="mpesaCallback" class="form-control" value="https://dokezo.co.ke/webhooks/mpesa" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mpesaKey" class="form-label">Consumer Key</label>
+                                <input type="password" id="mpesaKey" name="mpesaKey" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mpesaSecret" class="form-label">Consumer Secret</label>
+                                <input type="password" id="mpesaSecret" name="mpesaSecret" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                            </div>
+                            <div class="col-12">
+                                <label for="mpesaPasskey" class="form-label">Passkey</label>
+                                <input type="password" id="mpesaPasskey" name="mpesaPasskey" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <div class="form-text">Leave secret fields blank to keep the current values.</div>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Save M-Pesa</button>
+                                <button type="submit" formaction="#" class="btn btn-outline-secondary">Test Connection</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SMS -->
+            <div class="card mb-4" id="sms">
+                <div class="card-header">SMS Gateway</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="smsProvider" class="form-label">Provider</label>
+                                <select id="smsProvider" name="smsProvider" class="form-select">
+                                    <option value="africastalking" selected>Africa&rsquo;s Talking</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="smsUsername" class="form-label">Username</label>
+                                <input type="text" id="smsUsername" name="smsUsername" class="form-control" value="dokezo">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="smsSender" class="form-label">Sender ID</label>
+                                <input type="text" id="smsSender" name="smsSender" class="form-control" value="DOKEZO" maxlength="11">
+                            </div>
+                            <div class="col-12">
+                                <label for="smsKey" class="form-label">API Key</label>
+                                <input type="password" id="smsKey" name="smsKey" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                                <div class="form-text">Leave blank to keep the current value.</div>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Save SMS</button>
+                                <button type="submit" formaction="#" class="btn btn-outline-secondary">Send Test SMS</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="card mb-4" id="email">
+                <div class="card-header">Email (SMTP)</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="smtpHost" class="form-label">Host</label>
+                                <input type="text" id="smtpHost" name="smtpHost" class="form-control" value="smtp.example.com">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="smtpPort" class="form-label">Port</label>
+                                <input type="number" id="smtpPort" name="smtpPort" class="form-control" value="587">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="smtpSecurity" class="form-label">Security</label>
+                                <select id="smtpSecurity" name="smtpSecurity" class="form-select">
+                                    <option value="starttls" selected>STARTTLS</option>
+                                    <option value="ssl">SSL/TLS</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtpUser" class="form-label">Username</label>
+                                <input type="text" id="smtpUser" name="smtpUser" class="form-control" value="system@dokezo.co.ke">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtpPassword" class="form-label">Password</label>
+                                <input type="password" id="smtpPassword" name="smtpPassword" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="off">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fromAddress" class="form-label">From Address</label>
+                                <input type="email" id="fromAddress" name="fromAddress" class="form-control" value="system@dokezo.co.ke">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fromName" class="form-label">From Name</label>
+                                <input type="text" id="fromName" name="fromName" class="form-control" value="Dokezo">
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Save Email</button>
+                                <button type="submit" formaction="#" class="btn btn-outline-secondary">Send Test Email</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Data retention -->
+            <div class="card mb-4" id="retention">
+                <div class="card-header">Data Retention</div>
+                <div class="card-body">
+                    <form action="#" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="retainLogs" class="form-label">Login and Technical Logs (months)</label>
+                                <input type="number" id="retainLogs" name="retainLogs" class="form-control" value="12" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="retainContact" class="form-label">Contact Messages (months)</label>
+                                <input type="number" id="retainContact" name="retainContact" class="form-control" value="24" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="retainClosed" class="form-label">Closed Accounts (months)</label>
+                                <input type="number" id="retainClosed" name="retainClosed" class="form-control" value="12" min="0">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-text">
+                                    These should match what the Privacy Policy says. Payment records are kept longer, as accounting and the law require.
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Save Retention</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
