@@ -44,17 +44,26 @@
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Full Name</dt>
-                        <dd class="col-sm-8">John Deputy</dd>
+                        <dd class="col-sm-8" th:text="${user != null ? user.fullName : 'John Deputy'}">John Deputy</dd>
                         <dt class="col-sm-4">Email</dt>
-                        <dd class="col-sm-8">john@dokezo.co.ke <span class="badge bg-success">Verified</span></dd>
+                        <dd class="col-sm-8">
+                            <span th:text="${user != null ? user.email : 'john@dokezo.co.ke'}">john@dokezo.co.ke</span>
+                            <span th:if="${user == null or user.emailVerified}" class="badge bg-success ms-1">Verified</span>
+                            <span th:if="${user != null and !user.emailVerified}" class="badge bg-warning text-dark ms-1">Unverified</span>
+                        </dd>
                         <dt class="col-sm-4">Phone</dt>
-                        <dd class="col-sm-8">+254 700 000 002</dd>
+                        <dd class="col-sm-8" th:text="${user != null and user.phone != null ? user.phone : '+254 700 000 002'}">+254 700 000 002</dd>
                         <dt class="col-sm-4">Role</dt>
-                        <dd class="col-sm-8"><span class="badge bg-secondary">Admin</span></dd>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary" th:text="${user != null and user.role != null ? user.role.name() : 'Admin'}">Admin</span>
+                        </dd>
                         <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dd class="col-sm-8">
+                            <span th:if="${user == null or user.active}" class="badge bg-success">Active</span>
+                            <span th:if="${user != null and !user.active}" class="badge bg-danger">Suspended</span>
+                        </dd>
                         <dt class="col-sm-4">Added</dt>
-                        <dd class="col-sm-8">2026-02-14 by Jane Admin</dd>
+                        <dd class="col-sm-8" th:text="${user != null and user.createdAt != null ? #temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm') : '2026-02-14'}">2026-02-14</dd>
                     </dl>
                 </div>
             </div>

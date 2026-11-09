@@ -10,19 +10,24 @@
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Admin Users</a></li>
-            <li class="breadcrumb-item active" aria-current="page">John Deputy</li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/users}">Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${user != null ? user.fullName : 'John Deputy'}">John Deputy</li>
         </ol>
     </nav>
 
     <!-- Record header -->
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
         <div>
-            <h2 class="mb-1">John Deputy</h2>
+            <h2 class="mb-1" th:text="${user != null ? user.fullName : 'John Deputy'}">John Deputy</h2>
             <p class="text-muted mb-0">
-                john@dokezo.co.ke <span class="badge bg-success">Verified</span> &middot; +254 700 000 002
-                <span class="badge bg-secondary ms-2">Admin</span>
-                <span class="badge bg-success">Active</span>
+                <span th:text="${user != null ? user.email : 'john@dokezo.co.ke'}">john@dokezo.co.ke</span>
+                <span th:if="${user == null or user.emailVerified}" class="badge bg-success">Verified</span>
+                <span th:if="${user != null and !user.emailVerified}" class="badge bg-warning text-dark">Unverified</span>
+                &middot;
+                <span th:text="${user != null and user.phone != null ? user.phone : '+254 700 000 002'}">+254 700 000 002</span>
+                <span class="badge bg-secondary ms-2" th:text="${user != null and user.role != null ? user.role.name() : 'Admin'}">Admin</span>
+                <span th:if="${user == null or user.active}" class="badge bg-success">Active</span>
+                <span th:if="${user != null and !user.active}" class="badge bg-danger">Suspended</span>
             </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
@@ -33,8 +38,16 @@
 
     <!-- Tab navigation -->
     <ul class="nav nav-tabs mb-4">
-        <li class="nav-item"><a class="nav-link active" href="#">Overview</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Activity</a></li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${currentTab == 'overview'} ? 'active'"
+               th:href="${user != null} ? @{/admin/users/show/{id}(id=${user.id})} : '#'">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${currentTab == 'activities'} ? 'active'"
+               th:href="${user != null} ? @{/admin/users/show/{id}/activities(id=${user.id})} : '#'">Activity</a>
+        </li>
     </ul>
 
     <!-- Tab content goes here -->

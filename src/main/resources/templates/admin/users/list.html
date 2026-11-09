@@ -1,74 +1,95 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Users</title>
+    <title>Users</title>
 </head>
 <body>
 <div layout:fragment="content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Admin Users</h2>
-        <a href="#" class="btn btn-primary">Add Admin User</a>
+        <h2 class="mb-0">Users</h2>
+        <a th:href="@{/admin/users/create}" class="btn btn-primary">Add User</a>
     </div>
 
     <div class="row mb-4 g-3">
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Admins</p><h3 class="card-text">3</h3>
+                <p class="card-title text-muted mb-1">Admins</p><h3 class="card-text" th:text="${adminCount != null ? adminCount : 0}">3</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Superadmins</p><h3 class="card-text">1</h3>
+                <p class="card-title text-muted mb-1">Clients</p><h3 class="card-text" th:text="${clientCount != null ? clientCount : 0}">1</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Suspended</p><h3 class="card-text text-danger">1</h3>
+                <p class="card-title text-muted mb-1">Suspended</p><h3 class="card-text text-danger" th:text="${suspendedCount != null ? suspendedCount : 0}">1</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Active Today</p><h3 class="card-text">2</h3>
+                <p class="card-title text-muted mb-1">Total Users</p><h3 class="card-text" th:text="${totalCount != null ? totalCount : 0}">2</h3>
             </div></div>
         </div>
     </div>
 
     <div class="card mb-4">
         <div class="card-body">
-            <form action="#" method="get" class="row g-3 align-items-end">
+            <form th:action="@{/admin/users}"
+                  method="get"
+                  hx-get="/admin/users/table"
+                  hx-target="#users-table-card"
+                  hx-swap="outerHTML"
+                  class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label for="q" class="form-label">Search</label>
-                    <input type="text" id="q" name="q" class="form-control" placeholder="Name, email or phone">
+                    <input type="text"
+                           id="q"
+                           name="q"
+                           th:value="${q}"
+                           class="form-control"
+                           placeholder="Name, email or phone">
                 </div>
                 <div class="col-md-3">
                     <label for="role" class="form-label">Role</label>
                     <select id="role" name="role" class="form-select">
-                        <option value="" selected>All Roles</option>
-                        <option value="superadmin">Superadmin</option>
-                        <option value="admin">Admin</option>
+                        <option value="" th:selected="${selectedRole == null or selectedRole == ''}">All Roles</option>
+                        <option value="CLIENT" th:selected="${selectedRole == 'CLIENT'}">Client</option>
+                        <option value="ADMIN" th:selected="${selectedRole == 'ADMIN'}">Admin</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="status" class="form-label">Status</label>
                     <select id="status" name="status" class="form-select">
-                        <option value="" selected>All</option>
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
+                        <option value="" th:selected="${selectedStatus == null or selectedStatus == ''}">All</option>
+                        <option value="active" th:selected="${selectedStatus == 'active'}">Active</option>
+                        <option value="suspended" th:selected="${selectedStatus == 'suspended'}">Suspended</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
-                    <a href="#" class="btn btn-link">Reset</a>
+                    <a th:href="@{/admin/users}" class="btn btn-link">Reset</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header">All Admins</div>
+    <div class="card mb-4" id="users-table-card" th:fragment="usersTableCard">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span>All Users</span>
+            <span class="text-muted small"
+                  th:if="${usersPage != null and usersPage.totalElements > 0}"
+                  th:text="'Showing ' + (${usersPage.number * usersPage.size + 1}) + '–' + (${usersPage.number * usersPage.size + usersPage.numberOfElements}) + ' of ' + ${usersPage.totalElements} + ' user(s)'">
+                Showing 1–10 of 10 user(s)
+            </span>
+            <span class="text-muted small"
+                  th:if="${usersPage == null or usersPage.totalElements == 0}">
+                0 users
+            </span>
+        </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0 align-middle">
                 <thead>
@@ -77,56 +98,76 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Role</th>
-                    <th>Also a Client</th>
                     <th>Status</th>
                     <th>Last Login</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td><a href="#">Jane Admin</a> <span class="badge bg-info text-dark">You</span></td>
-                    <td>jane@dokezo.co.ke <span class="badge bg-success">Verified</span></td>
-                    <td>+254 700 000 001</td>
-                    <td><span class="badge bg-dark">Superadmin</span></td>
-                    <td>Yes</td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>2026-11-09 08:30</td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/users/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                    </td>
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="7" class="text-center text-muted py-4">No users found matching your filter criteria.</td>
                 </tr>
-                <tr>
-                    <td><a href="#">John Deputy</a></td>
-                    <td>john@dokezo.co.ke <span class="badge bg-success">Verified</span></td>
-                    <td>+254 700 000 002</td>
-                    <td><span class="badge bg-secondary">Admin</span></td>
-                    <td>No</td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>2026-11-09 07:55</td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/users/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Suspend</a>
+                <tr th:each="u : ${users}" th:classappend="${!u.active} ? 'table-secondary'">
+                    <td>
+                        <a th:href="@{/admin/users/show/{id}(id=${u.id})}" th:text="${u.fullName}">John Deputy</a>
                     </td>
-                </tr>
-                <tr class="table-secondary">
-                    <td><a href="#">Mary Reviewer</a></td>
-                    <td>mary@dokezo.co.ke <span class="badge bg-success">Verified</span></td>
-                    <td>+254 700 000 003</td>
-                    <td><span class="badge bg-secondary">Admin</span></td>
-                    <td>No</td>
-                    <td><span class="badge bg-danger">Suspended</span></td>
-                    <td>2026-09-12 10:05</td>
+                    <td>
+                        <span th:text="${u.email}">john@dokezo.co.ke</span>
+                        <span th:if="${u.emailVerified}" class="badge bg-success ms-1">Verified</span>
+                        <span th:unless="${u.emailVerified}" class="badge bg-warning text-dark ms-1">Unverified</span>
+                    </td>
+                    <td th:text="${u.phone != null ? u.phone : '—'}">+254 700 000 002</td>
+                    <td>
+                        <span th:if="${u.role != null and u.role.name() == 'ADMIN'}" class="badge bg-secondary">Admin</span>
+                        <span th:if="${u.role != null and u.role.name() == 'CLIENT'}" class="badge bg-dark">Client</span>
+                    </td>
+                    <td>
+                        <span th:if="${u.active}" class="badge bg-success">Active</span>
+                        <span th:unless="${u.active}" class="badge bg-danger">Suspended</span>
+                    </td>
+                    <td th:text="${u.lastLoginAt != null ? #temporals.format(u.lastLoginAt, 'yyyy-MM-dd HH:mm') : 'Never'}">2026-11-09 07:55</td>
                     <td class="text-nowrap">
-                        <a th:href="@{/admin/users/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-success">Reinstate</a>
+                        <a th:href="@{/admin/users/show/{id}(id=${u.id})}" class="btn btn-sm btn-outline-primary">View</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2"
+             th:if="${usersPage != null}">
+            <span class="text-muted small"
+                  th:text="'Page ' + (${usersPage.number + 1}) + ' of ' + (${usersPage.totalPages > 0 ? usersPage.totalPages : 1})">
+                Page 1 of 1
+            </span>
+            <nav aria-label="Users pagination">
+                <ul class="pagination pagination-sm mb-0 justify-content-end">
+                    <li class="page-item" th:classappend="${usersPage.first} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/users(q=${q}, role=${selectedRole}, status=${selectedStatus}, page=${usersPage.number - 1})}"
+                           th:attr="hx-get=@{/admin/users/table(q=${q}, role=${selectedRole}, status=${selectedStatus}, page=${usersPage.number - 1})}"
+                           hx-target="#users-table-card"
+                           hx-swap="outerHTML">Previous</a>
+                    </li>
+                    <li class="page-item"
+                        th:each="pageIdx : ${#numbers.sequence(0, (usersPage.totalPages > 0 ? usersPage.totalPages - 1 : 0))}"
+                        th:classappend="${pageIdx == usersPage.number} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/users(q=${q}, role=${selectedRole}, status=${selectedStatus}, page=${pageIdx})}"
+                           th:attr="hx-get=@{/admin/users/table(q=${q}, role=${selectedRole}, status=${selectedStatus}, page=${pageIdx})}"
+                           hx-target="#users-table-card"
+                           hx-swap="outerHTML"
+                           th:text="${pageIdx + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${usersPage.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/users(q=${q}, role=${selectedRole}, status=${selectedStatus}, page=${usersPage.number + 1})}"
+                           th:attr="hx-get=@{/admin/users/table(q=${q}, role=${selectedRole}, status=${selectedStatus}, page=${usersPage.number + 1})}"
+                           hx-target="#users-table-card"
+                           hx-swap="outerHTML">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 
