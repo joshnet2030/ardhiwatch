@@ -1,13 +1,21 @@
-<main class="container py-5">
-    <div class="row justify-content-center py-5">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm text-center">
-                <div class="card-body p-5">
-                    <h1 class="h3 mb-3">Email verified</h1>
-                    <p class="text-muted mb-4">Thank you. Your account is now active, so you can log in and add the keywords you want us to watch.</p>
-                    <a href="/login" class="btn btn-primary">Log In</a>
-                </div>
-            </div>
-        </div>
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/auth}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Email Verified — Dokezo</title>
+</head>
+<body>
+
+<div class="dk-auth__container" id="verify-email-wrapper" layout:fragment="content">
+    <div class="dk-auth-card dk-auth-card--center">
+        <div class="dk-auth-card__icon">✓</div>
+        <p class="dk-auth-card__eyebrow">Account Active</p>
+        <h1 class="dk-auth-card__title">Email verified</h1>
+        <p class="dk-auth-card__subtitle">Thank you. Your account is now active, so you can log in and add the keywords you want us to watch.</p>
+        <a href="/login" class="dk-btn dk-btn--primary dk-btn--block">Log In</a>
     </div>
-</main>
+</div>
+
+</body>
+</html>

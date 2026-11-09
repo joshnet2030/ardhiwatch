@@ -40,7 +40,11 @@ public class SecurityConfig {
                                     "/process-client-signup",
                                     "/verify-email",
                                     "/process-verify-email",
-                                    "/resend-email-verification-token"
+                                    "/resend-email-verification-token",
+                                    "/contact-us",
+                                    "/process-contact-us",
+                                    "/terms",
+                                    "/privacy-policy"
                             ).permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/client/**").hasRole("CLIENT")

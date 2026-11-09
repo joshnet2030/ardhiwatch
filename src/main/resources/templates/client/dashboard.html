@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/client}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard — Dokezo</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Page Header -->
+    <div class="dk-page-header">
+        <div>
+            <p class="dk-page-header__eyebrow">Property &amp; Identity Watch</p>
+            <h1 class="dk-page-header__title">Welcome back, Peter</h1>
+            <p class="dk-page-header__subtitle">We automatically scan every weekly issue of the Kenya Gazette for your land title numbers, names, and ID.</p>
+        </div>
+        <div class="dk-page-header__actions">
+            <a th:href="@{/client/keywords}" class="dk-btn dk-btn--primary">+ Add Keyword</a>
+        </div>
+    </div>
+
+    <!-- High-priority Alert Banner -->
+    <div class="dk-notice-banner dk-notice-banner--alert">
+        <div class="dk-notice-banner__icon">!</div>
+        <div class="dk-notice-banner__body">
+            <strong>Verified Gazette Match Found: LR No. 209/1145</strong>
+            <p>Your watched title number appeared in <strong>Kenya Gazette Vol. 128, No. 37 (Page 42)</strong> published on 11 Sep 2026. Review the notice immediately to verify whether a provisional certificate or succession notice affects your property.</p>
+        </div>
+        <a th:href="@{/client/matches/show/1042}" class="dk-btn dk-btn--primary dk-btn--sm">Inspect Notice &rarr;</a>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="dk-stat-grid">
+        <div class="dk-stat-card">
+            <span class="dk-stat-card__label">Active Keywords</span>
+            <div class="dk-stat-card__value">3 <span class="dk-stat-card__unit">/ 5</span></div>
+            <span class="dk-stat-card__hint">2 slots available on Landlord Pro</span>
+        </div>
+
+        <div class="dk-stat-card dk-stat-card--highlight">
+            <span class="dk-stat-card__label">Verified Alerts</span>
+            <div class="dk-stat-card__value">1</div>
+            <span class="dk-stat-card__hint">Sent via Email &amp; SMS on 11 Sep 2026</span>
+        </div>
+
+        <div class="dk-stat-card">
+            <span class="dk-stat-card__label">Latest Issue Scanned</span>
+            <div class="dk-stat-card__value dk-stat-card__value--sm">Vol. 128, No. 37</div>
+            <span class="dk-stat-card__hint">Published 11 Sep 2026 &middot; 84 pages</span>
+        </div>
+
+        <div class="dk-stat-card">
+            <span class="dk-stat-card__label">Days Left on Plan</span>
+            <div class="dk-stat-card__value dk-stat-card__value--amber">40</div>
+            <span class="dk-stat-card__hint">Expires 15 Dec 2026</span>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dk-dash-grid">
+
+        <!-- Left Column: Recent Verified Alerts & Watched Keywords -->
+        <div class="dk-dash-col">
+
+            <!-- Verified Alerts Card -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <div>
+                        <h2 class="dk-panel__title">Recent Gazette Alerts</h2>
+                        <p class="dk-panel__subtitle">Verified appearances of your watched keywords in the Kenya Gazette</p>
+                    </div>
+                    <a th:href="@{/client/matches}" class="dk-btn dk-btn--outline dk-btn--sm">View All Alerts</a>
+                </div>
+
+                <div class="dk-panel__body">
+                    <div class="dk-match-item">
+                        <div class="dk-match-item__top">
+                            <div class="dk-match-item__title-group">
+                                <span class="dk-pill dk-pill--emerald">Verified Match</span>
+                                <span class="dk-pill dk-pill--muted">Title / LR Number</span>
+                                <strong class="dk-match-item__keyword">LR No. 209/1145</strong>
+                            </div>
+                            <span class="dk-match-item__date">11 Sep 2026 &middot; Vol. 128, No. 37, Page 42</span>
+                        </div>
+
+                        <blockquote class="dk-match-item__excerpt">
+                            &ldquo;&hellip;WHEREAS <mark>LR No. 209/1145</mark>, situated in the City of Nairobi, registered in the name of Peter Mwangi, is reported lost, notice is given that after the expiration of sixty (60) days from the date hereof, the Land Registrar shall issue a provisional certificate of title unless a valid objection is lodged&hellip;&rdquo;
+                        </blockquote>
+
+                        <div class="dk-match-item__footer">
+                            <div class="dk-match-item__channels">
+                                <span class="dk-channel-tag">&#9993; Email PDF Sent</span>
+                                <span class="dk-channel-tag">&#128241; SMS Alert Sent</span>
+                            </div>
+                            <div class="dk-match-item__actions">
+                                <a th:href="@{/client/matches/show/1042}" class="dk-btn dk-btn--primary dk-btn--sm">View Full Gazette Page</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watched Keywords Table -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <div>
+                        <h2 class="dk-panel__title">Watched Keywords</h2>
+                        <p class="dk-panel__subtitle">Using 3 of 5 active keyword slots (1 paused)</p>
+                    </div>
+                    <a th:href="@{/client/keywords}" class="dk-btn dk-btn--outline dk-btn--sm">Manage Keywords</a>
+                </div>
+
+                <div class="dk-table-wrap">
+                    <table class="dk-table">
+                        <thead>
+                        <tr>
+                            <th>Keyword</th>
+                            <th>Type</th>
+                            <th>Matching Mode</th>
+                            <th>Status</th>
+                            <th>Alerts</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><strong class="dk-text-white">LR No. 209/1145</strong></td>
+                            <td>Title / LR Number</td>
+                            <td><span class="dk-pill dk-pill--blue" title="Automatically set for Title/LR Numbers">Exact (Auto)</span></td>
+                            <td><span class="dk-pill dk-pill--emerald">Active</span></td>
+                            <td><a th:href="@{/client/matches/show/1042}" class="dk-link-accent">1 match</a></td>
+                            <td class="dk-table__actions">
+                                <a th:href="@{/client/keywords}" class="dk-btn dk-btn--outline dk-btn--xs">Manage</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong class="dk-text-white">Peter Mwangi</strong></td>
+                            <td>Name</td>
+                            <td><span class="dk-pill dk-pill--purple" title="Automatically set for Names to catch spelling variations">Fuzzy (Auto)</span></td>
+                            <td><span class="dk-pill dk-pill--emerald">Active</span></td>
+                            <td class="dk-text-muted">0</td>
+                            <td class="dk-table__actions">
+                                <a th:href="@{/client/keywords}" class="dk-btn dk-btn--outline dk-btn--xs">Manage</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong class="dk-text-white">28451976</strong></td>
+                            <td>National ID</td>
+                            <td><span class="dk-pill dk-pill--blue" title="Automatically set for National IDs">Exact (Auto)</span></td>
+                            <td><span class="dk-pill dk-pill--emerald">Active</span></td>
+                            <td class="dk-text-muted">0</td>
+                            <td class="dk-table__actions">
+                                <a th:href="@{/client/keywords}" class="dk-btn dk-btn--outline dk-btn--xs">Manage</a>
+                            </td>
+                        </tr>
+                        <tr class="dk-table__row--muted">
+                            <td><strong>Mwangi Holdings Ltd</strong></td>
+                            <td>Name</td>
+                            <td><span class="dk-pill dk-pill--muted">Fuzzy (Auto)</span></td>
+                            <td><span class="dk-pill dk-pill--muted">Paused</span></td>
+                            <td class="dk-text-muted">0</td>
+                            <td class="dk-table__actions">
+                                <a th:href="@{/client/keywords}" class="dk-btn dk-btn--outline dk-btn--xs">Resume</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Subscription, Delivery Channels & Guidance -->
+        <div class="dk-dash-side">
+
+            <!-- Subscription Card -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <h2 class="dk-panel__title">Current Plan</h2>
+                    <span class="dk-pill dk-pill--emerald">Active</span>
+                </div>
+                <div class="dk-panel__body">
+                    <dl class="dk-kv-list">
+                        <div class="dk-kv-list__row">
+                            <dt>Plan</dt>
+                            <dd><strong>Landlord Pro</strong></dd>
+                        </div>
+                        <div class="dk-kv-list__row">
+                            <dt>Annual Fee</dt>
+                            <dd>KES 4,500 / year</dd>
+                        </div>
+                        <div class="dk-kv-list__row">
+                            <dt>Billing Period</dt>
+                            <dd>15 Dec 2025 &ndash; 15 Dec 2026</dd>
+                        </div>
+                        <div class="dk-kv-list__row">
+                            <dt>Keyword Quota</dt>
+                            <dd>3 of 5 active</dd>
+                        </div>
+                    </dl>
+                    <div class="dk-panel__actions">
+                        <a th:href="@{/client/subscription}" class="dk-btn dk-btn--primary dk-btn--sm dk-btn--block">Extend or Upgrade Plan</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert Channels Card -->
+            <div class="dk-panel">
+                <div class="dk-panel__header">
+                    <h2 class="dk-panel__title">Alert Channels</h2>
+                    <a th:href="@{/client/settings}" class="dk-link-accent" style="font-size:.82rem;">Edit</a>
+                </div>
+                <div class="dk-panel__body">
+                    <div class="dk-channel-list">
+                        <div class="dk-channel-item">
+                            <div>
+                                <strong class="dk-text-white">Email + PDF Page</strong>
+                                <p>peter@example.com</p>
+                            </div>
+                            <span class="dk-pill dk-pill--emerald">Verified</span>
+                        </div>
+                        <div class="dk-channel-item">
+                            <div>
+                                <strong class="dk-text-white">Instant SMS Alert</strong>
+                                <p>+254 712 345 678</p>
+                            </div>
+                            <span class="dk-pill dk-pill--emerald">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fraud Prevention Checklist Card -->
+            <div class="dk-panel dk-panel--subtle">
+                <div class="dk-panel__header">
+                    <h2 class="dk-panel__title">What to Watch</h2>
+                </div>
+                <div class="dk-panel__body">
+                    <ul class="dk-tip-list">
+                        <li><strong>Title / LR Number:</strong> Add exact parcel numbers (e.g., <code>LR No. 209/1145</code> or <code>KJD/Kiserian/4812</code>) to catch lost-deed &amp; conversion notices.</li>
+                        <li><strong>Owner Full Name:</strong> Automatically uses fuzzy matching to catch typographical variations in succession &amp; auction notices.</li>
+                        <li><strong>National ID Number:</strong> Catches notices that list the proprietor's ID alongside the land parcel.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

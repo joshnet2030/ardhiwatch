@@ -3,33 +3,53 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <script th:src="@{/js/htmx.min.js}"></script>
+    <meta name="description" content="Dokezo watches every Kenya Gazette issue and alerts you instantly when your name, title number, or ID is mentioned — protecting your land from fraud."/>
     <title>Dokezo — Know when your land is mentioned in the Kenya Gazette</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <script th:src="@{/js/htmx.min.js}" defer></script>
 </head>
 <body>
+
 <!-- Navbar -->
-<nav class="navbar navbar-dark bg-dark px-3">
-    <a href="/" class="navbar-brand mb-0 h1">Dokezo</a>
-    <div>
-        <a href="/#how-it-works" class="btn btn-link text-white text-decoration-none">How it works</a>
-        <a href="/#pricing" class="btn btn-link text-white text-decoration-none">Pricing</a>
-        <a href="/#faq" class="btn btn-link text-white text-decoration-none me-2">FAQ</a>
-        <a href="/login" class="btn btn-outline-light btn-sm me-1">Log In</a>
-        <a href="signup" class="btn btn-primary btn-sm">Sign Up</a>
+<nav class="dk-nav">
+    <a href="/" class="dk-nav__brand">Doke<span>zo</span></a>
+    <div class="dk-nav__links">
+        <a href="/#how-it-works" class="dk-link">How it works</a>
+        <a href="/#pricing" class="dk-link">Pricing</a>
+        <a href="/#faq" class="dk-link">FAQ</a>
+        <a href="/login" class="dk-btn dk-btn--outline" style="margin-left:.5rem;">Log In</a>
+        <a href="/signup" class="dk-btn dk-btn--primary">Sign Up</a>
     </div>
 </nav>
-<!-- Hero -->
+
+<!-- Page content injected here -->
 <th:block layout:fragment="content"></th:block>
+
 <!-- Footer -->
-<footer class="py-4 bg-dark border-top border-secondary text-center text-secondary small">
-    <div class="container">
-        <p class="mb-1">&copy; Dokezo. All rights reserved.</p>
-        <a href="/terms" class="text-secondary me-3">Terms of Service</a>
-        <a href="/privacy-policy" class="text-secondary me-3">Privacy Policy</a>
-        <a href="/contact-us" class="text-secondary">Contact</a>
-    </div>
+<footer class="dk-footer">
+    <p style="margin:0 0 .5rem;">&copy; 2025 Dokezo. All rights reserved.</p>
+    <a href="/terms">Terms of Service</a>
+    <a href="/privacy-policy">Privacy Policy</a>
+    <a href="/contact-us">Contact</a>
 </footer>
+
+<!-- FAQ accordion script -->
+<script>
+    document.querySelectorAll('.dk-faq__q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.closest('.dk-faq');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.dk-faq').forEach(f => f.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        });
+    });
+
+    // Scroll-triggered fade-up animations
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
 </body>
 </html>
-
