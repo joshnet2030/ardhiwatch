@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,34 +10,97 @@
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Subscription Plans</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Landlord Pro</li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/subscriptions}">Subscription Plans</a></li>
+            <li class="breadcrumb-item active" aria-current="page"
+                th:text="${plan != null ? plan.name : 'Landlord Pro'}">Landlord Pro</li>
         </ol>
     </nav>
 
     <!-- Record header -->
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
         <div>
-            <h2 class="mb-1">Landlord Pro</h2>
+            <h2 class="mb-1" th:text="${plan != null ? plan.name : 'Landlord Pro'}">Landlord Pro</h2>
             <p class="text-muted mb-0">
-                KES 4,500 per year &middot; up to 5 keywords
-                <span class="badge bg-success ms-2">On Sale</span>
+                <span th:text="${plan != null and plan.priceKes != null ? 'KES ' + #numbers.formatDecimal(plan.priceKes, 1, 'COMMA', 2, 'POINT') + ' (' + plan.billingPeriod + ')' : 'KES 4,500 per year'}">KES 4,500 per year</span>
+                &middot;
+                up to <span th:text="${plan != null ? plan.keywordLimit : 5}">5</span> keyword(s)
+                <span th:if="${plan == null or plan.active}" class="badge bg-success ms-2">On Sale</span>
+                <span th:if="${plan != null and !plan.active}" class="badge bg-secondary ms-2">Retired</span>
             </p>
         </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="#" class="btn btn-outline-secondary">Edit</a>
-            <a href="#" class="btn btn-outline-danger">Retire</a>
+        <div class="d-flex flex-wrap gap-2" th:if="${plan != null}">
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    th:attr="hx-get=@{/admin/subscriptions/modal/edit/{id}(id=${plan.id})}"
+                    hx-target="#planModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#planModal">
+                Edit
+            </button>
+            <button type="button"
+                    th:if="${plan.active}"
+                    class="btn btn-outline-danger"
+                    th:attr="hx-get=@{/admin/subscriptions/modal/status/{id}(id=${plan.id})}"
+                    hx-target="#planModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#planModal">
+                Retire
+            </button>
+            <button type="button"
+                    th:unless="${plan.active}"
+                    class="btn btn-outline-success"
+                    th:attr="hx-get=@{/admin/subscriptions/modal/status/{id}(id=${plan.id})}"
+                    hx-target="#planModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#planModal">
+                Put Back on Sale
+            </button>
         </div>
     </div>
 
     <!-- Tab navigation -->
     <ul class="nav nav-tabs mb-4">
-        <li  class="nav-item"><a th:classappend="${currentTab == 'overview'}? 'active'" class="nav-link" th:href="@{/admin/subscriptions/show/123}">Overview</a></li>
-        <li  class="nav-item"><a th:classappend="${currentTab == 'clients'}? 'active'" class="nav-link" th:href="@{/admin/subscriptions/show/123/clients}">Clients <span class="badge bg-secondary ms-1">47</span></a></li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'overview'} ? 'active'"
+               class="nav-link"
+               th:href="${plan != null} ? @{/admin/subscriptions/show/{id}(id=${plan.id})} : '#'">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'clients'} ? 'active'"
+               class="nav-link"
+               th:href="${plan != null} ? @{/admin/subscriptions/show/{id}/clients(id=${plan.id})} : '#'">
+                Clients <span class="badge bg-secondary ms-1">0</span>
+            </a>
+        </li>
     </ul>
 
     <!-- Tab content goes here -->
     <div layout:fragment="tab"></div>
+
+    <!-- Bootstrap 5 Modal Shell populated dynamically via HTMX -->
+    <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="planModalDialog">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4 text-muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.body.addEventListener('planSaved', function () {
+            var modalEl = document.getElementById('planModal');
+            if (modalEl && window.bootstrap) {
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+            window.location.reload();
+        });
+    </script>
 
 </div>
 </body>

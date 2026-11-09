@@ -1,6 +1,5 @@
-
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/subscriptions/record.html}">
+<html lang="en" layout:decorate="~{admin/subscriptions/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Subscription Plan &ndash; Overview</title>
@@ -12,25 +11,25 @@
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Active Clients</p>
-                <h3 class="card-text">41</h3>
+                <h3 class="card-text">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Expiring in 30 Days</p>
-                <h3 class="card-text text-warning">6</h3>
+                <h3 class="card-text text-warning">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Expired</p>
-                <h3 class="card-text text-danger">6</h3>
+                <h3 class="card-text text-danger">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Keywords in Use</p>
-                <h3 class="card-text">118</h3>
+                <h3 class="card-text">0</h3>
             </div></div>
         </div>
     </div>
@@ -40,17 +39,27 @@
         <div class="card-body">
             <dl class="row mb-0">
                 <dt class="col-sm-3">Name</dt>
-                <dd class="col-sm-9">Landlord Pro</dd>
+                <dd class="col-sm-9" th:text="${plan != null ? plan.name : 'Landlord Pro'}">Landlord Pro</dd>
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9" th:text="${plan != null and plan.description != null ? plan.description : '—'}">—</dd>
                 <dt class="col-sm-3">Price</dt>
-                <dd class="col-sm-9">KES 4,500</dd>
+                <dd class="col-sm-9"
+                    th:text="${plan != null and plan.priceKes != null ? 'KES ' + #numbers.formatDecimal(plan.priceKes, 1, 'COMMA', 2, 'POINT') : 'KES 4,500.00'}">KES 4,500.00</dd>
                 <dt class="col-sm-3">Billing Period</dt>
-                <dd class="col-sm-9">Annual</dd>
+                <dd class="col-sm-9" th:text="${plan != null ? plan.billingPeriod : 'Annual'}">Annual</dd>
                 <dt class="col-sm-3">Keyword Limit</dt>
-                <dd class="col-sm-9">5</dd>
+                <dd class="col-sm-9" th:text="${plan != null ? plan.keywordLimit : 5}">5</dd>
                 <dt class="col-sm-3">Available to New Clients</dt>
-                <dd class="col-sm-9"><span class="badge bg-success">Yes</span></dd>
+                <dd class="col-sm-9">
+                    <span th:if="${plan == null or plan.active}" class="badge bg-success">Yes (On Sale)</span>
+                    <span th:if="${plan != null and !plan.active}" class="badge bg-secondary">No (Retired)</span>
+                    <span th:if="${plan != null and !plan.active and plan.deactivationMemo != null}"
+                          class="text-muted small ms-2"
+                          th:text="'(' + ${plan.deactivationMemo} + ')'"></span>
+                </dd>
                 <dt class="col-sm-3">Created</dt>
-                <dd class="col-sm-9">2026-01-10</dd>
+                <dd class="col-sm-9"
+                    th:text="${plan != null and plan.createdAt != null ? #temporals.format(plan.createdAt, 'yyyy-MM-dd HH:mm') : '2026-01-10'}">2026-01-10</dd>
             </dl>
         </div>
         <div class="card-footer text-muted small">

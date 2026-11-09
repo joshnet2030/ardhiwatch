@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,103 +10,152 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Subscription Plans</h2>
-        <a href="#" class="btn btn-primary">Create Plan</a>
+        <button type="button"
+                class="btn btn-primary"
+                hx-get="/admin/subscriptions/modal/create"
+                hx-target="#planModalDialog"
+                hx-swap="innerHTML"
+                data-bs-toggle="modal"
+                data-bs-target="#planModal">
+            Create Plan
+        </button>
     </div>
 
-    <div class="row mb-4 g-3">
-        <div class="col-6 col-md-3">
-            <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Plans on Sale</p><h3 class="card-text">3</h3>
-            </div></div>
+    <!-- Reactive stats + table container refreshed whenever planSaved event triggers -->
+    <div id="plans-list-section"
+         hx-get="/admin/subscriptions/table"
+         hx-trigger="planSaved from:body"
+         hx-swap="outerHTML"
+         th:fragment="plansListSection">
+
+        <div class="row mb-4 g-3">
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100"><div class="card-body">
+                    <p class="card-title text-muted mb-1">Plans on Sale</p>
+                    <h3 class="card-text" th:text="${activePlansCount != null ? activePlansCount : 0}">3</h3>
+                </div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100"><div class="card-body">
+                    <p class="card-title text-muted mb-1">Retired Plans</p>
+                    <h3 class="card-text text-secondary" th:text="${retiredPlansCount != null ? retiredPlansCount : 0}">1</h3>
+                </div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100"><div class="card-body">
+                    <p class="card-title text-muted mb-1">Active Subscribers</p>
+                    <h3 class="card-text">0</h3>
+                </div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center h-100"><div class="card-body">
+                    <p class="card-title text-muted mb-1">Expiring in 30 Days</p>
+                    <h3 class="card-text text-warning">0</h3>
+                </div></div>
+            </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Active Subscribers</p><h3 class="card-text">104</h3>
-            </div></div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Expiring in 30 Days</p><h3 class="card-text text-warning">9</h3>
-            </div></div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Pending Payment</p><h3 class="card-text">3</h3>
-            </div></div>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>All Plans</span>
+                <span class="text-muted small" th:text="${plans != null ? #lists.size(plans) + ' plan(s)' : '0 plans'}">0 plans</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th class="text-end">Price (KES)</th>
+                        <th>Billing</th>
+                        <th>Keywords</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(plans)}">
+                        <td colspan="6" class="text-center text-muted py-4">No subscription plans created yet. Click "Create Plan" to add one.</td>
+                    </tr>
+                    <tr th:each="plan : ${plans}" th:classappend="${!plan.active} ? 'table-secondary'">
+                        <td>
+                            <a th:href="@{/admin/subscriptions/show/{id}(id=${plan.id})}"
+                               class="fw-semibold"
+                               th:text="${plan.name}">Basic</a>
+                            <div th:if="${plan.description != null and !#strings.isEmpty(plan.description)}"
+                                 class="text-muted small"
+                                 th:text="${plan.description}"></div>
+                        </td>
+                        <td class="text-end"
+                            th:text="${plan.priceKes != null ? #numbers.formatDecimal(plan.priceKes, 1, 'COMMA', 2, 'POINT') : '0.00'}">1,500.00</td>
+                        <td th:text="${plan.billingPeriod}">Annual</td>
+                        <td th:text="${plan.keywordLimit}">1</td>
+                        <td>
+                            <span th:if="${plan.active}" class="badge bg-success">On Sale</span>
+                            <span th:unless="${plan.active}" class="badge bg-secondary">Retired</span>
+                            <div th:if="${!plan.active and plan.deactivationMemo != null}"
+                                 class="text-muted small mt-1"
+                                 th:text="${plan.deactivationMemo}"></div>
+                        </td>
+                        <td class="text-nowrap text-end">
+                            <a th:href="@{/admin/subscriptions/show/{id}(id=${plan.id})}"
+                               class="btn btn-sm btn-outline-primary">View</a>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    th:attr="hx-get=@{/admin/subscriptions/modal/edit/{id}(id=${plan.id})}"
+                                    hx-target="#planModalDialog"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#planModal">
+                                Edit
+                            </button>
+                            <button type="button"
+                                    th:if="${plan.active}"
+                                    class="btn btn-sm btn-outline-danger"
+                                    th:attr="hx-get=@{/admin/subscriptions/modal/status/{id}(id=${plan.id})}"
+                                    hx-target="#planModalDialog"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#planModal">
+                                Retire
+                            </button>
+                            <button type="button"
+                                    th:unless="${plan.active}"
+                                    class="btn btn-sm btn-outline-success"
+                                    th:attr="hx-get=@{/admin/subscriptions/modal/status/{id}(id=${plan.id})}"
+                                    hx-target="#planModalDialog"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#planModal">
+                                Put Back on Sale
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header">All Plans</div>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover mb-0 align-middle">
-                <thead>
-                <tr>
-                    <th>Plan</th>
-                    <th class="text-end">Price (KES)</th>
-                    <th>Billing</th>
-                    <th>Keywords</th>
-                    <th>Active Clients</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><a href="#">Basic</a></td>
-                    <td class="text-end">1,500.00</td>
-                    <td>Annual</td>
-                    <td>1</td>
-                    <td>52</td>
-                    <td><span class="badge bg-success">On Sale</span></td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/subscriptions/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Retire</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td><a href="#">Landlord Pro</a></td>
-                    <td class="text-end">4,500.00</td>
-                    <td>Annual</td>
-                    <td>5</td>
-                    <td>41</td>
-                    <td><span class="badge bg-success">On Sale</span></td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/subscriptions/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Retire</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td><a href="#">Portfolio</a></td>
-                    <td class="text-end">12,000.00</td>
-                    <td>Annual</td>
-                    <td>20</td>
-                    <td>11</td>
-                    <td><span class="badge bg-success">On Sale</span></td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/subscriptions/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Retire</a>
-                    </td>
-                </tr>
-                <tr class="table-secondary">
-                    <td><a href="#">Starter (2025)</a></td>
-                    <td class="text-end">900.00</td>
-                    <td>Annual</td>
-                    <td>1</td>
-                    <td>0</td>
-                    <td><span class="badge bg-secondary">Retired</span></td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/subscriptions/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-success">Put Back on Sale</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <!-- Bootstrap 5 Modal Shell populated dynamically via HTMX -->
+    <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="planModalDialog">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4 text-muted">Loading...</div>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.body.addEventListener('planSaved', function () {
+            var modalEl = document.getElementById('planModal');
+            if (modalEl && window.bootstrap) {
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+        });
+    </script>
 
 </div>
 </body>

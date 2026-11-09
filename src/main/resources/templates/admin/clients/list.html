@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,46 +10,75 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Clients</h2>
-        <a href="#" class="btn btn-primary">Add Client</a>
+        <button type="button"
+                class="btn btn-primary"
+                hx-get="/admin/clients/modal/create"
+                hx-target="#clientModalDialog"
+                hx-swap="innerHTML"
+                data-bs-toggle="modal"
+                data-bs-target="#clientModal">
+            Add Client
+        </button>
     </div>
 
     <div class="card mb-4">
         <div class="card-body">
-            <form action="#" method="get" class="row g-3 align-items-end">
+            <form th:action="@{/admin/clients}"
+                  method="get"
+                  hx-get="/admin/clients/table"
+                  hx-target="#clients-table-card"
+                  hx-swap="outerHTML"
+                  class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label for="q" class="form-label">Search</label>
-                    <input type="text" id="q" name="q" class="form-control" placeholder="Name, email or phone">
+                    <input type="text"
+                           id="q"
+                           name="q"
+                           th:value="${q}"
+                           class="form-control"
+                           placeholder="Name, email or phone">
                 </div>
                 <div class="col-md-3">
-                    <label for="subscription" class="form-label">Subscription</label>
-                    <select id="subscription" name="subscription" class="form-select">
-                        <option value="" selected>Any</option>
-                        <option value="active">Active</option>
-                        <option value="expiring">Expiring in 30 days</option>
-                        <option value="expired">Expired</option>
-                        <option value="none">None</option>
+                    <label for="status" class="form-label">Status</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="" th:selected="${selectedStatus == null or selectedStatus == ''}">Any</option>
+                        <option value="active" th:selected="${selectedStatus == 'active'}">Active</option>
+                        <option value="suspended" th:selected="${selectedStatus == 'suspended'}">Suspended</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="verified" class="form-label">Email Verified</label>
                     <select id="verified" name="verified" class="form-select">
-                        <option value="" selected>Any</option>
-                        <option value="yes">Verified</option>
-                        <option value="no">Not verified</option>
+                        <option value="" th:selected="${selectedVerified == null or selectedVerified == ''}">Any</option>
+                        <option value="yes" th:selected="${selectedVerified == 'yes'}">Verified</option>
+                        <option value="no" th:selected="${selectedVerified == 'no'}">Not verified</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
-                    <a href="#" class="btn btn-link">Reset</a>
+                    <a th:href="@{/admin/clients}" class="btn btn-link">Reset</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-4"
+         id="clients-table-card"
+         hx-get="/admin/clients/table"
+         hx-trigger="clientSaved from:body"
+         hx-swap="outerHTML"
+         th:fragment="clientsTableCard">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>All Clients</span>
-            <span class="text-muted small">Showing 1&ndash;4 of 128</span>
+            <span class="text-muted small"
+                  th:if="${clientsPage != null and clientsPage.totalElements > 0}"
+                  th:text="'Showing ' + (${clientsPage.number * clientsPage.size + 1}) + '–' + (${clientsPage.number * clientsPage.size + clientsPage.numberOfElements}) + ' of ' + ${clientsPage.totalElements}">
+                Showing 1–1 of 1
+            </span>
+            <span class="text-muted small"
+                  th:if="${clientsPage == null or clientsPage.totalElements == 0}">
+                0 clients
+            </span>
         </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0 align-middle">
@@ -58,90 +87,127 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Plan</th>
-                    <th>Keywords</th>
-                    <th>Alerts</th>
+                    <th>Active Keywords</th>
                     <th>Status</th>
                     <th>Joined</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td><a href="#">Peter Mwangi</a></td>
-                    <td>peter@example.com <span class="badge bg-success">Verified</span></td>
-                    <td>+254 712 345 678</td>
-                    <td>Landlord Pro<br><span class="text-muted small">to 2026-12-15</span></td>
-                    <td>3 / 5</td>
-                    <td>2</td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>2026-03-02</td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/clients/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Suspend</a>
-                    </td>
+                <tr th:if="${#lists.isEmpty(clients)}">
+                    <td colspan="7" class="text-center text-muted py-4">No clients found. Click "Add Client" to create one.</td>
                 </tr>
-                <tr>
-                    <td><a href="#">Grace Wanjiru</a></td>
-                    <td>grace@example.com <span class="badge bg-success">Verified</span></td>
-                    <td>+254 722 111 222</td>
-                    <td>Basic<br><span class="text-muted small">to 2026-11-20</span></td>
-                    <td>1 / 1</td>
-                    <td>1</td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>2026-04-18</td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/clients/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Suspend</a>
+                <tr th:each="c : ${clients}" th:classappend="${!c.active} ? 'table-secondary'">
+                    <td>
+                        <a th:href="@{/admin/clients/show/{id}(id=${c.id})}"
+                           class="fw-semibold"
+                           th:text="${c.fullName}">Peter Mwangi</a>
                     </td>
-                </tr>
-                <tr>
-                    <td><a href="#">Samuel Otieno</a></td>
-                    <td>samuel@example.com <span class="badge bg-warning text-dark">Unverified</span></td>
-                    <td>+254 733 987 654</td>
-                    <td class="text-muted">None</td>
-                    <td>0 / &mdash;</td>
-                    <td>0</td>
-                    <td><span class="badge bg-secondary">Inactive</span></td>
-                    <td>2026-10-29</td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/clients/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Suspend</a>
+                    <td>
+                        <span th:text="${c.email}">peter@example.com</span>
+                        <span th:if="${c.emailVerified}" class="badge bg-success ms-1">Verified</span>
+                        <span th:unless="${c.emailVerified}" class="badge bg-warning text-dark ms-1">Unverified</span>
                     </td>
-                </tr>
-                <tr class="table-secondary">
-                    <td><a href="#">Amina Hassan</a></td>
-                    <td>amina@example.com <span class="badge bg-success">Verified</span></td>
-                    <td>+254 701 555 444</td>
-                    <td>Landlord Pro<br><span class="text-muted small">expired 2026-09-30</span></td>
-                    <td>0 / 5</td>
-                    <td>1</td>
-                    <td><span class="badge bg-danger">Suspended</span></td>
-                    <td>2025-12-11</td>
-                    <td class="text-nowrap">
-                        <a th:href="@{/admin/clients/show/123}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-success">Reinstate</a>
+                    <td th:text="${c.phone != null ? c.phone : '—'}">+254 712 345 678</td>
+                    <td th:text="${keywordCounts != null and keywordCounts.containsKey(c.id) ? keywordCounts.get(c.id) : 0}">0</td>
+                    <td>
+                        <span th:if="${c.active}" class="badge bg-success">Active</span>
+                        <span th:unless="${c.active}" class="badge bg-danger">Suspended</span>
+                    </td>
+                    <td th:text="${c.createdAt != null ? #temporals.format(c.createdAt, 'yyyy-MM-dd') : '—'}">2026-03-02</td>
+                    <td class="text-nowrap text-end">
+                        <a th:href="@{/admin/clients/show/{id}(id=${c.id})}" class="btn btn-sm btn-outline-primary">View</a>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-secondary"
+                                th:attr="hx-get=@{/admin/clients/modal/edit/{id}(id=${c.id})}"
+                                hx-target="#clientModalDialog"
+                                hx-swap="innerHTML"
+                                data-bs-toggle="modal"
+                                data-bs-target="#clientModal">
+                            Edit
+                        </button>
+                        <button type="button"
+                                th:if="${c.active}"
+                                class="btn btn-sm btn-outline-danger"
+                                th:attr="hx-get=@{/admin/clients/modal/status/{id}(id=${c.id})}"
+                                hx-target="#clientModalDialog"
+                                hx-swap="innerHTML"
+                                data-bs-toggle="modal"
+                                data-bs-target="#clientModal">
+                            Suspend
+                        </button>
+                        <button type="button"
+                                th:unless="${c.active}"
+                                class="btn btn-sm btn-outline-success"
+                                th:attr="hx-get=@{/admin/clients/modal/status/{id}(id=${c.id})}"
+                                hx-target="#clientModalDialog"
+                                hx-swap="innerHTML"
+                                data-bs-toggle="modal"
+                                data-bs-target="#clientModal">
+                            Reinstate
+                        </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
-            <nav>
+        <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2"
+             th:if="${clientsPage != null}">
+            <span class="text-muted small"
+                  th:text="'Page ' + (${clientsPage.number + 1}) + ' of ' + (${clientsPage.totalPages > 0 ? clientsPage.totalPages : 1})">
+                Page 1 of 1
+            </span>
+            <nav aria-label="Clients pagination">
                 <ul class="pagination pagination-sm mb-0 justify-content-end">
-                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    <li class="page-item" th:classappend="${clientsPage.first} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/clients(q=${q}, verified=${selectedVerified}, status=${selectedStatus}, page=${clientsPage.number - 1})}"
+                           th:attr="hx-get=@{/admin/clients/table(q=${q}, verified=${selectedVerified}, status=${selectedStatus}, page=${clientsPage.number - 1})}"
+                           hx-target="#clients-table-card"
+                           hx-swap="outerHTML">Previous</a>
+                    </li>
+                    <li class="page-item"
+                        th:each="pageIdx : ${#numbers.sequence(0, (clientsPage.totalPages > 0 ? clientsPage.totalPages - 1 : 0))}"
+                        th:classappend="${pageIdx == clientsPage.number} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/clients(q=${q}, verified=${selectedVerified}, status=${selectedStatus}, page=${pageIdx})}"
+                           th:attr="hx-get=@{/admin/clients/table(q=${q}, verified=${selectedVerified}, status=${selectedStatus}, page=${pageIdx})}"
+                           hx-target="#clients-table-card"
+                           hx-swap="outerHTML"
+                           th:text="${pageIdx + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${clientsPage.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/clients(q=${q}, verified=${selectedVerified}, status=${selectedStatus}, page=${clientsPage.number + 1})}"
+                           th:attr="hx-get=@{/admin/clients/table(q=${q}, verified=${selectedVerified}, status=${selectedStatus}, page=${clientsPage.number + 1})}"
+                           hx-target="#clients-table-card"
+                           hx-swap="outerHTML">Next</a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </div>
+
+    <!-- Bootstrap 5 Modal Shell populated dynamically via HTMX -->
+    <div class="modal fade" id="clientModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="clientModalDialog">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4 text-muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.body.addEventListener('clientSaved', function () {
+            var modalEl = document.getElementById('clientModal');
+            if (modalEl && window.bootstrap) {
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+        });
+    </script>
 
 </div>
 </body>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/clients/record.html}">
+<html lang="en" layout:decorate="~{admin/clients/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Client &ndash; Overview</title>
@@ -11,26 +11,26 @@
     <div class="row mb-4 g-3">
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Keywords</p>
-                <h3 class="card-text">3 / 5</h3>
+                <p class="card-title text-muted mb-1">Active Keywords</p>
+                <h3 class="card-text" th:text="${activeKeywordsCount != null ? activeKeywordsCount : 0}">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Alerts Received</p>
-                <h3 class="card-text">2</h3>
+                <h3 class="card-text">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Total Paid</p>
-                <h3 class="card-text">KES 9,000</h3>
+                <h3 class="card-text">KES 0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Days Left on Plan</p>
-                <h3 class="card-text text-warning">40</h3>
+                <h3 class="card-text text-muted">&mdash;</h3>
             </div></div>
         </div>
     </div>
@@ -45,32 +45,52 @@
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Full Name</dt>
-                        <dd class="col-sm-8">Peter Mwangi</dd>
+                        <dd class="col-sm-8" th:text="${client != null ? client.fullName : 'Peter Mwangi'}">Peter Mwangi</dd>
                         <dt class="col-sm-4">Email</dt>
-                        <dd class="col-sm-8">peter@example.com <span class="badge bg-success">Verified</span></dd>
+                        <dd class="col-sm-8">
+                            <span th:text="${client != null ? client.email : 'peter@example.com'}">peter@example.com</span>
+                            <span th:if="${client == null or client.emailVerified}" class="badge bg-success ms-1">Verified</span>
+                            <span th:if="${client != null and !client.emailVerified}" class="badge bg-warning text-dark ms-1">Unverified</span>
+                        </dd>
                         <dt class="col-sm-4">Phone</dt>
-                        <dd class="col-sm-8">+254 712 345 678</dd>
-                        <dt class="col-sm-4">National ID</dt>
-                        <dd class="col-sm-8">28451976</dd>
+                        <dd class="col-sm-8" th:text="${client != null and client.phone != null ? client.phone : '+254 712 345 678'}">+254 712 345 678</dd>
                         <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
+                        <dd class="col-sm-8">
+                            <span th:if="${client == null or client.active}" class="badge bg-success">Active</span>
+                            <span th:if="${client != null and !client.active}" class="badge bg-danger">Suspended</span>
+                            <span th:if="${client != null and !client.active and client.deactivationMemo != null}"
+                                  class="text-muted small ms-2"
+                                  th:text="'(' + ${client.deactivationMemo} + ')'"></span>
+                        </dd>
                         <dt class="col-sm-4">Joined</dt>
-                        <dd class="col-sm-8">2026-03-02</dd>
+                        <dd class="col-sm-8" th:text="${client != null and client.createdAt != null ? #temporals.format(client.createdAt, 'yyyy-MM-dd HH:mm') : '2026-03-02'}">2026-03-02</dd>
                         <dt class="col-sm-4">Last Login</dt>
-                        <dd class="col-sm-8">2026-11-04 18:22</dd>
-                        <dt class="col-sm-4">Terms Accepted</dt>
-                        <dd class="col-sm-8">2026-03-02 10:14</dd>
+                        <dd class="col-sm-8" th:text="${client != null and client.lastLoginAt != null ? #temporals.format(client.lastLoginAt, 'yyyy-MM-dd HH:mm') : 'Never'}">Never</dd>
                     </dl>
                 </div>
             </div>
 
-            <div class="card mb-4">
+            <div class="card mb-4" id="internal-notes-card" th:fragment="internalNotesCard">
                 <div class="card-header">Internal Notes</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <div th:if="${notesSuccess}" class="alert alert-success py-2 mb-3" role="alert" th:text="${notesSuccess}"></div>
+                    <div th:if="${notesFailure}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${notesFailure}"></div>
+
+                    <form th:if="${client != null}"
+                          th:action="@{/admin/clients/show/{id}/notes(id=${client.id})}"
+                          method="post"
+                          th:attr="hx-post=@{/admin/clients/show/{id}/notes(id=${client.id})}"
+                          hx-target="#internal-notes-card"
+                          hx-swap="outerHTML">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <div class="mb-3">
-                            <label for="notes" class="form-label visually-hidden">Notes</label>
-                            <textarea id="notes" name="notes" class="form-control" rows="4" placeholder="Only admins can see these notes"></textarea>
+                            <label for="internalNotes" class="form-label visually-hidden">Notes</label>
+                            <textarea id="internalNotes"
+                                      name="internalNotes"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Only admins can see these notes"
+                                      th:text="${client.internalNotes}"></textarea>
                         </div>
                         <button type="submit" class="btn btn-sm btn-primary">Save Notes</button>
                     </form>
@@ -79,50 +99,48 @@
 
         </div>
 
-        <!-- Right: current plan and recent alerts -->
+        <!-- Right: watched keywords summary and subscription placeholder -->
         <div class="col-lg-6">
 
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Watched Keywords</span>
+                    <a th:if="${client != null}"
+                       th:href="@{/admin/clients/show/{id}/keywords(id=${client.id})}"
+                       class="btn btn-sm btn-outline-secondary">Manage Keywords</a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li th:if="${#lists.isEmpty(keywords)}" class="list-group-item text-muted small py-3">
+                        No keywords configured for this client yet.
+                    </li>
+                    <li th:each="kw : ${keywords}" class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong th:text="${kw.keyword}">LR No. 209/1145</strong>
+                            <div class="small text-muted" th:text="${kw.keywordType.label + ' · ' + kw.matchPrecision}">Title / LR Number · EXACT</div>
+                        </div>
+                        <div>
+                            <span th:if="${!kw.paused}" class="badge bg-success">Active</span>
+                            <span th:if="${kw.paused}" class="badge bg-secondary">Paused</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Current Subscription</span>
-                    <a href="#" class="btn btn-sm btn-outline-secondary">All Subscriptions</a>
+                    <a th:if="${client != null}"
+                       th:href="@{/admin/clients/show/{id}/subscriptions(id=${client.id})}"
+                       class="btn btn-sm btn-outline-secondary">All Subscriptions</a>
                 </div>
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Plan</dt>
-                        <dd class="col-sm-8">Landlord Pro</dd>
-                        <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8"><span class="badge bg-success">Active</span></dd>
-                        <dt class="col-sm-4">Period</dt>
-                        <dd class="col-sm-8">2025-12-15 to 2026-12-15</dd>
+                        <dd class="col-sm-8 text-muted">None assigned yet</dd>
                         <dt class="col-sm-4">Keywords</dt>
-                        <dd class="col-sm-8">3 of 5 used</dd>
+                        <dd class="col-sm-8" th:text="${(activeKeywordsCount != null ? activeKeywordsCount : 0) + ' active'}">0 active</dd>
                     </dl>
                 </div>
-                <div class="card-footer d-flex gap-2">
-                    <a href="#" class="btn btn-sm btn-outline-primary">Extend</a>
-                    <a href="#" class="btn btn-sm btn-outline-secondary">Change Plan</a>
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-header">Recent Alerts</div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <a href="#">LR No. 209/1145</a>
-                            <div class="small text-muted">Vol. 128 No. 37, page 42 &middot; 2026-09-11</div>
-                        </div>
-                        <span class="badge bg-success">Approved</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <a href="#">Peter Mwangi</a>
-                            <div class="small text-muted">Vol. 128 No. 33, page 12 &middot; 2026-08-14</div>
-                        </div>
-                        <span class="badge bg-danger">Rejected</span>
-                    </li>
-                </ul>
             </div>
 
         </div>

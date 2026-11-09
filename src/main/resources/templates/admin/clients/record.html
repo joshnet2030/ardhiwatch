@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{layouts/admin.html}">
+<html lang="en" layout:decorate="~{layouts/admin.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,38 +10,136 @@
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Clients</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Peter Mwangi</li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/clients}">Clients</a></li>
+            <li class="breadcrumb-item active" aria-current="page"
+                th:text="${client != null ? client.fullName : 'Peter Mwangi'}">Peter Mwangi</li>
         </ol>
     </nav>
 
     <!-- Record header -->
     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
         <div>
-            <h2 class="mb-1">Peter Mwangi</h2>
+            <h2 class="mb-1" th:text="${client != null ? client.fullName : 'Peter Mwangi'}">Peter Mwangi</h2>
             <p class="text-muted mb-0">
-                peter@example.com <span class="badge bg-success">Verified</span> &middot; +254 712 345 678
-                <span class="badge bg-success ms-2">Active</span>
+                <span th:text="${client != null ? client.email : 'peter@example.com'}">peter@example.com</span>
+                <span th:if="${client == null or client.emailVerified}" class="badge bg-success ms-1">Verified</span>
+                <span th:if="${client != null and !client.emailVerified}" class="badge bg-warning text-dark ms-1">Unverified</span>
+                &middot;
+                <span th:text="${client != null and client.phone != null ? client.phone : '+254 712 345 678'}">+254 712 345 678</span>
+                <span th:if="${client == null or client.active}" class="badge bg-success ms-2">Active</span>
+                <span th:if="${client != null and !client.active}" class="badge bg-danger ms-2">Suspended</span>
             </p>
         </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="#" class="btn btn-outline-secondary">Edit</a>
-            <a href="#" class="btn btn-outline-danger">Suspend</a>
+        <div class="d-flex flex-wrap gap-2" th:if="${client != null}">
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    th:attr="hx-get=@{/admin/clients/modal/edit/{id}(id=${client.id})}"
+                    hx-target="#clientModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#clientModal">
+                Edit
+            </button>
+            <button type="button"
+                    th:if="${client.active}"
+                    class="btn btn-outline-danger"
+                    th:attr="hx-get=@{/admin/clients/modal/status/{id}(id=${client.id})}"
+                    hx-target="#clientModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#clientModal">
+                Suspend
+            </button>
+            <button type="button"
+                    th:unless="${client.active}"
+                    class="btn btn-outline-success"
+                    th:attr="hx-get=@{/admin/clients/modal/status/{id}(id=${client.id})}"
+                    hx-target="#clientModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#clientModal">
+                Reinstate
+            </button>
         </div>
     </div>
 
     <!-- Tab navigation -->
     <ul class="nav nav-tabs mb-4">
-        <li class="nav-item"><a th:classappend="${currentTab == 'overview'}? 'active'" class="nav-link" th:href="@{/admin/clients/show/123}">Overview</a></li>
-        <li class="nav-item"><a th:classappend="${currentTab == 'keywords'}? 'active'" class="nav-link" th:href="@{/admin/clients/show/123/keywords}">Keywords <span class="badge bg-secondary ms-1">3</span></a></li>
-        <li class="nav-item"><a th:classappend="${currentTab == 'matches'}? 'active'" class="nav-link" th:href="@{/admin/clients/show/123/matches}">Matches <span class="badge bg-secondary ms-1">3</span></a></li>
-        <li class="nav-item"><a th:classappend="${currentTab == 'notifications'}? 'active'" class="nav-link" th:href="@{/admin/clients/show/123/notifications}">Notifications <span class="badge bg-secondary ms-1">4</span></a></li>
-        <li class="nav-item"><a th:classappend="${currentTab == 'subscriptions'}? 'active'" class="nav-link" th:href="@{/admin/clients/show/123/subscriptions}">Subscriptions <span class="badge bg-secondary ms-1">2</span></a></li>
-        <li class="nav-item"><a th:classappend="${currentTab == 'transactions'}? 'active'" class="nav-link" th:href="@{/admin/clients/show/123/transactions}">Transactions <span class="badge bg-secondary ms-1">4</span></a></li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'overview'} ? 'active'"
+               class="nav-link"
+               th:href="${client != null} ? @{/admin/clients/show/{id}(id=${client.id})} : '#'">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'keywords'} ? 'active'"
+               class="nav-link"
+               th:href="${client != null} ? @{/admin/clients/show/{id}/keywords(id=${client.id})} : '#'">
+                Keywords <span class="badge bg-secondary ms-1" th:text="${keywordsCount != null ? keywordsCount : 0}">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'matches'} ? 'active'"
+               class="nav-link"
+               th:href="${client != null} ? @{/admin/clients/show/{id}/matches(id=${client.id})} : '#'">
+                Matches <span class="badge bg-secondary ms-1">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'notifications'} ? 'active'"
+               class="nav-link"
+               th:href="${client != null} ? @{/admin/clients/show/{id}/notifications(id=${client.id})} : '#'">
+                Notifications <span class="badge bg-secondary ms-1">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'subscriptions'} ? 'active'"
+               class="nav-link"
+               th:href="${client != null} ? @{/admin/clients/show/{id}/subscriptions(id=${client.id})} : '#'">
+                Subscriptions <span class="badge bg-secondary ms-1">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:classappend="${currentTab == 'transactions'} ? 'active'"
+               class="nav-link"
+               th:href="${client != null} ? @{/admin/clients/show/{id}/transactions(id=${client.id})} : '#'">
+                Transactions <span class="badge bg-secondary ms-1">0</span>
+            </a>
+        </li>
     </ul>
 
     <!-- Tab content goes here -->
     <div layout:fragment="tab"></div>
+
+    <!-- Bootstrap 5 Modal Shell populated dynamically via HTMX -->
+    <div class="modal fade" id="clientModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="clientModalDialog">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4 text-muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.body.addEventListener('clientSaved', function () {
+            var modalEl = document.getElementById('clientModal');
+            if (modalEl && window.bootstrap) {
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+            window.location.reload();
+        });
+        document.body.addEventListener('keywordSaved', function () {
+            var modalEl = document.getElementById('clientModal');
+            if (modalEl && window.bootstrap) {
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+        });
+    </script>
 
 </div>
 </body>

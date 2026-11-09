@@ -47,5 +47,8 @@ public class AppUser extends Auditable {
     @Column(name = "password_reset_token_sent_at")
     ZonedDateTime passwordResetTokenSentAt;
 
+    @Column(name = "internal_notes", columnDefinition = "text")
+    private String internalNotes;
+
 
 }

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Create / Edit Client Modal Content Fragment -->
+<div class="modal-content" th:fragment="clientFormModal">
+    <form th:action="${isEdit} ? @{/admin/clients/process-edit/{id}(id=${clientForm.id})} : @{/admin/clients/process-create}"
+          th:attr="hx-post=${isEdit} ? @{/admin/clients/process-edit/{id}(id=${clientForm.id})} : @{/admin/clients/process-create}"
+          hx-target="#clientModalDialog"
+          hx-swap="innerHTML"
+          th:object="${clientForm}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="modal-header">
+            <h5 class="modal-title" th:text="${isEdit} ? 'Edit Client' : 'Add Client'">Add Client</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            <div th:if="${modalError}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${modalError}"></div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text"
+                           id="fullName"
+                           th:field="*{fullName}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                           placeholder="e.g. Peter Mwangi">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email"
+                           id="email"
+                           th:field="*{email}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                           placeholder="e.g. peter@example.com">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <input type="tel"
+                           id="phoneNumber"
+                           th:field="*{phoneNumber}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'"
+                           placeholder="e.g. +254 712 345 678">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                </div>
+
+                <div class="col-12">
+                    <label for="password" class="form-label" th:text="${isEdit} ? 'New Password (leave blank to keep current)' : 'Password'">Password</label>
+                    <input type="password"
+                           id="password"
+                           th:field="*{password}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                           placeholder="Minimum 8 characters">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="emailVerified" th:field="*{emailVerified}">
+                        <label class="form-check-label" for="emailVerified">
+                            Email verified
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6" th:if="${!isEdit}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="active" th:field="*{active}">
+                        <label class="form-check-label" for="active">
+                            Active account
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label for="internalNotes" class="form-label">Internal Notes (optional)</label>
+                    <textarea id="internalNotes"
+                              th:field="*{internalNotes}"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Only admins can see these notes"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" th:text="${isEdit} ? 'Save Changes' : 'Create Client'">Create Client</button>
+        </div>
+    </form>
+</div>
+
+<!-- Activate / Deactivate (Suspend / Reinstate) Client Modal Content Fragment -->
+<div class="modal-content" th:fragment="clientStatusModal">
+    <form th:if="${client != null}"
+          th:action="@{/admin/clients/process-status/{id}(id=${client.id})}"
+          th:attr="hx-post=@{/admin/clients/process-status/{id}(id=${client.id})}"
+          hx-target="#clientModalDialog"
+          hx-swap="innerHTML">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" name="active" th:value="${!client.active}"/>
+
+        <div class="modal-header">
+            <h5 class="modal-title"
+                th:text="${client.active} ? 'Suspend Client: ' + ${client.fullName} : 'Reinstate Client: ' + ${client.fullName}">
+                Suspend Client
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            <div th:if="${modalError}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${modalError}"></div>
+
+            <div th:if="${client.active}">
+                <p class="mb-3">
+                    Are you sure you want to suspend <strong th:text="${client.fullName}">Client</strong>
+                    (<span th:text="${client.email}">email</span>)?
+                    Suspended clients cannot sign in or receive keyword match alerts until reinstated.
+                </p>
+                <div class="mb-0">
+                    <label for="deactivationMemo" class="form-label">Reason / Note (optional)</label>
+                    <textarea id="deactivationMemo"
+                              name="deactivationMemo"
+                              class="form-control"
+                              rows="2"
+                              placeholder="e.g. Account suspended pending verification"></textarea>
+                </div>
+            </div>
+
+            <div th:unless="${client.active}">
+                <p class="mb-0">
+                    Reinstate <strong th:text="${client.fullName}">Client</strong>
+                    (<span th:text="${client.email}">email</span>) so they can sign in and receive Gazette match alerts again?
+                </p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit"
+                    class="btn"
+                    th:classappend="${client.active} ? 'btn-danger' : 'btn-success'"
+                    th:text="${client.active} ? 'Suspend Client' : 'Reinstate Client'">
+                Confirm
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Create / Edit Client Keyword Modal Content Fragment -->
+<div class="modal-content" th:fragment="keywordFormModal">
+    <form th:if="${client != null}"
+          th:action="${isEdit} ? @{/admin/clients/show/{id}/keywords/process-edit/{kid}(id=${client.id}, kid=${keywordForm.id})} : @{/admin/clients/show/{id}/keywords/process-create(id=${client.id})}"
+          th:attr="hx-post=${isEdit} ? @{/admin/clients/show/{id}/keywords/process-edit/{kid}(id=${client.id}, kid=${keywordForm.id})} : @{/admin/clients/show/{id}/keywords/process-create(id=${client.id})}"
+          hx-target="#clientModalDialog"
+          hx-swap="innerHTML"
+          th:object="${keywordForm}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="modal-header">
+            <h5 class="modal-title" th:text="${isEdit} ? 'Edit Keyword' : 'Add Keyword for ' + ${client.fullName}">Add Keyword</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            <div th:if="${modalError}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${modalError}"></div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="keyword" class="form-label">Keyword to Watch</label>
+                    <input type="text"
+                           id="keyword"
+                           th:field="*{keyword}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('keyword')} ? 'is-invalid'"
+                           placeholder="e.g. LR No. 209/1145 or Peter Mwangi">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('keyword')}" th:errors="*{keyword}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="keywordType" class="form-label">Keyword Type</label>
+                    <select id="keywordType"
+                            th:field="*{keywordType}"
+                            class="form-select"
+                            th:classappend="${#fields.hasErrors('keywordType')} ? 'is-invalid'">
+                        <option th:each="kt : ${keywordTypes}"
+                                th:value="${kt}"
+                                th:text="${kt.label}">Title / LR Number</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('keywordType')}" th:errors="*{keywordType}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="matchPrecision" class="form-label">Matching Precision</label>
+                    <select id="matchPrecision"
+                            th:field="*{matchPrecision}"
+                            class="form-select"
+                            th:classappend="${#fields.hasErrors('matchPrecision')} ? 'is-invalid'">
+                        <option value="EXACT">Exact</option>
+                        <option value="FUZZY">Fuzzy</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('matchPrecision')}" th:errors="*{matchPrecision}"></div>
+                </div>
+
+                <div class="col-12">
+                    <label for="notes" class="form-label">Label / Description (optional)</label>
+                    <input type="text"
+                           id="notes"
+                           th:field="*{notes}"
+                           class="form-control"
+                           placeholder="e.g. Nairobi commercial plot">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" th:text="${isEdit} ? 'Save Changes' : 'Add Keyword'">Add Keyword</button>
+        </div>
+    </form>
+</div>
+
+<!-- Empty fragment returned when modal closes after successful save -->
+<div class="modal-content" th:fragment="modalClosed"></div>
+
+</body>
+</html>

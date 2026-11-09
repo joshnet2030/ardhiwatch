@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/clients/record.html}">
+<html lang="en" layout:decorate="~{admin/clients/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Client &ndash; Keywords</title>
@@ -7,81 +7,106 @@
 <body>
 <div layout:fragment="tab">
 
-    <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2" role="alert">
-        <div>Using <strong>3 of 5</strong> keywords on the Landlord Pro plan.</div>
-        <a href="#" class="btn btn-sm btn-primary">Add Keyword</a>
-    </div>
+    <div id="client-keywords-section"
+         th:attr="hx-get=${client != null} ? @{/admin/clients/show/{id}/keywords/table(id=${client.id})} : null"
+         hx-trigger="keywordSaved from:body"
+         hx-swap="outerHTML"
+         th:fragment="keywordsSection">
 
-    <div class="card mb-4">
-        <div class="card-header">Keywords</div>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover mb-0 align-middle">
-                <thead>
-                <tr>
-                    <th>Keyword</th>
-                    <th>Type</th>
-                    <th>Precision</th>
-                    <th>Status</th>
-                    <th>Matches</th>
-                    <th>Added</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>LR No. 209/1145</td>
-                    <td>Title / LR Number</td>
-                    <td><span class="badge bg-primary">Exact</span></td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>1</td>
-                    <td>2026-03-02</td>
-                    <td class="text-nowrap">
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-warning">Pause</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Peter Mwangi</td>
-                    <td>Name</td>
-                    <td><span class="badge bg-secondary">Fuzzy</span></td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>1</td>
-                    <td>2026-03-02</td>
-                    <td class="text-nowrap">
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-warning">Pause</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>28451976</td>
-                    <td>National ID</td>
-                    <td><span class="badge bg-primary">Exact</span></td>
-                    <td><span class="badge bg-success">Active</span></td>
-                    <td>0</td>
-                    <td>2026-03-05</td>
-                    <td class="text-nowrap">
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-warning">Pause</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </td>
-                </tr>
-                <tr class="table-secondary">
-                    <td>Mwangi Holdings Ltd</td>
-                    <td>Name</td>
-                    <td><span class="badge bg-secondary">Fuzzy</span></td>
-                    <td><span class="badge bg-secondary">Paused</span></td>
-                    <td>0</td>
-                    <td>2026-06-12</td>
-                    <td class="text-nowrap">
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-success">Resume</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div th:if="${keywordsError}" class="alert alert-danger py-2 mb-3" role="alert" th:text="${keywordsError}"></div>
+
+        <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2" role="alert">
+            <div>
+                <strong th:text="${activeKeywordsCount != null ? activeKeywordsCount : 0}">0</strong> active keyword(s)
+                (<span th:text="${keywordsCount != null ? keywordsCount : 0}">0</span> total).
+            </div>
+            <button th:if="${client != null}"
+                    type="button"
+                    class="btn btn-sm btn-primary"
+                    th:attr="hx-get=@{/admin/clients/show/{id}/keywords/modal/create(id=${client.id})}"
+                    hx-target="#clientModalDialog"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#clientModal">
+                Add Keyword
+            </button>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Keywords</div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Type</th>
+                        <th>Precision</th>
+                        <th>Status</th>
+                        <th>Added</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(keywords)}">
+                        <td colspan="6" class="text-center text-muted py-4">No keywords added for this client yet. Click "Add Keyword" above to add one.</td>
+                    </tr>
+                    <tr th:each="kw : ${keywords}" th:classappend="${kw.paused} ? 'table-secondary'">
+                        <td>
+                            <div class="fw-semibold" th:text="${kw.keyword}">LR No. 209/1145</div>
+                            <div th:if="${kw.notes != null and !#strings.isEmpty(kw.notes)}"
+                                 class="text-muted small"
+                                 th:text="${kw.notes}"></div>
+                        </td>
+                        <td th:text="${kw.keywordType != null ? kw.keywordType.label : 'Title / LR Number'}">Title / LR Number</td>
+                        <td>
+                            <span th:if="${kw.matchPrecision == 'EXACT'}" class="badge bg-primary">Exact</span>
+                            <span th:if="${kw.matchPrecision != 'EXACT'}" class="badge bg-secondary">Fuzzy</span>
+                        </td>
+                        <td>
+                            <span th:if="${!kw.paused}" class="badge bg-success">Active</span>
+                            <span th:if="${kw.paused}" class="badge bg-secondary">Paused</span>
+                        </td>
+                        <td th:text="${kw.createdAt != null ? #temporals.format(kw.createdAt, 'yyyy-MM-dd') : '—'}">2026-03-02</td>
+                        <td class="text-nowrap text-end">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    th:attr="hx-get=@{/admin/clients/show/{id}/keywords/modal/edit/{kid}(id=${client.id}, kid=${kw.id})}"
+                                    hx-target="#clientModalDialog"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#clientModal">
+                                Edit
+                            </button>
+
+                            <form th:action="@{/admin/clients/show/{id}/keywords/{kid}/toggle-pause(id=${client.id}, kid=${kw.id})}"
+                                  method="post"
+                                  th:attr="hx-post=@{/admin/clients/show/{id}/keywords/{kid}/toggle-pause(id=${client.id}, kid=${kw.id})}"
+                                  hx-target="#client-keywords-section"
+                                  hx-swap="outerHTML"
+                                  class="d-inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit"
+                                        class="btn btn-sm"
+                                        th:classappend="${kw.paused} ? 'btn-outline-success' : 'btn-outline-warning'"
+                                        th:text="${kw.paused} ? 'Resume' : 'Pause'">
+                                    Pause
+                                </button>
+                            </form>
+
+                            <form th:action="@{/admin/clients/show/{id}/keywords/{kid}/delete(id=${client.id}, kid=${kw.id})}"
+                                  method="post"
+                                  th:attr="hx-post=@{/admin/clients/show/{id}/keywords/{kid}/delete(id=${client.id}, kid=${kw.id})}"
+                                  hx-target="#client-keywords-section"
+                                  hx-swap="outerHTML"
+                                  class="d-inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

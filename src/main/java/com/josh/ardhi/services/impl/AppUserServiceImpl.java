@@ -1,6 +1,7 @@
 package com.josh.ardhi.services.impl;
 
 import com.josh.ardhi.exception.AppException;
+import com.josh.ardhi.forms.AdminClientForm;
 import com.josh.ardhi.forms.CreateUserForm;
 import com.josh.ardhi.models.AppUser;
 import com.josh.ardhi.models.AppUserRole;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -117,5 +119,145 @@ public class AppUserServiceImpl implements AppUserService {
 
         PageRequest pageRequest = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
         return appUserRepository.findAll(spec, pageRequest);
+    }
+
+    @Override
+    public Page<AppUser> searchClients(String q, String verified, String status, int page, int size) {
+        int safePage = Math.max(0, page);
+        int safeSize = size > 0 ? size : 10;
+
+        Specification<AppUser> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("role"), AppUserRole.CLIENT));
+
+            if (StringUtils.hasText(q)) {
+                String pattern = "%" + q.trim().toLowerCase() + "%";
+                Predicate nameMatch = cb.like(cb.lower(cb.coalesce(root.get("fullName"), "")), pattern);
+                Predicate emailMatch = cb.like(cb.lower(cb.coalesce(root.get("email"), "")), pattern);
+                Predicate phoneMatch = cb.like(cb.lower(cb.coalesce(root.get("phone"), "")), pattern);
+                predicates.add(cb.or(nameMatch, emailMatch, phoneMatch));
+            }
+
+            if (StringUtils.hasText(verified)) {
+                String normalizedVerified = verified.trim().toLowerCase();
+                if ("yes".equals(normalizedVerified)) {
+                    predicates.add(cb.isTrue(root.get("isEmailVerified")));
+                } else if ("no".equals(normalizedVerified)) {
+                    predicates.add(cb.isFalse(root.get("isEmailVerified")));
+                }
+            }
+
+            if (StringUtils.hasText(status)) {
+                String normalizedStatus = status.trim().toLowerCase();
+                if ("active".equals(normalizedStatus)) {
+                    predicates.add(cb.isTrue(root.get("isActive")));
+                } else if ("suspended".equals(normalizedStatus)) {
+                    predicates.add(cb.isFalse(root.get("isActive")));
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        PageRequest pageRequest = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return appUserRepository.findAll(spec, pageRequest);
+    }
+
+    @Override
+    @Transactional(rollbackOn = AppException.class)
+    public AppUser createClient(AdminClientForm form) throws AppException {
+        if (form == null || !StringUtils.hasText(form.getEmail())) {
+            throw new AppException("Email address is required.");
+        }
+        if (!StringUtils.hasText(form.getPassword()) || form.getPassword().trim().length() < 8) {
+            throw new AppException("Password must be at least 8 characters.");
+        }
+        String normalizedEmail = form.getEmail().trim();
+        if (appUserRepository.findFirstByEmailIgnoreCase(normalizedEmail).isPresent()) {
+            throw new AppException("A user with this email address already exists.");
+        }
+
+        try {
+            AppUser client = create(null, form);
+            client.setRole(AppUserRole.CLIENT);
+            client.setEmailVerified(form.isEmailVerified());
+            if (form.isEmailVerified()) {
+                client.setEmailVerifiedAt(ZonedDateTime.now());
+            }
+            client.setActive(form.isActive());
+            client.setInternalNotes(StringUtils.hasText(form.getInternalNotes()) ? form.getInternalNotes().trim() : null);
+            return appUserRepository.save(client);
+        } catch (Exception e) {
+            throw new AppException("Unable to create client: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackOn = AppException.class)
+    public AppUser updateClient(UUID id, AdminClientForm form) throws AppException {
+        AppUser client = getById(id);
+
+        if (form == null || !StringUtils.hasText(form.getEmail())) {
+            throw new AppException("Email address is required.");
+        }
+
+        String normalizedEmail = form.getEmail().trim();
+        Optional<AppUser> existing = appUserRepository.findFirstByEmailIgnoreCase(normalizedEmail);
+        if (existing.isPresent() && !existing.get().getId().equals(id)) {
+            throw new AppException("Another user with this email address already exists.");
+        }
+
+        try {
+            client.setFullName(form.getFullName().trim());
+            client.setEmail(normalizedEmail);
+            client.setPhone(form.getPhoneNumber() != null ? form.getPhoneNumber().trim() : null);
+            client.setEmailVerified(form.isEmailVerified());
+            if (form.isEmailVerified() && client.getEmailVerifiedAt() == null) {
+                client.setEmailVerifiedAt(ZonedDateTime.now());
+            }
+            if (StringUtils.hasText(form.getPassword())) {
+                if (form.getPassword().trim().length() < 8) {
+                    throw new AppException("New password must be at least 8 characters.");
+                }
+                client.setPasswordHash(passwordEncoder.encode(form.getPassword().trim()));
+            }
+            client.setInternalNotes(StringUtils.hasText(form.getInternalNotes()) ? form.getInternalNotes().trim() : null);
+            return appUserRepository.save(client);
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AppException("Unable to update client: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackOn = AppException.class)
+    public AppUser updateClientStatus(UUID id, boolean active, String deactivationMemo) throws AppException {
+        AppUser client = getById(id);
+        try {
+            client.setActive(active);
+            if (!active) {
+                client.setDeactivationMemo(StringUtils.hasText(deactivationMemo)
+                        ? deactivationMemo.trim()
+                        : "Suspended by admin");
+            } else {
+                client.setDeactivationMemo(null);
+            }
+            return appUserRepository.save(client);
+        } catch (Exception e) {
+            throw new AppException("Unable to update client status: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackOn = AppException.class)
+    public AppUser updateInternalNotes(UUID id, String internalNotes) throws AppException {
+        AppUser client = getById(id);
+        try {
+            client.setInternalNotes(StringUtils.hasText(internalNotes) ? internalNotes.trim() : null);
+            return appUserRepository.save(client);
+        } catch (Exception e) {
+            throw new AppException("Unable to save internal notes: " + e.getMessage());
+        }
     }
 }
