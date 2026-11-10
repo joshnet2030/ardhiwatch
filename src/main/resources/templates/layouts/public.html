@@ -12,13 +12,18 @@
 
 <!-- Navbar -->
 <nav class="dk-nav">
-    <a href="/" class="dk-nav__brand">Doke<span>zo</span></a>
+    <a th:href="${dashboardUrl != null ? dashboardUrl : '/'}" class="dk-nav__brand">Doke<span>zo</span></a>
     <div class="dk-nav__links">
-        <a href="/#how-it-works" class="dk-link">How it works</a>
-        <a href="/#pricing" class="dk-link">Pricing</a>
-        <a href="/#faq" class="dk-link">FAQ</a>
-        <a href="/login" class="dk-btn dk-btn--outline" style="margin-left:.5rem;">Log In</a>
-        <a href="/client-signup" class="dk-btn dk-btn--primary">Sign Up</a>
+        <th:block th:if="${dashboardUrl == null}">
+            <a href="/#how-it-works" class="dk-link">How it works</a>
+            <a href="/#pricing" class="dk-link">Pricing</a>
+            <a href="/#faq" class="dk-link">FAQ</a>
+            <a href="/login" class="dk-btn dk-btn--outline" style="margin-left:.5rem;">Log In</a>
+            <a href="/client-signup" class="dk-btn dk-btn--primary">Sign Up</a>
+        </th:block>
+        <th:block th:if="${dashboardUrl != null}">
+            <a th:href="${dashboardUrl}" class="dk-btn dk-btn--primary" style="margin-left:.5rem;">Go to Dashboard &rarr;</a>
+        </th:block>
     </div>
 </nav>
 

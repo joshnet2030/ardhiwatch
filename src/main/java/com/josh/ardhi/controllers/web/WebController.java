@@ -5,12 +5,18 @@ import com.josh.ardhi.services.ContactMessageService;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Set;
 
 @Controller
 public class WebController {
@@ -21,8 +27,17 @@ public class WebController {
         this.contactMessageService = contactMessageService;
     }
 
+    @ModelAttribute("dashboardUrl")
+    public String populateDashboardUrl() {
+        return resolveDashboardPath();
+    }
+
     @GetMapping("")
     public String index() {
+        String dashboardPath = resolveDashboardPath();
+        if (dashboardPath != null) {
+            return "redirect:" + dashboardPath;
+        }
         return "index";
     }
 
@@ -34,6 +49,21 @@ public class WebController {
     @GetMapping("/privacy-policy")
     public String privacyPolicy() {
         return "privacy_policy";
+    }
+
+    private String resolveDashboardPath() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+        Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
+        if (roles.contains("ROLE_ADMIN")) {
+            return "/admin";
+        }
+        if (roles.contains("ROLE_CLIENT")) {
+            return "/client";
+        }
+        return null;
     }
 
     @GetMapping("/contact-us")

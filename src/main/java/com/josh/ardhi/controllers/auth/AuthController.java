@@ -14,6 +14,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class AuthController {
@@ -37,10 +42,29 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login(@RequestParam(required = false) String error, Model model ){
+        String dashboardRedirect = resolveAuthenticatedDashboardRedirect();
+        if (dashboardRedirect != null) {
+            return dashboardRedirect;
+        }
         if(error != null){
             model.addAttribute("message", "Invalid login credentials");
         }
         return "auth/login";
+    }
+
+    private String resolveAuthenticatedDashboardRedirect() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+        Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
+        if (roles.contains("ROLE_ADMIN")) {
+            return "redirect:/admin";
+        }
+        if (roles.contains("ROLE_CLIENT")) {
+            return "redirect:/client";
+        }
+        return null;
     }
 
     @Getter
