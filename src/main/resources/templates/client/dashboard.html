@@ -21,6 +21,38 @@
         </div>
     </div>
 
+    <!-- Subscription Status Banner -->
+    <div class="dk-notice-banner" th:if="${currentSubscription != null and currentSubscription.valid}">
+        <div class="dk-notice-banner__icon">&#10003;</div>
+        <div class="dk-notice-banner__body">
+            <strong>Gazette Monitoring is Active &mdash; Your Property Watch is Running</strong>
+            <p>
+                Your <strong th:text="${currentSubscription.subscriptionPlan != null ? currentSubscription.subscriptionPlan.name : 'Subscription'}">Subscription</strong>
+                plan is fully active through
+                <strong th:text="${currentSubscription.endDate != null ? #temporals.format(currentSubscription.endDate, 'MMM d, yyyy') : 'your billing period'}">Dec 15, 2026</strong>.
+                Every weekly issue of the Kenya Gazette is automatically scanned against your watched keywords.
+            </p>
+        </div>
+        <a th:href="@{/client/keywords}" class="dk-btn dk-btn--outline dk-btn--sm">Manage Keywords</a>
+    </div>
+
+    <div class="dk-notice-banner dk-notice-banner--warning" th:if="${currentSubscription == null or !currentSubscription.valid}">
+        <div class="dk-notice-banner__icon">!</div>
+        <div class="dk-notice-banner__body">
+            <strong>Gazette Monitoring is Paused &mdash; Activate Your Subscription</strong>
+            <p th:if="${currentSubscription != null and currentSubscription.balance != null and currentSubscription.balance.doubleValue() > 0}">
+                Your <strong th:text="${currentSubscription.subscriptionPlan != null ? currentSubscription.subscriptionPlan.name : 'subscription'}">subscription</strong>
+                has an outstanding balance of
+                <strong th:text="'KES ' + ${#numbers.formatDecimal(currentSubscription.balance, 1, 'COMMA', 0, 'POINT')}">KES 0</strong>.
+                Complete your payment now to activate automatic Kenya Gazette scanning for your keywords.
+            </p>
+            <p th:if="${currentSubscription == null or currentSubscription.balance == null or currentSubscription.balance.doubleValue() <= 0}">
+                Your account does not have an active subscription plan right now. Choose a plan and complete payment to start automatic weekly monitoring of the Kenya Gazette.
+            </p>
+        </div>
+        <a th:href="@{/client/subscription}" class="dk-btn dk-btn--primary dk-btn--sm">Complete Payment &rarr;</a>
+    </div>
+
     <!-- High-priority Alert Banner -->
     <div class="dk-notice-banner dk-notice-banner--alert" th:if="${latestMatch != null}">
         <div class="dk-notice-banner__icon">!</div>

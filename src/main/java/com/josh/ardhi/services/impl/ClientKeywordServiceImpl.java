@@ -58,6 +58,13 @@ public class ClientKeywordServiceImpl implements ClientKeywordService {
         }
 
         KeywordType type = form.getKeywordType() != null ? form.getKeywordType() : KeywordType.TITLE;
+        String trimmedKeyword = form.getKeyword().trim();
+        if (clientKeywordRepository.existsByClientIdAndKeywordIgnoreCaseAndKeywordTypeAndIsActiveTrue(
+                clientId, trimmedKeyword, type)) {
+            throw new AppException("The keyword \"" + trimmedKeyword + "\" (" + type.getLabel()
+                    + ") already exists on this account.");
+        }
+
         String precision = StringUtils.hasText(form.getMatchPrecision())
                 ? form.getMatchPrecision().trim().toUpperCase()
                 : type.getDefaultPrecision();
@@ -65,7 +72,7 @@ public class ClientKeywordServiceImpl implements ClientKeywordService {
         try {
             ClientKeyword entity = ClientKeyword.builder()
                     .client(client)
-                    .keyword(form.getKeyword().trim())
+                    .keyword(trimmedKeyword)
                     .keywordType(type)
                     .matchPrecision(precision)
                     .notes(StringUtils.hasText(form.getNotes()) ? form.getNotes().trim() : null)
@@ -89,12 +96,19 @@ public class ClientKeywordServiceImpl implements ClientKeywordService {
         }
 
         KeywordType type = form.getKeywordType() != null ? form.getKeywordType() : KeywordType.TITLE;
+        String trimmedKeyword = form.getKeyword().trim();
+        if (clientKeywordRepository.existsByClientIdAndKeywordIgnoreCaseAndKeywordTypeAndIsActiveTrueAndIdNot(
+                clientId, trimmedKeyword, type, keywordId)) {
+            throw new AppException("The keyword \"" + trimmedKeyword + "\" (" + type.getLabel()
+                    + ") already exists on this account.");
+        }
+
         String precision = StringUtils.hasText(form.getMatchPrecision())
                 ? form.getMatchPrecision().trim().toUpperCase()
                 : type.getDefaultPrecision();
 
         try {
-            entity.setKeyword(form.getKeyword().trim());
+            entity.setKeyword(trimmedKeyword);
             entity.setKeywordType(type);
             entity.setMatchPrecision(precision);
             entity.setNotes(StringUtils.hasText(form.getNotes()) ? form.getNotes().trim() : null);

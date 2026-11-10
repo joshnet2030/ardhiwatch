@@ -1684,6 +1684,17 @@ body {
     border-color: rgba(16,185,129,.38);
 }
 
+.dk-notice-banner--warning {
+    background: linear-gradient(90deg, rgba(245,158,11,.14), rgba(21,32,56,.92));
+    border-color: rgba(245,158,11,.42);
+}
+
+.dk-notice-banner--warning .dk-notice-banner__icon {
+    background: var(--amber);
+    color: #0b1221;
+    box-shadow: 0 4px 16px rgba(245,158,11,.25);
+}
+
 .dk-notice-banner__icon {
     width: 40px;
     height: 40px;
@@ -1703,11 +1714,16 @@ body {
     flex: 1;
 }
 
-.dk-notice-banner__body strong {
+.dk-notice-banner__body > strong {
     color: #fff;
     font-size: .95rem;
     display: block;
     margin-bottom: .2rem;
+}
+
+.dk-notice-banner__body p strong {
+    color: #fff;
+    font-weight: 600;
 }
 
 .dk-notice-banner__body p {

@@ -1,6 +1,7 @@
 package com.josh.ardhi.repositories;
 
 import com.josh.ardhi.models.ClientKeyword;
+import com.josh.ardhi.models.KeywordType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,11 @@ public interface ClientKeywordRepository extends JpaRepository<ClientKeyword, UU
     long countByClientIdAndIsActiveTrue(UUID clientId);
 
     long countByClientIdAndIsActiveTrueAndPausedFalse(UUID clientId);
+
+    boolean existsByClientIdAndKeywordIgnoreCaseAndKeywordTypeAndIsActiveTrue(
+            UUID clientId, String keyword, KeywordType keywordType);
+
+    boolean existsByClientIdAndKeywordIgnoreCaseAndKeywordTypeAndIsActiveTrueAndIdNot(
+            UUID clientId, String keyword, KeywordType keywordType, UUID id);
 
 }
