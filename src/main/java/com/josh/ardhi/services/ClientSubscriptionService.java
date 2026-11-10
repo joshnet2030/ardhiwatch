@@ -21,6 +21,8 @@ public interface ClientSubscriptionService {
 
     long countClientSubscriptions(UUID clientId);
 
+    long countActiveValidSubscriptions();
+
     ClientSubscriptionPlan getSubscriptionById(UUID id) throws AppException;
 
     ClientSubscriptionPlan createSubscription(UUID clientId, CreateClientSubscriptionForm form) throws AppException;

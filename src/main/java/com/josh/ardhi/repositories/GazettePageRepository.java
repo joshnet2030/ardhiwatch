@@ -26,4 +26,32 @@ public interface GazettePageRepository extends JpaRepository<GazettePage, UUID> 
             nativeQuery = true)
     List<GazettePage> fullTextSearch(@Param("query") String query);
 
+    @Query(value = "SELECT * FROM gazette_page " +
+            "WHERE gazette_issue_id = :gazetteIssueId " +
+            "AND is_active = TRUE " +
+            "AND ocr_text IS NOT NULL " +
+            "AND (ocr_text ILIKE CONCAT('%', :keyword, '%') " +
+            "     OR ocr_text_tsv @@ phraseto_tsquery('english', :keyword)) " +
+            "ORDER BY page_number ASC",
+            nativeQuery = true)
+    List<GazettePage> findExactMatchesInIssue(@Param("gazetteIssueId") UUID gazetteIssueId,
+                                              @Param("keyword") String keyword);
+
+    @Query(value = "SELECT * FROM gazette_page " +
+            "WHERE gazette_issue_id = :gazetteIssueId " +
+            "AND is_active = TRUE " +
+            "AND ocr_text IS NOT NULL " +
+            "AND word_similarity(:keyword, ocr_text) >= :minSimilarity " +
+            "ORDER BY page_number ASC",
+            nativeQuery = true)
+    List<GazettePage> findFuzzyMatchesInIssue(@Param("gazetteIssueId") UUID gazetteIssueId,
+                                              @Param("keyword") String keyword,
+                                              @Param("minSimilarity") double minSimilarity);
+
+    @Query(value = "SELECT COALESCE(word_similarity(:keyword, ocr_text), 0.0) " +
+            "FROM gazette_page WHERE id = :pageId",
+            nativeQuery = true)
+    Double computeWordSimilarityOnPage(@Param("pageId") UUID pageId,
+                                       @Param("keyword") String keyword);
+
 }

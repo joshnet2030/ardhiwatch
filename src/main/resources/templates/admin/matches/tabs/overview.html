@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/matches/record.html}">
+<html lang="en" layout:decorate="~{admin/matches/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Match &ndash; Overview</title>
@@ -7,7 +7,7 @@
 <body>
 <div layout:fragment="tab">
 
-    <div class="row g-4">
+    <div class="row g-4" th:if="${match != null}">
 
         <!-- Left: verification and page preview -->
         <div class="col-lg-8">
@@ -18,40 +18,71 @@
                     <div class="row text-center mb-3">
                         <div class="col-6">
                             <p class="text-muted small mb-1">Client's Keyword</p>
-                            <p class="fs-5 fw-semibold mb-0">Samuel Otieno Odhiambo</p>
+                            <p class="fs-5 fw-semibold mb-0" th:text="${match.keywordText}">Samuel Otieno Odhiambo</p>
                         </div>
                         <div class="col-6">
                             <p class="text-muted small mb-1">Found in Gazette</p>
-                            <p class="fs-5 fw-semibold mb-0">Samwel Otieno Odhiambo</p>
+                            <p class="fs-5 fw-semibold mb-0" th:text="${match.matchedText}">Samwel Otieno Odhiambo</p>
                         </div>
                     </div>
-                    <p class="text-muted small mb-1">Text around the match <span class="badge bg-secondary ms-1">1 of 1 occurrence</span></p>
+                    <p class="text-muted small mb-1">
+                        Text around the match
+                        <span class="badge bg-secondary ms-1" th:text="${match.matchPrecision + ' (' + match.similarityScore + '%)'}">EXACT (100%)</span>
+                    </p>
                     <blockquote class="border-start border-3 ps-3 mb-0">
                         <p class="mb-0">
-                            ...loss of the original title deed for land parcel LR No. 209/1145, registered in the name of
-                            <mark>Samwel Otieno Odhiambo</mark> of P.O. Box 4410, Kisumu, who has applied for the issue of a
-                            provisional certificate...
+                            <span th:text="${match.snippetPrefix}">...loss of the original title deed...</span><mark class="bg-warning px-1 fw-semibold" th:if="${!#strings.isEmpty(match.snippetHighlight)}" th:text="${match.snippetHighlight}">Samwel Otieno Odhiambo</mark><span th:text="${match.snippetSuffix}">...</span>
                         </p>
                     </blockquote>
                 </div>
                 <div class="card-footer text-muted small">
-                    Read by OCR, so check it against the page image below. If they disagree, the image is correct.
+                    Read by OCR, so check it against the page PDF below. If they disagree, the original page is authoritative.
                 </div>
             </div>
 
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${match.gazettePage != null}"
+                 th:with="activePdfFile=${(pdfView == null or pdfView == 'highlighted') and match.highlightedPdfSystemFile != null ? match.highlightedPdfSystemFile : match.gazettePage.pdfSystemFile}">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <span class="fw-semibold">Vol. 128, No. 37 &middot; Page 61</span>
-                    <ul class="nav nav-pills">
-                        <li class="nav-item"><a class="nav-link active py-1" href="#">Highlighted</a></li>
-                        <li class="nav-item"><a class="nav-link py-1" href="#">Original</a></li>
+                    <span class="fw-semibold"
+                          th:text="'Vol. ' + ${match.gazetteIssue.volumeNumber} + ', No. ' + ${match.gazetteIssue.issueNumber} + ' · Page ' + ${match.gazettePage.pageNumber}">
+                        Vol. 128, No. 37 · Page 61
+                    </span>
+                    <ul class="nav nav-pills" th:if="${match.highlightedPdfSystemFile != null}">
+                        <li class="nav-item">
+                            <a class="nav-link py-1"
+                               th:classappend="${pdfView == null or pdfView == 'highlighted'} ? 'active'"
+                               th:href="@{/admin/matches/show/{mid}(mid=${match.id}, view='highlighted')}">Highlighted</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-1"
+                               th:classappend="${pdfView == 'original'} ? 'active'"
+                               th:href="@{/admin/matches/show/{mid}(mid=${match.id}, view='original')}">Original</a>
+                        </li>
                     </ul>
-                    <a href="#" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">Open in New Tab</a>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/admin/gazettes/show/{iid}/pages(iid=${match.gazetteIssue.id}, page=${match.gazettePage.pageNumber})}"
+                           class="btn btn-sm btn-outline-secondary">Open in Gazette Viewer</a>
+                        <a th:if="${activePdfFile != null}"
+                           th:href="@{/admin/system-file/serve(id=${activePdfFile.id})}"
+                           class="btn btn-sm btn-outline-primary"
+                           target="_blank"
+                           rel="noopener">Open PDF in New Tab</a>
+                    </div>
                 </div>
                 <div class="card-body bg-light p-2">
-                    <iframe src="#" title="Page 61 preview" class="w-100 border rounded bg-white" height="950"></iframe>
+                    <iframe th:if="${activePdfFile != null}"
+                            th:src="@{/admin/system-file/serve(id=${activePdfFile.id})}"
+                            th:title="'Page ' + ${match.gazettePage.pageNumber} + ' preview'"
+                            class="w-100 border rounded bg-white"
+                            height="950"></iframe>
+                    <div th:if="${activePdfFile == null}" class="text-center text-muted py-5">
+                        Split page PDF is not available.
+                    </div>
                 </div>
-                <div class="card-footer text-muted small">OCR confidence 91% &middot; processed 2026-09-11 14:12</div>
+                <div class="card-footer text-muted small"
+                     th:text="'Processed ' + (${match.gazettePage.createdAt != null ? #temporals.format(match.gazettePage.createdAt, 'yyyy-MM-dd HH:mm') : '—'})">
+                    Processed
+                </div>
             </div>
 
         </div>
@@ -64,50 +95,72 @@
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-5">Status</dt>
-                        <dd class="col-7"><span class="badge bg-warning text-dark">Pending Review</span></dd>
+                        <dd class="col-7">
+                            <span th:if="${match.status.name() == 'PENDING_REVIEW'}" class="badge bg-warning text-dark">Pending Review</span>
+                            <span th:if="${match.status.name() == 'APPROVED'}" class="badge bg-success">Approved</span>
+                            <span th:if="${match.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                        </dd>
                         <dt class="col-5">Client</dt>
-                        <dd class="col-7"><a href="#">Samuel Otieno</a></dd>
+                        <dd class="col-7">
+                            <a th:href="@{/admin/clients/show/{cid}(cid=${match.client.id})}"
+                               th:text="${match.client.fullName}">Samuel Otieno</a>
+                        </dd>
                         <dt class="col-5">Phone</dt>
-                        <dd class="col-7">+254 733 987 654</dd>
+                        <dd class="col-7" th:text="${match.client.phone != null ? match.client.phone : '—'}">+254 733 987 654</dd>
                         <dt class="col-5">Email</dt>
-                        <dd class="col-7">samuel@example.com</dd>
+                        <dd class="col-7" th:text="${match.client.email}">samuel@example.com</dd>
                         <dt class="col-5">Keyword Type</dt>
-                        <dd class="col-7">Name</dd>
+                        <dd class="col-7"
+                            th:text="${match.clientKeyword != null and match.clientKeyword.keywordType != null ? match.clientKeyword.keywordType.label : '—'}">Name</dd>
                         <dt class="col-5">Precision</dt>
-                        <dd class="col-7"><span class="badge bg-secondary">Fuzzy</span></dd>
+                        <dd class="col-7">
+                            <span th:if="${match.matchPrecision == 'EXACT'}" class="badge bg-primary">Exact</span>
+                            <span th:if="${match.matchPrecision != 'EXACT'}" class="badge bg-secondary">Fuzzy</span>
+                        </dd>
                         <dt class="col-5">Score</dt>
-                        <dd class="col-7"><span class="badge bg-warning text-dark">81%</span></dd>
+                        <dd class="col-7">
+                            <span class="badge"
+                                  th:classappend="${match.similarityScore >= 95 ? 'bg-success' : 'bg-warning text-dark'}"
+                                  th:text="${match.similarityScore + '%'}">81%</span>
+                        </dd>
                         <dt class="col-5">Found</dt>
-                        <dd class="col-7">2026-09-11 14:12</dd>
+                        <dd class="col-7" th:text="${match.createdAt != null ? #temporals.format(match.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-11 14:12</dd>
                         <dt class="col-5">Subscription</dt>
-                        <dd class="col-7"><span class="badge bg-success">Active</span> to 2026-12-15</dd>
+                        <dd class="col-7" th:if="${currentSubscription != null}">
+                            <span th:if="${currentSubscription.valid}" class="badge bg-success">Active</span>
+                            <span th:unless="${currentSubscription.valid}" class="badge bg-warning text-dark" th:text="${currentSubscription.status.label}">Pending</span>
+                            <span class="small ms-1" th:text="'to ' + ${currentSubscription.endDate}">to 2026-12-15</span>
+                        </dd>
+                        <dd class="col-7 text-muted" th:if="${currentSubscription == null}">None</dd>
                     </dl>
                 </div>
             </div>
 
-            <!-- Decision: shown while the match is pending -->
+            <!-- Decision: shown while the match is pending or can be updated -->
             <div class="card mb-4">
-                <div class="card-header">On Approval, Samuel Will Receive</div>
+                <div class="card-header" th:text="'Notifications for ' + ${match.client.fullName}">Notifications</div>
                 <div class="card-body">
-                    <p class="mb-2"><span class="badge bg-info text-dark me-1">Email</span> the highlighted page 61 as a PDF</p>
-                    <p class="mb-0"><span class="badge bg-info text-dark me-1">SMS</span> a private link to view the highlighted page</p>
+                    <p class="mb-2"><span class="badge bg-info text-dark me-1">Email</span> Gazette page <span th:text="${match.gazettePage.pageNumber}">61</span> alert queued to <span th:text="${match.client.email}">email</span></p>
+                    <p class="mb-0" th:if="${match.client.phone != null}"><span class="badge bg-info text-dark me-1">SMS</span> Alert queued to <span th:text="${match.client.phone}">phone</span></p>
                 </div>
             </div>
 
-            <div class="card mb-4 border-success">
+            <div class="card mb-4 border-success" th:if="${match.status.name() != 'APPROVED'}">
                 <div class="card-header bg-success text-white">Approve</div>
                 <div class="card-body">
-                    <p class="text-muted small">Confirm the highlighted text really is this client's keyword, not a similar one.</p>
-                    <form action="#" method="post">
-                        <button type="submit" class="btn btn-success w-100">Approve and Send Alerts</button>
+                    <p class="text-muted small">Confirm the matched text really corresponds to this client's keyword.</p>
+                    <form th:action="@{/admin/matches/show/{mid}/approve(mid=${match.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-success w-100">Approve Match</button>
                     </form>
                 </div>
             </div>
 
-            <div class="card mb-4 border-danger">
+            <div class="card mb-4 border-danger" th:if="${match.status.name() != 'REJECTED'}">
                 <div class="card-header bg-danger text-white">Reject</div>
                 <div class="card-body">
-                    <form action="#" method="post">
+                    <form th:action="@{/admin/matches/show/{mid}/reject(mid=${match.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <div class="mb-3">
                             <label for="reason" class="form-label">Reason</label>
                             <select id="reason" name="reason" class="form-select">
@@ -119,29 +172,46 @@
                         </div>
                         <div class="mb-3">
                             <label for="memo" class="form-label">Notes (optional)</label>
-                            <textarea id="memo" name="memo" class="form-control" rows="3"></textarea>
+                            <textarea id="memo" name="memo" class="form-control" rows="2" th:text="${match.reviewNotes}"></textarea>
                         </div>
                         <button type="submit" class="btn btn-outline-danger w-100">Reject Match</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Decision history: shown instead of the two forms above once decided -->
+            <!-- Decision history -->
             <div class="card mb-4">
                 <div class="card-header">History</div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <div class="small text-muted">2026-09-11 14:12</div>
-                        Match found by the system
+                        <div class="small text-muted" th:text="${match.createdAt != null ? #temporals.format(match.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-11 14:12</div>
+                        Match found by the system (<span th:text="${match.matchPrecision + ' ' + match.similarityScore + '%'}">EXACT 100%</span>)
                     </li>
-                    <li class="list-group-item text-muted">Not reviewed yet.</li>
+                    <li class="list-group-item" th:if="${match.reviewedAt != null}">
+                        <div class="small text-muted" th:text="${#temporals.format(match.reviewedAt, 'yyyy-MM-dd HH:mm')}">2026-09-11 14:30</div>
+                        <span th:text="'Marked as ' + ${match.status.label}">Marked as Approved</span>
+                        <div class="small text-muted" th:if="${match.reviewNotes != null}" th:text="${match.reviewNotes}"></div>
+                    </li>
+                    <li class="list-group-item text-muted" th:if="${match.reviewedAt == null}">Not reviewed yet.</li>
                 </ul>
             </div>
 
             <div class="card mb-4">
                 <div class="card-header">Other Matches for This Client</div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item text-muted">No other matches.</li>
+                    <li class="list-group-item text-muted" th:if="${#lists.isEmpty(otherClientMatches)}">No other matches.</li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="om : ${otherClientMatches}">
+                        <div>
+                            <a th:href="@{/admin/matches/show/{oid}(oid=${om.id})}"
+                               class="fw-semibold"
+                               th:text="${om.shortCode}">#1042</a>
+                            <span class="ms-1" th:text="${om.keywordText}">Keyword</span>
+                            <div class="small text-muted"
+                                 th:text="'Vol. ' + ${om.gazetteIssue.volumeNumber} + ' No. ' + ${om.gazetteIssue.issueNumber} + ', Page ' + ${om.gazettePage.pageNumber}"></div>
+                        </div>
+                        <span class="badge bg-secondary" th:text="${om.status.label}">Pending</span>
+                    </li>
                 </ul>
             </div>
 

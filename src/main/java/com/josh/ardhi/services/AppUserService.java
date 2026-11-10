@@ -36,4 +36,6 @@ public interface AppUserService {
 
     AppUser deductFromWalletBalance(UUID id, BigDecimal amount) throws AppException;
 
+    long countActiveClients();
+
 }

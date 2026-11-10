@@ -90,6 +90,11 @@ public class ClientSubscriptionServiceImpl implements ClientSubscriptionService 
     }
 
     @Override
+    public long countActiveValidSubscriptions() {
+        return clientSubscriptionPlanRepository.countActiveValidSubscriptions(LocalDate.now());
+    }
+
+    @Override
     public ClientSubscriptionPlan getSubscriptionById(UUID id) throws AppException {
         return clientSubscriptionPlanRepository.findById(id)
                 .orElseThrow(() -> new AppException("Client subscription not found."));

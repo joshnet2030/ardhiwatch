@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" layout:decorate="~{admin/clients/record.html}">
+<html lang="en" layout:decorate="~{admin/clients/record.html}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Client &ndash; Matches</title>
@@ -12,54 +12,55 @@
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Total Matches</p>
-                <h3 class="card-text">3</h3>
+                <h3 class="card-text" th:text="${totalMatchesCount != null ? totalMatchesCount : 0}">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Pending Review</p>
-                <h3 class="card-text text-warning">1</h3>
+                <h3 class="card-text text-warning" th:text="${pendingMatchesCount != null ? pendingMatchesCount : 0}">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Approved</p>
-                <h3 class="card-text text-success">1</h3>
+                <h3 class="card-text text-success" th:text="${approvedMatchesCount != null ? approvedMatchesCount : 0}">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
                 <p class="card-title text-muted mb-1">Rejected</p>
-                <h3 class="card-text text-danger">1</h3>
+                <h3 class="card-text text-danger" th:text="${rejectedMatchesCount != null ? rejectedMatchesCount : 0}">0</h3>
             </div></div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="card mb-4">
+    <div class="card mb-4" th:if="${client != null}">
         <div class="card-body">
-            <form action="#" method="get" class="row g-3 align-items-end">
+            <form th:action="@{/admin/clients/show/{id}/matches(id=${client.id})}" method="get" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label for="status" class="form-label">Status</label>
                     <select id="status" name="status" class="form-select">
-                        <option value="" selected>All</option>
-                        <option value="pending_review">Pending Review</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="" th:selected="${selectedMatchStatus == null or selectedMatchStatus == ''}">All</option>
+                        <option value="PENDING_REVIEW" th:selected="${selectedMatchStatus == 'PENDING_REVIEW'}">Pending Review</option>
+                        <option value="APPROVED" th:selected="${selectedMatchStatus == 'APPROVED'}">Approved</option>
+                        <option value="REJECTED" th:selected="${selectedMatchStatus == 'REJECTED'}">Rejected</option>
                     </select>
                 </div>
                 <div class="col-md-4">
                     <label for="keyword" class="form-label">Keyword</label>
                     <select id="keyword" name="keyword" class="form-select">
-                        <option value="" selected>All Keywords</option>
-                        <option value="1">LR No. 209/1145</option>
-                        <option value="2">Peter Mwangi</option>
-                        <option value="3">28451976</option>
+                        <option value="" th:selected="${selectedKeywordId == null}">All Keywords</option>
+                        <option th:each="kw : ${keywords}"
+                                th:value="${kw.id}"
+                                th:selected="${selectedKeywordId != null and selectedKeywordId.equals(kw.id)}"
+                                th:text="${kw.keyword}">LR No. 209/1145</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-flex gap-2">
                     <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
-                    <a href="#" class="btn btn-link">Reset</a>
+                    <a th:href="@{/admin/clients/show/{id}/matches(id=${client.id})}" class="btn btn-link">Reset</a>
                 </div>
             </form>
         </div>
@@ -67,7 +68,14 @@
 
     <!-- Matches table -->
     <div class="card mb-4">
-        <div class="card-header">Matches for This Client</div>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Matches for This Client</span>
+            <span class="text-muted small"
+                  th:if="${matchesPage != null and matchesPage.totalElements > 0}"
+                  th:text="'Showing ' + (${matchesPage.number * matchesPage.size + 1}) + '–' + (${matchesPage.number * matchesPage.size + matchesPage.numberOfElements}) + ' of ' + ${matchesPage.totalElements}">
+                Showing 1–1 of 1
+            </span>
+        </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0 align-middle">
                 <thead>
@@ -84,48 +92,84 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="table-warning">
-                    <td>#1051</td>
-                    <td>Peter Mwangi<br><span class="text-muted small">Name</span></td>
-                    <td>Peter Mwangi Kamau</td>
-                    <td>Vol. 128 No. 38<br><span class="text-muted small">Page 29</span></td>
-                    <td><span class="badge bg-secondary">Fuzzy</span></td>
-                    <td><span class="badge bg-warning text-dark">84%</span></td>
-                    <td><span class="badge bg-warning text-dark">Pending Review</span></td>
-                    <td>2026-09-18 11:20</td>
-                    <td class="text-nowrap"><a href="#" class="btn btn-sm btn-primary">Review</a></td>
+                <tr th:if="${#lists.isEmpty(clientMatches)}">
+                    <td colspan="9" class="text-center text-muted py-4">
+                        No matches found for this client yet.
+                    </td>
                 </tr>
-                <tr>
-                    <td>#1042</td>
-                    <td>LR No. 209/1145<br><span class="text-muted small">Title / LR Number</span></td>
-                    <td>LR No. 209/1145</td>
-                    <td>Vol. 128 No. 37<br><span class="text-muted small">Page 42</span></td>
-                    <td><span class="badge bg-primary">Exact</span></td>
-                    <td><span class="badge bg-success">98%</span></td>
-                    <td><span class="badge bg-success">Approved</span></td>
-                    <td>2026-09-11 14:09</td>
-                    <td class="text-nowrap"><a href="#" class="btn btn-sm btn-outline-primary">Open</a></td>
-                </tr>
-                <tr class="table-secondary">
-                    <td>#0987</td>
-                    <td>Peter Mwangi<br><span class="text-muted small">Name</span></td>
-                    <td>Peter Mwangi</td>
-                    <td>Vol. 128 No. 33<br><span class="text-muted small">Page 12</span></td>
-                    <td><span class="badge bg-secondary">Fuzzy</span></td>
-                    <td><span class="badge bg-warning text-dark">88%</span></td>
-                    <td><span class="badge bg-danger">Rejected</span></td>
-                    <td>2026-08-14 10:02</td>
-                    <td class="text-nowrap"><a href="#" class="btn btn-sm btn-outline-primary">Open</a></td>
+                <tr th:each="m : ${clientMatches}"
+                    th:classappend="${m.status.name() == 'PENDING_REVIEW' ? 'table-warning' : (m.status.name() == 'REJECTED' ? 'table-secondary' : '')}">
+                    <td>
+                        <a th:href="@{/admin/matches/show/{mid}(mid=${m.id})}"
+                           class="fw-semibold"
+                           th:text="${m.shortCode}">#1051</a>
+                    </td>
+                    <td>
+                        <span th:text="${m.keywordText}">Peter Mwangi</span><br>
+                        <span class="text-muted small"
+                              th:text="${m.clientKeyword != null and m.clientKeyword.keywordType != null ? m.clientKeyword.keywordType.label : 'Keyword'}">Name</span>
+                    </td>
+                    <td>
+                        <span th:text="${m.matchedText}">Peter Mwangi Kamau</span>
+                        <div class="text-muted small text-truncate" style="max-width: 240px;"
+                             th:if="${m.snippetText != null}"
+                             th:text="${m.snippetText}"></div>
+                    </td>
+                    <td>
+                        <a th:if="${m.gazetteIssue != null and m.gazettePage != null}"
+                           th:href="@{/admin/gazettes/show/{iid}/pages(iid=${m.gazetteIssue.id}, page=${m.gazettePage.pageNumber})}"
+                           th:text="'Vol. ' + ${m.gazetteIssue.volumeNumber} + ' No. ' + ${m.gazetteIssue.issueNumber}">Vol. 128 No. 38</a>
+                        <br>
+                        <span class="text-muted small"
+                              th:text="${m.gazettePage != null ? 'Page ' + m.gazettePage.pageNumber : ''}">Page 29</span>
+                    </td>
+                    <td>
+                        <span th:if="${m.matchPrecision == 'EXACT'}" class="badge bg-primary">Exact</span>
+                        <span th:if="${m.matchPrecision != 'EXACT'}" class="badge bg-secondary">Fuzzy</span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${m.similarityScore >= 95 ? 'bg-success' : 'bg-warning text-dark'}"
+                              th:text="${m.similarityScore + '%'}">84%</span>
+                    </td>
+                    <td>
+                        <span th:if="${m.status.name() == 'PENDING_REVIEW'}" class="badge bg-warning text-dark">Pending Review</span>
+                        <span th:if="${m.status.name() == 'APPROVED'}" class="badge bg-success">Approved</span>
+                        <span th:if="${m.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                    </td>
+                    <td th:text="${m.createdAt != null ? #temporals.format(m.createdAt, 'yyyy-MM-dd HH:mm') : '—'}">2026-09-18 11:20</td>
+                    <td class="text-nowrap text-end">
+                        <a th:href="@{/admin/matches/show/{mid}(mid=${m.id})}"
+                           class="btn btn-sm"
+                           th:classappend="${m.status.name() == 'PENDING_REVIEW' ? 'btn-primary' : 'btn-outline-primary'}"
+                           th:text="${m.status.name() == 'PENDING_REVIEW' ? 'Review' : 'Open'}">Review</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
+        <div class="card-footer d-flex justify-content-between align-items-center" th:if="${matchesPage != null and client != null}">
+            <span class="text-muted small"
+                  th:text="'Page ' + (${matchesPage.number + 1}) + ' of ' + (${matchesPage.totalPages > 0 ? matchesPage.totalPages : 1})">
+                Page 1 of 1
+            </span>
             <nav>
                 <ul class="pagination pagination-sm mb-0 justify-content-end">
-                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                    <li class="page-item" th:classappend="${matchesPage.first} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/clients/show/{id}/matches(id=${client.id}, status=${selectedMatchStatus}, keyword=${selectedKeywordId}, page=${matchesPage.number - 1})}">Previous</a>
+                    </li>
+                    <li class="page-item"
+                        th:each="pageIdx : ${#numbers.sequence(0, (matchesPage.totalPages > 0 ? matchesPage.totalPages - 1 : 0))}"
+                        th:classappend="${pageIdx == matchesPage.number} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/clients/show/{id}/matches(id=${client.id}, status=${selectedMatchStatus}, keyword=${selectedKeywordId}, page=${pageIdx})}"
+                           th:text="${pageIdx + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${matchesPage.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/clients/show/{id}/matches(id=${client.id}, status=${selectedMatchStatus}, keyword=${selectedKeywordId}, page=${matchesPage.number + 1})}">Next</a>
+                    </li>
                 </ul>
             </nav>
         </div>

@@ -20,8 +20,8 @@
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100"><div class="card-body">
-                <p class="card-title text-muted mb-1">Alerts Received</p>
-                <h3 class="card-text">0</h3>
+                <p class="card-title text-muted mb-1">Alerts / Matches</p>
+                <h3 class="card-text" th:text="${matchesCount != null ? matchesCount : 0}">0</h3>
             </div></div>
         </div>
         <div class="col-6 col-md-3">

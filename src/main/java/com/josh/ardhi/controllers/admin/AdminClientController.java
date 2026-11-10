@@ -7,12 +7,18 @@ import com.josh.ardhi.forms.CreateClientSubscriptionForm;
 import com.josh.ardhi.forms.RecordPaymentForm;
 import com.josh.ardhi.models.AppUser;
 import com.josh.ardhi.models.ClientKeyword;
+import com.josh.ardhi.models.ClientKeywordMatch;
+import com.josh.ardhi.models.ClientKeywordMatchStatus;
+import com.josh.ardhi.models.ClientNotification;
 import com.josh.ardhi.models.ClientSubscriptionPlan;
 import com.josh.ardhi.models.KeywordType;
+import com.josh.ardhi.models.NotificationChannel;
+import com.josh.ardhi.models.NotificationStatus;
 import com.josh.ardhi.models.PaymentMethod;
 import com.josh.ardhi.models.PaymentTransaction;
 import com.josh.ardhi.models.PaymentTransactionStatus;
 import com.josh.ardhi.services.AppUserService;
+import com.josh.ardhi.services.ClientKeywordMatchService;
 import com.josh.ardhi.services.ClientKeywordService;
 import com.josh.ardhi.services.ClientSubscriptionService;
 import com.josh.ardhi.services.SubscriptionPlanService;
@@ -47,15 +53,18 @@ public class AdminClientController {
     private final ClientKeywordService clientKeywordService;
     private final ClientSubscriptionService clientSubscriptionService;
     private final SubscriptionPlanService subscriptionPlanService;
+    private final ClientKeywordMatchService clientKeywordMatchService;
 
     public AdminClientController(AppUserService appUserService,
                                  ClientKeywordService clientKeywordService,
                                  ClientSubscriptionService clientSubscriptionService,
-                                 SubscriptionPlanService subscriptionPlanService) {
+                                 SubscriptionPlanService subscriptionPlanService,
+                                 ClientKeywordMatchService clientKeywordMatchService) {
         this.appUserService = appUserService;
         this.clientKeywordService = clientKeywordService;
         this.clientSubscriptionService = clientSubscriptionService;
         this.subscriptionPlanService = subscriptionPlanService;
+        this.clientKeywordMatchService = clientKeywordMatchService;
     }
 
     @GetMapping("")
@@ -540,22 +549,95 @@ public class AdminClientController {
     }
 
     @GetMapping("/show/{id}/matches")
-    public String matches(@PathVariable String id, Model model) {
+    public String matches(@PathVariable String id,
+                          @RequestParam(name = "status", defaultValue = "") String status,
+                          @RequestParam(name = "keyword", required = false) UUID keywordId,
+                          @RequestParam(name = "page", defaultValue = "0") int page,
+                          Model model) {
         loadClientFullDetails(id, model);
+        populateClientMatchesModel(id, status, keywordId, page, model);
         model.addAttribute("currentTab", "matches");
         return "admin/clients/tabs/matches";
     }
 
     @GetMapping("/show/{id}/notifications")
-    public String notifications(@PathVariable String id, Model model) {
+    public String notifications(@PathVariable String id,
+                                @RequestParam(name = "channel", defaultValue = "") String channel,
+                                @RequestParam(name = "status", defaultValue = "") String status,
+                                @RequestParam(name = "page", defaultValue = "0") int page,
+                                Model model) {
         loadClientFullDetails(id, model);
+        populateClientNotificationsModel(id, channel, status, page, model);
         model.addAttribute("currentTab", "notifications");
         return "admin/clients/tabs/notifications";
+    }
+
+    @HxRequest
+    @PostMapping("/show/{id}/notifications/{nid}/resend")
+    public String resendClientNotification(@PathVariable String id,
+                                           @PathVariable UUID nid,
+                                           @RequestParam(name = "channel", defaultValue = "") String channel,
+                                           @RequestParam(name = "status", defaultValue = "") String status,
+                                           @RequestParam(name = "page", defaultValue = "0") int page,
+                                           Model model) {
+        try {
+            clientKeywordMatchService.resendNotification(nid);
+            model.addAttribute("notificationsSuccess", "Notification queued for re-sending.");
+        } catch (AppException e) {
+            model.addAttribute("notificationsError", e.getMessage());
+        }
+        loadClientFullDetails(id, model);
+        populateClientNotificationsModel(id, channel, status, page, model);
+        return "admin/clients/tabs/notifications :: notificationsSection";
     }
 
     @ModelAttribute("currentMenu")
     public String currentMenu() {
         return "clients";
+    }
+
+    private void populateClientMatchesModel(String id, String status, UUID keywordId, int page, Model model) {
+        try {
+            UUID clientUuid = UUID.fromString(id);
+            Page<ClientKeywordMatch> matchesPage = clientKeywordMatchService
+                    .searchClientMatches(clientUuid, status, keywordId, page, CLIENTS_PAGE_SIZE);
+            model.addAttribute("matchesPage", matchesPage);
+            model.addAttribute("clientMatches", matchesPage.getContent());
+            model.addAttribute("selectedMatchStatus", status != null ? status.trim().toUpperCase() : "");
+            model.addAttribute("selectedKeywordId", keywordId);
+            model.addAttribute("totalMatchesCount", clientKeywordMatchService.countClientMatches(clientUuid));
+            model.addAttribute("pendingMatchesCount",
+                    clientKeywordMatchService.countClientMatchesByStatus(clientUuid, ClientKeywordMatchStatus.PENDING_REVIEW));
+            model.addAttribute("approvedMatchesCount",
+                    clientKeywordMatchService.countClientMatchesByStatus(clientUuid, ClientKeywordMatchStatus.APPROVED));
+            model.addAttribute("rejectedMatchesCount",
+                    clientKeywordMatchService.countClientMatchesByStatus(clientUuid, ClientKeywordMatchStatus.REJECTED));
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    private void populateClientNotificationsModel(String id, String channel, String status, int page, Model model) {
+        try {
+            UUID clientUuid = UUID.fromString(id);
+            Page<ClientNotification> notificationsPage = clientKeywordMatchService
+                    .searchClientNotifications(clientUuid, channel, status, page, CLIENTS_PAGE_SIZE);
+            model.addAttribute("notificationsPage", notificationsPage);
+            model.addAttribute("clientNotifications", notificationsPage.getContent());
+            model.addAttribute("selectedChannel", channel != null ? channel.trim().toUpperCase() : "");
+            model.addAttribute("selectedNotificationStatus", status != null ? status.trim().toUpperCase() : "");
+            model.addAttribute("totalNotificationsCount", clientKeywordMatchService.countClientNotifications(clientUuid));
+            model.addAttribute("emailNotificationsCount",
+                    clientKeywordMatchService.countClientNotificationsByChannel(clientUuid, NotificationChannel.EMAIL));
+            model.addAttribute("smsNotificationsCount",
+                    clientKeywordMatchService.countClientNotificationsByChannel(clientUuid, NotificationChannel.SMS));
+            model.addAttribute("pendingNotificationsCount",
+                    clientKeywordMatchService.countClientNotificationsByStatus(clientUuid, NotificationStatus.PENDING));
+            model.addAttribute("deliveredNotificationsCount",
+                    clientKeywordMatchService.countClientNotificationsByStatus(clientUuid, NotificationStatus.DELIVERED));
+            model.addAttribute("failedNotificationsCount",
+                    clientKeywordMatchService.countClientNotificationsByStatus(clientUuid, NotificationStatus.FAILED));
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
     private void populateClientsListModel(String q, String verified, String status, int page, Model model) {
@@ -598,6 +680,8 @@ public class AdminClientController {
             model.addAttribute("transactions", transactions);
             model.addAttribute("transactionsCount", transactions.size());
             model.addAttribute("totalPaid", clientSubscriptionService.getTotalPaidByClient(uuid));
+            model.addAttribute("matchesCount", clientKeywordMatchService.countClientMatches(uuid));
+            model.addAttribute("notificationsCount", clientKeywordMatchService.countClientNotifications(uuid));
         } catch (IllegalArgumentException | AppException ignored) {
         }
     }

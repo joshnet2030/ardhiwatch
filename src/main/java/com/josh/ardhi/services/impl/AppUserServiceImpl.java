@@ -287,4 +287,9 @@ public class AppUserServiceImpl implements AppUserService {
         user.setWalletBalance(updated);
         return appUserRepository.save(user);
     }
+
+    @Override
+    public long countActiveClients() {
+        return appUserRepository.countByRoleAndIsActiveTrue(AppUserRole.CLIENT);
+    }
 }

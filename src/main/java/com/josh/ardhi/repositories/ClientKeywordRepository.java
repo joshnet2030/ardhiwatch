@@ -12,6 +12,8 @@ public interface ClientKeywordRepository extends JpaRepository<ClientKeyword, UU
 
     List<ClientKeyword> findAllByClientIdAndIsActiveTrueOrderByCreatedAtDesc(UUID clientId);
 
+    List<ClientKeyword> findAllByClientIdAndIsActiveTrueAndPausedFalseOrderByCreatedAtAsc(UUID clientId);
+
     long countByClientIdAndIsActiveTrue(UUID clientId);
 
     long countByClientIdAndIsActiveTrueAndPausedFalse(UUID clientId);
