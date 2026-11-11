@@ -1,10 +1,12 @@
 package com.josh.ardhi.utils;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationHighlight;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationTextMarkup;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
@@ -27,7 +29,7 @@ public class PdfHighlighter extends PDFTextStripper {
     public byte[] highlightToBytes(File sourceFile, String[] wordsToHighlight) throws IOException {
         this.criteria = wordsToHighlight;
 
-        try (PDDocument document = PDDocument.load(sourceFile)) {
+        try (PDDocument document = Loader.loadPDF(sourceFile)) {
             this.setSortByPosition(true);
             this.setStartPage(0);
             this.setEndPage(document.getNumberOfPages());
@@ -86,7 +88,8 @@ public class PdfHighlighter extends PDFTextStripper {
                 };
 
                 List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
-                PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup("Highlight");
+                PDAnnotationHighlight highlight = new PDAnnotationHighlight();
+
 
                 PDRectangle position = new PDRectangle();
                 position.setLowerLeftX(posXInit);

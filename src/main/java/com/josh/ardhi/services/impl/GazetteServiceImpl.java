@@ -13,6 +13,7 @@ import com.josh.ardhi.services.GazetteService;
 import com.josh.ardhi.services.SystemFileService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -75,7 +76,7 @@ public class GazetteServiceImpl implements GazetteService {
 
         updateIssueStatus(issue, GazetteIssueStatus.SPLITTING);
 
-        try (PDDocument sourceDocument = PDDocument.load(sourcePdfFile)) {
+        try (PDDocument sourceDocument = Loader.loadPDF(sourcePdfFile)) {
             Splitter splitter = new Splitter();
             List<PDDocument> splitPages = splitter.split(sourceDocument);
 

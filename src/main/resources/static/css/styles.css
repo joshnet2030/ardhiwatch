@@ -2378,3 +2378,32 @@ body {
     .dk-nav__gazette-status { display: none; }
     .dk-match-compare { grid-template-columns: 1fr; }
 }
+
+
+/* ── Client Portal Overflow Guards ──────────────────────────── */
+/* Grid/flex children default to min-width:auto, so wide content (tables,
+   nowrap action cells, long keywords) stretches the 1fr track past the
+   viewport. Letting them shrink keeps scrolling inside .dk-table-wrap. */
+.dk-app-body { overflow-x: hidden; }
+
+.dk-main,
+.dk-sidebar,
+.dk-dash-col,
+.dk-dash-side,
+.dk-dash-grid > *,
+.dk-stat-grid > *,
+.dk-panel,
+.dk-panel__body,
+.dk-notice-banner__body {
+    min-width: 0;
+}
+
+.dk-notice-banner { flex-wrap: wrap; }
+.dk-notice-banner__body { overflow-wrap: anywhere; }
+
+.dk-table td { overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+    .dk-nav--app { flex-wrap: wrap; gap: .75rem; padding: .75rem 1.15rem; }
+    .dk-nav__user-info { display: none; }
+}
