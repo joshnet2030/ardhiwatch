@@ -14,7 +14,7 @@ Goal: Auth|Password reset
 -[DONE] Add schedular to send emails
 -[DONE] Add client dashboard page
 -[DONE] add 404 page
-- add 500 page
+-[DONE] add 500 page
 
 Goal: Upload and process pdfs
 
