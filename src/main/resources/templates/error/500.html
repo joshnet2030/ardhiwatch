@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/public}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Something Went Wrong — Dokezo</title>
+</head>
+<body>
+<main layout:fragment="content" class="dk-auth">
+    <div class="dk-auth__container">
+        <div class="dk-auth-card dk-auth-card--center">
+            <div class="dk-auth-card__icon dk-auth-card__icon--warn">!</div>
+            <p class="dk-auth-card__eyebrow" th:text="${status != null ? 'Error ' + status : 'Error'}">Error</p>
+            <h1 class="dk-auth-card__title" th:text="${error ?: 'Page unavailable'}">Page unavailable</h1>
+            <p class="dk-auth-card__subtitle">
+                Something unexpected happened on our end. We are looking into it.
+            </p>
+            <a href="/" class="dk-btn dk-btn--primary dk-btn--block">Back to Home</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

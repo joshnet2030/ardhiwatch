@@ -48,8 +48,10 @@ public class WebController {
 
     @GetMapping("/privacy-policy")
     public String privacyPolicy() {
-        return "privacy_policy";
+        throw new RuntimeException("Test error");
+        //return "privacy_policy";
     }
+
 
     private String resolveDashboardPath() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

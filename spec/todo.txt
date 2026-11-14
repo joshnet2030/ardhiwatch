@@ -10,10 +10,10 @@ Goal: Auth|Password reset
 -[DONE] implement password reset
 -[DONE] Implement client sign up
 -[DONE] implement login as client
-- On login, ensure client email is verified else, redirect to verify email page
-- Add schedular to send emails
-- Add client dashboard page
-- add 404 page
+-[DONE] On login, ensure client email is verified else, redirect to verify email page
+-[DONE] Add schedular to send emails
+-[DONE] Add client dashboard page
+-[DONE] add 404 page
 - add 500 page
 
 Goal: Upload and process pdfs
